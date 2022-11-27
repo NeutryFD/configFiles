@@ -35,9 +35,33 @@
   ~~~
   #mkswap /dev/swap_partition
   ~~~
-* To hability swap storage
-  ~~~
-  #swapon 
-  ~~~
+* To enable swap storage
+~~~
+#swapon 
+~~~
 ### Mont partitions just created
-*
+  - Mount the partitin of the system
+  ~~~
+  #mount /dev/system_partition /mnt
+  ~~~
+  - Mont the boot partition
+    - Create dicrectory for boot
+    ~~~
+    #mkdir /mnt/boot
+    ~~~
+  - Mont partition
+  ~~~ 
+  #mount /dev/partition_boot /mnt/boot
+  ~~~
+### Package instalation
+~~~
+#pacstrap -K /mnt base linux linux-firmware
+~~~
+### Create fstab ficher to auto-mount the partition at the start of the system
+~~~
+#genfstab -U /mnt >> /mnt/etc/fstab
+~~~
+### Go into our system 
+~~~
+#arch-chroot /mnt
+~~~
