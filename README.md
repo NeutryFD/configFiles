@@ -1,4 +1,4 @@
-# NeutryArch
+# Parrot Security 
 
 ### Arch Instalation from bootable USB using manual instalation with terminal.
 
