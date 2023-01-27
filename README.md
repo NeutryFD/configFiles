@@ -65,3 +65,6 @@
 ~~~
 #arch-chroot /mnt
 ~~~
+### Alies usefull
+~~~
+#skill -kill - u {user} --> close sesion 
