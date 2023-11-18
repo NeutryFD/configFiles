@@ -1,9 +1,11 @@
 #! /bin/sh
 
-picom --config /home/neutry/.config/picom/picon.conf &
-feh --bg-scale /home/neutry/Pictures/nasa_wallpaper.jpg
-polybar parrot &
-pgrep -x sxhkd > /dev/null || sxhkd &
+sxhkd -c /home/neutry/configFiles/sxhkd/sxhkdrc &
+
+picom --config /home/neutry/configFiles/picom/picom.conf &
+feh --bg-scale /home/neutry/Pictures/nasa.jpg
+polybar -c /home/neutry/configFiles/polybar/config  parrot &
+#pgrep -x sxhkd > /dev/null || sxhkd &
 
 bspc monitor -d I II III IV V VI VII VIII IX X
 
