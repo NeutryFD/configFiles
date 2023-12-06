@@ -8,8 +8,8 @@ if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then
 	startx
 fi
 
-eval "$(ssh-agent -s)"
-ssh-add ~/.ssh/github 
+eval "$(ssh-agent -s)" &>/dev/null
+ssh-add ~/.ssh/github  &>/dev/null
 
 
 # Set name of the theme to load --- if set to "random", it will
