@@ -6,7 +6,7 @@ killall -q polybar
 
 sxhkd -c /home/neutry/configFiles/sxhkd/sxhkdrc &
 picom --config /home/neutry/configFiles/picom/picom.conf &
-feh --bg-scale /home/neutry/Pictures/oni.jpg
+feh --bg-scale /home/neutry/Downloads/oni.jpg
 polybar -c /home/neutry/configFiles/polybar/config  parrot &
 #pgrep -x sxhkd > /dev/null || sxhkd &
 

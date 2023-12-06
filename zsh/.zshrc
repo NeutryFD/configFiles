@@ -3,8 +3,15 @@
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
-export PATH=/snap/bin/:$PATH
-export PATH=/usr/bin/snap:$PATH
+
+if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then
+	startx
+fi
+
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/github 
+
+
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
@@ -72,8 +79,8 @@ ZSH_THEME="robbyrussell"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git
-	zsh-autosuggestions
-        zsh-syntax-highlighting)
+         zsh-autosuggestions
+         zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -103,10 +110,5 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias lc="lsd -la"
-alias pp="sudo poweroff"
-alias rr="sudo reboot"
-alias cat="batcat  -l java --style=plain --theme TwoDark"
-alias cb="xclip -selection c"
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-alias lc="lsd -la"
+alias icat="kitty +kitten icat"
+alias cat="bat --style=plain --theme TwoDark" 
