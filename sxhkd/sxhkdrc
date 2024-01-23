@@ -4,18 +4,21 @@
 
 # terminal emulator
 super + Return
-	kitty --config /home/neutry/configFiles/kitty/kitty.conf
+	kitty --config /home/lsantos/configFiles/kitty/kitty.conf
 
 super + n
-	bspc rule -a \* -o state=floating sticky=on layer=above rectangle=720x360+600+26 && kitty --config /home/neutry/configFiles/kitty/kitty.conf
-# program launcher
-super + @space
-	export PATH=/snap/bin:$PATH && rofi -show run
+	bspc rule -a \* -o state=floating sticky=on layer=above rectangle=720x360+600+26 && kitty --config /home/lsantos/configFiles/kitty/kitty.conf
+# program laulsantosuper + @space
+
+super + @space	
+   rofi -show run
 
 # make sxhkd reload its configuration files:
 super + Escape
 	pkill -USR1 -x sxhkd
 
+super + b 
+  betterlockscreen -l dim 
 #
 # bspwm hotkeys
 #
