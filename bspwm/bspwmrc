@@ -1,5 +1,8 @@
 #! /bin/sh
-
+xsetroot -cursor_name left_ptr
+setxkbmap eu
+sudo setAudioCard
+sudo mountDisk
 killall -q sxhkd
 killall -q polybar 
 

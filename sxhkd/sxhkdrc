@@ -19,6 +19,8 @@ super + Escape
 
 #lockScreean
 
+
+
 super + b 
  betterlockscreen -l dim
 

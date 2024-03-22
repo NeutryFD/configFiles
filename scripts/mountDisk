@@ -1,0 +1,5 @@
+#!/bin/bash
+if [ -n $(lsblk -o UUID | grep "56fa5147-4b24-47c2-a165-d61cc18dd92d") ]; then
+   mount --uuid 56fa5147-4b24-47c2-a165-d61cc18dd92d /virtualMachines/
+   chown -R neutry:neutry /virtualMachines/
+fi
