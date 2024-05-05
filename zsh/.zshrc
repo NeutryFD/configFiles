@@ -113,3 +113,5 @@ alias lc="lsd -la"
 alias icat="kitty +kitten icat"
 alias cat="bat --style=plain --theme TwoDark"
 alias copy="xclip -sel clip"
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

@@ -69,8 +69,8 @@ module-margin-right = 2
 font-0 = fixed:pixelsize=10;1
 font-1 = unifont:fontformat=truetype:size=8:antialias=false;0
 font-2 = siji:pixelsize=10;1
-font-3 = "Material <D-º>Icons:style=Bold:size=10;4"
-font-4 ="HackNerdFont:pixelsize=10;1"
+font-3 = Material Icons:style=Bold:size=10;4
+font-4 = HackNerdFont:pixelsize=10;1
 
 modules-left = filesystem xkeyboard 
 modules-center = bspwm 
@@ -102,7 +102,7 @@ label = %title:0:30:...%
 type = internal/xkeyboard
 blacklist-0 = num lock
 
-format-prefix = "󰌌  "
+format-prefix = " 󰌌  "
 format-prefix-foreground = ${colors.foreground-alt}
 
 label-layout = %layout%
@@ -207,7 +207,7 @@ ramp-signal-foreground = ${colors.foreground-alt}
 
 [module/eth]
 type = internal/network
-interface = enp2s0
+interface = enp4s0
 interval = 3.0
 
 format-connected-prefix-foreground = ${colors.foreground-alt}
@@ -271,7 +271,7 @@ bar-volume-empty-foreground = ${colors.foreground-alt}
 [module/cpu]
 type = internal/cpu
 format = <label>
-format-prefix = " :"
+format-prefix = "   :"
 format-prefix-foreground = ${colors.two}
 label = %percentage%%
 ; Spacing between individual per-core ramps
