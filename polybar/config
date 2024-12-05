@@ -108,7 +108,6 @@ label = %title:0:30:...%
 type = internal/xkeyboard
 blacklist-0 = num lock
 
-format-prefix = " 󰌌  "
 format-prefix-foreground = ${colors.foreground-alt}
 
 label-layout = %layout%
@@ -231,17 +230,15 @@ interva = 1
 
 radius = 90.0 
 
-date =
-date-alt = "%Y-%m-%d"
+date = "%Y-%m-%d"
 
-time = "%H:%M"
-time-alt = %H:%M:%S
+time = "%H:%M:%S"
 
 format-padding = 1
 format-prefix-foreground = #6381C4
 
 format-foreground = #6381C4
-format-background = #2c2e42
+#format-background = #2c2e42
 
 
 label = %date% %time%
