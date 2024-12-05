@@ -11,7 +11,7 @@ public ()
 
 git-set ()
 {
-  kill ssh-agent 2>/dev/null
+  pkill ssh-agent 2>/dev/null
   eval "$(ssh-agent -s)"
   ssh-add ~/.ssh/github 
 }
