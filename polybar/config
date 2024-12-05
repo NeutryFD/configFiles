@@ -230,7 +230,7 @@ interva = 1
 
 radius = 90.0 
 
-date = "%Y-%m-%d"
+date = "%d-%m-%Y"
 
 time = "%H:%M:%S"
 
