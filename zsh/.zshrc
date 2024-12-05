@@ -26,7 +26,7 @@ source $ZSH/oh-my-zsh.sh
 ################################################### alias
 alias lc="lsd -la"
 alias icat="kitty +kitten icat"
-alias cat="bat --style=plain --theme TwoDark"
+#alias cat="bat --style=plain --theme TwoDark"
 alias copy="xclip -sel clip"
 alias ll="lsd -la"
 alias vim="nvim"
