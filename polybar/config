@@ -39,7 +39,10 @@ foreground-alt = #555
 primary = #dfdfdf
 secondary = #e60053
 alert = #bd2c40
-
+ghost_red = #FF0000       ; Rojo (Blinky)
+ghost_pink = #FFC0CB      ; Rosa (Pinky)
+ghost_blue = #00FFFF      ; Azul (Inky)
+ghost_orange = #FFA500    ; Naranja (Clyde)
 
 
 [bar/parrot]
@@ -131,11 +134,11 @@ label-unmounted-foreground = ${colors.foreground-alt}
 type = internal/bspwm
 format-padding = 2
 
-label-focused = " 󰊠 " 
+label-focused = " 󰮯 " 
 label-focused-background = ${colors.background}
 label-focused-underline= ${colors.primary}
 label-focused-padding = 1
-label-focused-foreground = #DDB6F2 
+label-focused-foreground = #FFD700
 
 label-occupied = " 󰊠 "
 label-occupied-foreground = #96CDFB
@@ -146,7 +149,7 @@ label-urgent-background = ${colors.alert}
 label-urgent-padding = 1
 
 label-empty = " 󰧵 "
-label-empty-foreground  = #FAE3B0
+label-empty-foreground = #FFC0CB
 label-empty-padding = 1
 #label-empty-font = 10
 ; Separator in between workspaces
