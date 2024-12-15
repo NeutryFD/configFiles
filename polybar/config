@@ -83,7 +83,7 @@ font-4 = HackNerdFont-Bold:style=Bold:pixelsize=12;1
 
 modules-left = filesystem xkeyboard 
 modules-center = bspwm 
-modules-right = memory cpu eth temperature date  
+modules-right = memory system-nvidia-smi cpu eth temperature date  
 
 tray-position = right
 tray-padding = 2
@@ -102,6 +102,11 @@ tray-padding = 2
 
 cursor-click = pointer
 cursor-scroll = ns-resize
+
+[module/system-nvidia-smi]
+type = custom/script
+exec = /home/neutry/configFiles/polybar/system-nvidia-smi.sh
+interval = 10
 
 [module/xwindow]
 type = internal/xwindow
@@ -122,13 +127,15 @@ label-indicator-underline = ${colors.secondary}
 
 [module/filesystem]
 type = internal/fs
-interval = 25
+interval = 10
 
 mount-0 = /
-
+mount-1 = /Games
 label-mounted =   %{F#0a81f5}%mountpoint%%{F-}: %percentage_used%%
 label-unmounted = %mountpoint% not mounted
 label-unmounted-foreground = ${colors.foreground-alt}
+#label-mounted-1 =   Games: %percentage_used%%
+#label-mounted =   %{F#0a81f5}%mountpoint%%{F-}: %percentage_used%%
 
 [module/bspwm]
 type = internal/bspwm

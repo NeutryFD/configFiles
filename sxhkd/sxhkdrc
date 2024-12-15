@@ -18,14 +18,18 @@ super + Escape
 
 
 #lockScreean
-
-
-
 super + b 
  betterlockscreen -l dim
 
+# Show clipmenu
+super + v
+    CM_LAUNCHER=rofi clipmenu \
+        -location 0 \
+        -no-show-icons \
+        -theme-str '* \{font: "Hack Nerd Font 10";\}' \
+        -theme-str 'listview \{ spacing: 0; \}' \
+        -theme-str 'window \{ width: 20em; anchor: center; location: center; \}'
 
-#
 # bspwm hotkeys
 #
 

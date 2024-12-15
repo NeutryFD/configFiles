@@ -6,7 +6,7 @@ setxkbmap eu
 killall -q sxhkd
 killall -q polybar 
 
-
+clipmenud &
 sxhkd -c /home/neutry/configFiles/sxhkd/sxhkdrc &
 picom --config /home/neutry/configFiles/picom/picom.conf &
 feh --bg-scale /home/neutry/Downloads/oni.jpg
