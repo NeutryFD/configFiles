@@ -30,6 +30,12 @@ super + v
         -theme-str 'listview \{ spacing: 0; \}' \
         -theme-str 'window \{ width: 20em; anchor: center; location: center; \}'
 
+#Volume UP
+XF86AudioRaiseVolume
+  amixer -c 0 set PCM 5%+
+
+XF86AudioLowerVolume
+  amixer -c 0 set PCM 5%-
 # bspwm hotkeys
 #
 
