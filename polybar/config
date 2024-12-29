@@ -83,7 +83,7 @@ font-4 = HackNerdFont-Bold:style=Bold:pixelsize=12;1
 
 modules-left = filesystem xkeyboard 
 modules-center = bspwm 
-modules-right = memory system-nvidia-smi cpu eth temperature date  
+modules-right = memory system-nvidia-smi cpu alsa eth temperature date  
 
 tray-position = right
 tray-padding = 2
@@ -304,7 +304,7 @@ type = internal/memory
 internal = 3
 warn-percentange = 95 
 format = <label>
-label = RAM: %gb_used% /%gb_total%
+label = RAM: %gb_used%
 
 [module/temperature]
 type = internal/temperature
