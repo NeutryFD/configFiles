@@ -16,6 +16,15 @@ git-set ()
   ssh-add ~/.ssh/github 
 }
 
+clean-copy (){
+  #pgrep -f clipmenu | xargs  kill > /dev/null
+  #rm -rf /run/user/1001/clipmenu*
+  #bspc wm -r
+  clipdel -d ".*" > /dev/null
+  echo "clipboard cleaned"
+}
+
+
 ################################################### plugins
 plugins=(git
          zsh-autosuggestions
