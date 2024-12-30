@@ -31,6 +31,8 @@ xsetroot -cursor_name left_ptr
 sxhkd -c /home/lsantos/configFiles/sxhkd/sxhkdrc &
 picom --config /home/lsantos/configFiles/picom/picom.conf &
 feh --bg-scale /home/lsantos/Pictures/df.jpg
+clipmenud &
+
 #feh --bg-scale /home/lsantos/Downloads/download.jpeg
 #pgrep -x sxhkd > /dev/null || sxhkd &
 
