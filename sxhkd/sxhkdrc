@@ -19,7 +19,31 @@ super + Escape
 
 super + b 
   betterlockscreen -l dim 
-#
+
+# Show clipmenu
+super + v
+    CM_LAUNCHER=rofi clipmenu \
+        -location 0 \
+        -no-show-icons \
+        -theme-str '* \{font: "Hack Nerd Font 10";\}' \
+        -theme-str 'listview \{ spacing: 0; \}' \
+        -theme-str 'window \{ width: 20em; anchor: center; location: center; \}'
+
+#Volume UP
+XF86AudioRaiseVolume
+  amixer -D pulse sset Master 5%+
+
+#Volume Down
+XF86AudioLowerVolume
+  amixer -D pulse sset Master 5%-
+
+#Mute Audio
+XF86AudioMute
+	amixer -D pulse sset Master toggle
+
+
+
+
 # bspwm hotkeys
 #
 
