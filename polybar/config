@@ -75,9 +75,9 @@ font-2 = siji:pixelsize=10;1
 font-3 = "Material Icons:style=Bold:size=12;4"
 font-4 = "Hack Nerd Font:pixelsize=12;1"
 
-modules-left = battery  filesystem
+modules-left = battery  filesystem xkeyboard
 modules-center = bspwm 
-modules-right = alsa  xkeyboard memory cpu wlan eth temperature date  
+modules-right = alsa memory cpu wlan eth temperature date  
 
 tray-position = right
 tray-padding = 2
@@ -172,13 +172,13 @@ format-padding = 2
 
 
 label-focused = " 󰮯 " 
-#label-focused = "󰊠" 
+#label-focused = "󰊠 " 
 label-focused-background = ${colors.background}
 label-focused-underline= ${colors.primary}
 label-focused-padding = 1
 label-focused-foreground = #FFD700 
 
-label-occupied = "󰊠"
+label-occupied = "󰊠 "
 label-occupied-foreground = #96CDFB
 label-occupied-padding = 1
 
@@ -186,7 +186,7 @@ label-urgent = %index%!
 label-urgent-background = ${colors.alert}
 label-urgent-padding = 1
 
-label-empty = "󰧵"
+label-empty = "󰧵 "
 label-empty-foreground  = #FFC0CB
 label-empty-padding = 1
 ; Separator in between workspaces
@@ -230,7 +230,7 @@ card = intel_backlight
 
 [module/wlan]
 type = internal/network
-interface = wlp1s0
+interface = enx00e04c7c627c
 interval = 3.0
 
 format-connected = <label-connected>
@@ -336,7 +336,7 @@ type = internal/memory
 internal = 3
 warn-percentange = 95 
 format = <label>
-label = RAM: %gb_used% / %gb_total%
+label = RAM: %gb_used%
 
 [module/temperature]
 type = internal/temperature
