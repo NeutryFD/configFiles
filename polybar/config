@@ -99,6 +99,7 @@ cursor-scroll = ns-resize
 
 [bar/parrot2]
 override-redirect = true
+enable-ipc = true
 wm-restack = bspwm
 
 monitor = ${env:MONITOR:HDMI-A-0}
@@ -130,7 +131,7 @@ font-4 = "Hack Nerd Font:pixelsize=12;1"
 
 ;lmodules-left = battery  filesystem
 modules-center = bspwm 
-;modules-right = alsa  xkeyboard memory cpu wlan eth temperature date  
+modules-right = spotify spotify-prev spotify-play-pause spotify-next 
 
 tray-position = right
 tray-padding = 2
@@ -193,18 +194,33 @@ label-empty-padding = 1
 ;label-separator = |
 
 
-[module/mpd]
-type = internal/mpd
-format-online = <label-song>  <icon-prev> <icon-stop> <toggle> <icon-next>
+[module/spotify]
+type = custom/script
+tail = true
+interval = 1
+; prefix symbol is shown before the text
+format-prefix = "   "
+format = <label>
+exec = ~/configFiles/polybar/scripts/spotify_status.sh
 
-icon-prev = 
-icon-stop = 
-icon-play = 
-icon-pause = 
-icon-next = 
+[module/spotify-prev]
+type = custom/script
+exec = echo "󰙣 "
+format = <label>
+click-left = playerctl previous -p spotify
 
-label-song-maxlen = 25
-label-song-ellipsis = true
+[module/spotify-play-pause]
+type = custom/ipc
+hook-1 = echo " "
+hook-0 = echo " "
+initial = 0
+click-left = playerctl play-pause -p spotify
+
+[module/spotify-next]
+type = custom/script
+exec = echo "󰙡 "
+format = <label>
+click-left = playerctl next -p spotify
 
 [module/xbacklight]
 type = internal/xbacklight
