@@ -29,6 +29,10 @@ super + v
         -theme-str 'listview \{ spacing: 0; \}' \
         -theme-str 'window \{ width: 20em; anchor: center; location: center; \}'
 
+
+super + alt + c
+  clipdel -d ".*" > /dev/null
+
 #Volume UP
 XF86AudioRaiseVolume
   amixer -D pulse sset Master 5%+
