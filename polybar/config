@@ -131,7 +131,7 @@ font-4 = "Hack Nerd Font:pixelsize=12;1"
 
 ;lmodules-left = battery  filesystem
 modules-center = bspwm 
-modules-right = spotify spotify-prev spotify-play-pause spotify-next 
+modules-right = spotify spotify-prev spotify-play-pause spotify-next date 
 
 tray-position = right
 tray-padding = 2
@@ -199,7 +199,7 @@ type = custom/script
 tail = true
 interval = 1
 ; prefix symbol is shown before the text
-format-prefix = "   "
+format-prefix = "󰝚  "
 format = <label>
 exec = ~/configFiles/polybar/scripts/spotify_status.sh
 
@@ -268,7 +268,8 @@ ramp-signal-foreground = ${colors.foreground-alt}
 
 [module/eth]
 type = internal/network
-interface = enx00e04c6801f2
+interface = wlp1s0
+#interface = enx00e04c6801f2
 interval = 3.0
 
 format-connected-prefix-foreground = ${colors.foreground-alt}
@@ -286,11 +287,9 @@ interva = 1
 
 radius = 90.0 
 
-date =
-date-alt = "%Y-%m-%d"
+date  = "%Y-%m-%d"
 
-time = "%H:%M"
-time-alt = %H:%M:%S
+time = "%H:%M:%S"
 
 format-padding = 1
 format-prefix-foreground = #6381C4
