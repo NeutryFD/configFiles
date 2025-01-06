@@ -32,15 +32,15 @@ super + v
 
 #Volume UP
 XF86AudioRaiseVolume
-  amixer -c 0 set PCM 5%+
+  amixer sset 'Master' 5%+
 
 #Volume Down
 XF86AudioLowerVolume
-  amixer -c 0 set PCM 5%-
+  amixer sset 'Master' 5%-
 
 #Mute Audio
 XF86AudioMute
-	amixer -c 0 sset PCM toggle
+	amixer sset 'Master' toggle
 
 
 # bspwm hotkeys
