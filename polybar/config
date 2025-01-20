@@ -75,9 +75,9 @@ font-2 = siji:pixelsize=10;1
 font-3 = "Material Icons:style=Bold:size=12;4"
 font-4 = "Hack Nerd Font:pixelsize=12;1"
 
-modules-left = battery  filesystem xkeyboard
+modules-left = battery  filesystem xkeyboard memory cpu
 modules-center = bspwm 
-modules-right = alsa memory cpu wlan eth temperature date  
+modules-right = alsa  wlan eth temperature date  
 
 tray-position = right
 tray-padding = 2
@@ -246,14 +246,14 @@ card = intel_backlight
 
 [module/wlan]
 type = internal/network
-interface = enx00e04c7c627c
+interface = wlp1s0
 interval = 3.0
 
 format-connected = <label-connected>
 #format-connected-underline = #9f78e1
-label-connected = %local_ip% %downspeed:9%
+label-connected =   %local_ip% %downspeed%
 
-format-disconnected =
+format-disconnected = 󰖪 
 ;format-disconnected = <label-disconnected>
 ;format-disconnected-underline = ${self.format-connected-underline}
 ;label-disconnected = %ifname% disconnected
@@ -268,14 +268,14 @@ ramp-signal-foreground = ${colors.foreground-alt}
 
 [module/eth]
 type = internal/network
-interface = wlp1s0
+interface = enx00e04c7c627c
 #interface = enx00e04c6801f2
 interval = 3.0
 
 format-connected-prefix-foreground = ${colors.foreground-alt}
-label-connected = 󰌗 : %local_ip%
+label-connected = 󰈀  %local_ip% %downspeed%
 
-format-disconnected = "No connected"
+format-disconnected = 󰈂
 ;format-disconnected = <label-disconnected>
 ;format-disconnected-underline = ${self.format-connected-underline}
 ;label-disconnected = %ifname% disconnected
