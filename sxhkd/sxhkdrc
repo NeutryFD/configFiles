@@ -3,8 +3,12 @@
 #
 
 # terminal emulator
+#super + Return
+#	kitty --config /home/lsantos/configFiles/kitty/kitty.conf
+
+
 super + Return
-	kitty --config /home/lsantos/configFiles/kitty/kitty.conf
+	ghostty
 
 super + n
 	bspc rule -a \* -o state=floating sticky=on layer=above rectangle=720x360+600+26 && kitty --config /home/lsantos/configFiles/kitty/kitty.conf
