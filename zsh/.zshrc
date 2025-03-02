@@ -24,6 +24,10 @@ clean-copy (){
   echo "clipboard cleaned"
 }
 
+configfiles () 
+{
+  cd /home/lsantos/configFiles/
+}
 
 ################################################### plugins
 plugins=(git
