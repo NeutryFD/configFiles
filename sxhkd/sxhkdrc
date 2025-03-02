@@ -51,6 +51,16 @@ XF86AudioMute
 	amixer sset 'Master' toggle
 
 
+
+# Move to the previous desktop
+super + Left
+    bspc {desktop -f} prev.local
+
+# Move to the next desktop
+super + Right
+    bspc desktop -f next.local
+
+
 # bspwm hotkeys
 
 # quit/restart bspwm
@@ -88,7 +98,9 @@ super + ctrl + {m,x,y,z}
 
 #
 # focus/swap
-#
+
+super + alt + {1-9,0}
+	bspc desktop '^{1-9,10}' --swap focused --focus ^$(bspc query -D --names -d focused)
 
 # focus the node in the given direction
 super + {_,shift + }{h,j,k,l}
