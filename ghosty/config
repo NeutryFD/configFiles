@@ -19,7 +19,6 @@
 # ==========================
 # # The config file consists of simple key-value pairs,
 # # separated by equals signs.
-font-family = HackNerdFont
 # window-padding-x = 2
 #
 # # Spacing around the equals sign does not matter.
@@ -42,17 +41,51 @@ font-family = HackNerdFont
 # # Just for example:
 # resize-overlay-duration = 4s 200msi
 
-window-decoration = none
+ 
+#theme = Apple System Colors
+#theme = Argonaut
+
+#Style
+#Font
+font-family = HackNerdFont
+
+#Theme
+theme = Calamity
+
+#Background
 background-opacity = 0.90
 background = #1a1b26
- 
+
+#windows settings
+window-padding-x = 20
+window-padding-y = 20
+window-decoration = none
+
+#Cursor
+cursor-style = bar
+
+
 #Selection highlight    
 selection-foreground = #7aa2f7    
 selection-background = #28344a
-#theme = Apple System Colors
-#theme = Argonaut
-theme = Calamity
-cursor-style = bar
-window-padding-x = 20
-window-padding-y = 20
+
+#Control Tabs
+## add tabs
+keybind = ctrl+shift+right=new_split:right
+keybind = ctrl+shift+down=new_split:down
+## Move between tabs
+keybind = ctrl+up=goto_split:up
+keybind = ctrl+down=goto_split:down
+keybind = ctrl+right=goto_split:right
+keybind = ctrl+left=goto_split:left
+
+#Close tab
+keybind = ctrl+x=close_surface
+
+
+#Scrool with keys
+keybind = shift+up=scroll_page_lines:-5
+keybind = shift+down=scroll_page_lines:5
+
 #command = "neofetch"
+
