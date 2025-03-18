@@ -38,5 +38,5 @@ alias icat="kitty +kitten icat"
 alias copy="xclip -sel clip"
 alias ll="lsd -la"
 alias vim="nvim"
-
+alias master="sudo /usr/local/bin/reconnect-mm712.sh"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
