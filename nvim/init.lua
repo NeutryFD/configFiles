@@ -23,7 +23,3 @@ vim.cmd([[highlight ModeMsg guibg=#3b4252 guifg=#d8dee9]])  -- Dark background a
 vim.opt.number = true      -- Show absolute line numbers
 vim.opt.relativenumber = true  -- Show relative line numbers
 vim.keymap.set("n", "<leader>n", ":set number! relativenumber!<CR>", { desc = "Toggle line numbers" })
-
-
-
-
