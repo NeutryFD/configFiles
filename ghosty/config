@@ -45,6 +45,13 @@
 #theme = Apple System Colors
 #theme = Argonaut
 
+#General
+
+confirm-close-surface = false
+#git push -uf origin main
+clipboard-paste-protection = false
+
+
 #Style
 #Font
 font-family = HackNerdFont
@@ -86,6 +93,8 @@ keybind = ctrl+x=close_surface
 #Scrool with keys
 keybind = shift+up=scroll_page_lines:-5
 keybind = shift+down=scroll_page_lines:5
+
+
 
 #command = "neofetch"
 
