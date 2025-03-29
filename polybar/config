@@ -333,7 +333,7 @@ type = internal/memory
 internal = 3
 warn-percentange = 95 
 format = <label>
-label = RAM: %gb_used%
+label = RAM: %gb_used%/%gb_total%
 
 [module/temperature]
 type = internal/temperature
