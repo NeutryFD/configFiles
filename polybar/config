@@ -107,8 +107,8 @@ cursor-scroll = ns-resize
 
 [module/system-nvidia-smi]
 type = custom/script
-exec = /home/neutry/configFiles/polybar/scripts/system-nvidia-smi.sh
-interval = 10
+exec = /home/neutry/configFiles/polybar/scripts/usage_gpu.sh
+interval = 2
 
 [module/xwindow]
 type = internal/xwindow
@@ -122,7 +122,7 @@ format-prefix-foreground = ${colors.foreground-alt}
 
 label-layout = %layout%
 
-label-indicator-padding = 2
+label-indicator-padding = 
 label-indicator-margin = 1
 label-indicator-background = ${colors.secondary}
 label-indicator-underline = ${colors.secondary}
@@ -132,7 +132,7 @@ type = internal/fs
 interval = 10
 
 mount-0 = /
-mount-1 = /Games
+mount-1 = /BoxRoom
 label-mounted =   %{F#0a81f5}%mountpoint%%{F-}: %percentage_used%%
 label-unmounted = %mountpoint% not mounted
 label-unmounted-foreground = ${colors.foreground-alt}
