@@ -1,6 +1,9 @@
 export ZSH="$HOME/.oh-my-zsh"
 export EDITOR=/bin/nvim
+export PATH=$PATH:/home/neutry/.lmstudio/bin
+
 ZSH_THEME="robbyrussell"
+
 
 ################################################## funtions 
 
