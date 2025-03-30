@@ -1,3 +1,5 @@
+-- Modules PAHT
+package.path = package.path .. ';/home/neutry/configFiles/nvim/lua/?.lua'
 
 -- set leader key
 vim.g.mapleader = " "  -- Set Space as the leader key
