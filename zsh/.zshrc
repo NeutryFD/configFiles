@@ -7,13 +7,32 @@ ZSH_THEME="robbyrussell"
 public ()
 {
   xclip -sel clip ~/.ssh/id_rsa.pub
+export EDITOR=/bin/nvim
+export PATH=$PATH:/home/neutry/.lmstudio/bin
+source $ZSH/oh-my-zsh.sh
+ZSH_THEME="robbyrussell"
+
+
+################################################## funtions
+sshfslocal (){
+	host=$1
+	dir=$2
+if [ -z "$dir" ]; then
+	mkdir -p $HOME/remoteDir
+	dir="$HOME/remoteDir"
+fi
+sshfs -o  idmap=user $host $dir &&cd $dir
 }
 
-git-set ()
-{
-  pkill ssh-agent 2>/dev/null
-  eval "$(ssh-agent -s)"
-  ssh-add ~/.ssh/github 
+
+public (){
+	xclip -sel clip ~/.ssh/id_rsa.pub
+}
+
+git-set (){
+	pkill ssh-agent 2>/dev/null
+	eval "$(ssh-agent -s)"
+	ssh-add ~/.ssh/github 
 }
 
 clean-copy (){
@@ -22,6 +41,10 @@ clean-copy (){
   #bspc wm -r
   clipdel -d ".*" > /dev/null
   echo "clipboard cleaned"
+	rm -rf /run/user/1000/clipmenu*
+	pgrep -f clipmenu | xargs  kill > /dev/null
+	bspc wm -r
+	echo "clipboard cleaned"
 }
 
 configfiles () 
@@ -31,11 +54,11 @@ configfiles ()
 
 ################################################### plugins
 plugins=(git
-         zsh-autosuggestions
-         zsh-syntax-highlighting)
+		zsh-autosuggestions
+		zsh-syntax-highlighting
+		)
 
 
-source $ZSH/oh-my-zsh.sh
 ################################################### alias
 alias lc="lsd -la"
 alias icat="kitty +kitten icat"
