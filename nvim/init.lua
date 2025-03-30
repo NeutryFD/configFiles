@@ -4,7 +4,12 @@ package.path = package.path .. ';/home/neutry/configFiles/nvim/lua/?.lua'
 -- set leader key
 vim.g.mapleader = " "  -- Set Space as the leader key
 vim.g.maplocalleader = " "  -- Also set local leader to Space
+-- visualitation of tabs
 
+vim.o.list = true  -- Enable visualizing spaces and tabs
+vim.o.listchars = "tab:▸-,trail:·,lead:·"
+vim.o.tabstop = 4        -- Each tab is 4 spaces wide
+vim.o.shiftwidth = 4
 -- mouse funcionality
 vim.o.mouse = "a"
 
