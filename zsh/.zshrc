@@ -42,4 +42,5 @@ alias copy="xclip -sel clip"
 alias ll="lsd -la"
 alias vim="nvim"
 alias master="sudo /usr/local/bin/reconnect-mm712.sh"
+alias lazygit="git-set && lazygit"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
