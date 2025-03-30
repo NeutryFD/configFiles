@@ -33,7 +33,7 @@ local function lineinfo()
   if vim.bo.filetype == "alpha" then
     return ""
   end
-  return " %P %L/%l:%c "
+  return " %P %l/%L:%c "
 end
 
 local function filepath()
