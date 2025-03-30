@@ -1,7 +1,7 @@
+
 -- set leader key
 vim.g.mapleader = " "  -- Set Space as the leader key
 vim.g.maplocalleader = " "  -- Also set local leader to Space
-
 
 -- mouse funcionality
 vim.o.mouse = "a"
@@ -25,5 +25,21 @@ vim.opt.relativenumber = true  -- Show relative line numbers
 vim.keymap.set("n", "<leader>n", ":set number! relativenumber!<CR>", { desc = "Toggle line numbers" })
 
 
+-- Hide the Command-line when no use it
+vim.o.cmdheight = 0
 
+-- statusline
+-- Load the custom statusline from lua/config/statusline.lua
+local Statusline = require('config.statusline')
 
+-- Set the statusline using the active statusline function
+vim.opt.statusline = "%!v:lua.Statusline.active()"
+
+-- Optionally, update the statusline dynamically when entering or leaving windows/buffers
+vim.api.nvim_exec([[
+  augroup Statusline
+  au!
+  au WinEnter,BufEnter * setlocal statusline=%!v:lua.Statusline.active()
+  au WinLeave,BufLeave * setlocal statusline=%!v:lua.Statusline.active()
+  augroup END
+]], false)
