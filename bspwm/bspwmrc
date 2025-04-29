@@ -4,7 +4,7 @@ setxkbmap eu
 #sudo setAudioCard
 #sudo mountDisk
 killall -q sxhkd
-killall -q polybar 
+killall -q polybar
 
 clipmenud &
 sxhkd -c /home/neutry/configFiles/sxhkd/sxhkdrc &
