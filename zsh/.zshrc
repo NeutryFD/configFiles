@@ -1,7 +1,6 @@
 export ZSH="$HOME/.oh-my-zsh"
 export EDITOR=/bin/nvim
 export PATH=$PATH:/home/neutry/.lmstudio/bin
-source $ZSH/oh-my-zsh.sh
 ZSH_THEME="robbyrussell"
 
 
@@ -42,6 +41,7 @@ plugins=(git
 		)
 
 
+source $ZSH/oh-my-zsh.sh
 ################################################### alias
 alias lc="lsd -la"
 alias icat="kitty +kitten icat"
@@ -51,4 +51,5 @@ alias ll="lsd -la"
 alias vim="nvim"
 alias master="sudo /usr/local/bin/reconnect-mm712.sh"
 alias lazygit="git-set && lazygit"
+alias mountvault="sudo mount -t nfs santos.local:/Plex /NFS-Vault"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
