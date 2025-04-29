@@ -30,21 +30,21 @@
 [colors]
 ;background = ${xrdb:color0:#222}
 #background = #aa161320
-background = #E61a1b26
+background     = #E61a1b26
 #background = #aa2F343F
 background-alt = #232133
 ;foreground = ${xrdb:color7:#222}
-foreground = #dfdfdf
-bg1 = #232133
-bg2 = #38354c
+foreground     = #dfdfdf
+bg1            = #232133
+bg2            = #38354c
 foreground-alt = #555
-primary = #dfdfdf
-secondary = #e60053
-alert = #bd2c40
-ghost_red = #FF0000       ; Rojo (Blinky)
-ghost_pink = #FFC0CB      ; Rosa (Pinky)
-ghost_blue = #00FFFF      ; Azul (Inky)
-ghost_orange = #FFA500    ; Naranja (Clyde)
+primary        = #dfdfdf
+secondary      = #e60053
+alert          = #bd2c40
+ghost_red      = #FF0000    ; Rojo (Blinky)
+ghost_pink     = #FFC0CB    ; Rosa (Pinky)
+ghost_blue     = #00FFFF    ; Azul (Inky)
+ghost_orange   = #FFA500    ; Naranja (Clyde)
 
 
 [bar/parrot]
@@ -83,9 +83,9 @@ font-2 = siji:pixelsize=12;1
 font-3 = MaterialIcons-Regular:style=Bold:pixelsize=13;1
 font-4 = HackNerdFont-Bold:style=Bold:pixelsize=12;1  
 
-modules-left = xkeyboard filesystem spotify spotify-prev spotify-play-pause spotify-next 
+modules-left = xkeyboard filesystem spotify spotify-prev spotify-play-pause spotify-next
 modules-center = bspwm 
-modules-right = memory system-nvidia-smi cpu alsa eth temperature date  
+modules-right = memory system-nvidia-smi cpu alsa eth temperature date
 
 tray-position = right
 tray-padding = 2
@@ -122,7 +122,7 @@ format-prefix-foreground = ${colors.foreground-alt}
 
 label-layout = %layout%
 
-label-indicator-padding = 
+label-indicator-padding = 5
 label-indicator-margin = 1
 label-indicator-background = ${colors.secondary}
 label-indicator-underline = ${colors.secondary}
@@ -132,7 +132,7 @@ type = internal/fs
 interval = 10
 
 mount-0 = /
-mount-1 = /BoxRoom
+mount-1 = /NFS-Vault
 label-mounted =   %{F#0a81f5}%mountpoint%%{F-}: %percentage_used%%
 label-unmounted = %mountpoint% not mounted
 label-unmounted-foreground = ${colors.foreground-alt}
@@ -251,7 +251,7 @@ ramp-signal-foreground = ${colors.foreground-alt}
 
 [module/eth]
 type = internal/network
-interface = enp4s0
+interface = enp5s0
 interval = 3.0
 
 format-connected-prefix-foreground = ${colors.foreground-alt}
@@ -284,14 +284,24 @@ label = %date% %time%
 
 [module/alsa]
 type = internal/alsa
+;master-soundcard=hw:0
+
+master-soundcard    =hw:2
+;speaker-soundcard   =hw:0
+;headphone-soundcard =hw:2
+
+master-mixer = "G435 Wireless Gaming Headset Playback Volum"
+
+mapped = true
+interval = 5
 
 format-volume = <label-volume> <bar-volume>
 label-volume = VOL
 label-volume-foreground = ${root.foreground}
 
-format-muted-prefix = " "
+;format-muted-prefix = ""
 format-muted-foreground = ${colors.foreground-alt}
-label-muted = sound muted
+label-muted =  ALSA
 
 bar-volume-width = 10
 bar-volume-foreground-0 = #55aa55
@@ -314,7 +324,7 @@ bar-volume-empty-foreground = ${colors.foreground-alt}
 type = internal/cpu
 format = <label>
 format-prefix = "   :"
-format-prefix-foreground = ${colors.two}
+;format-prefix-foreground = ${colors.two}
 label = %percentage%%
 ; Spacing between individual per-core ramps
 ramp-coreload-spacing = 0
@@ -326,7 +336,7 @@ ramp-coreload-4 = ▅
 ramp-coreload-5 = ▆
 ramp-coreload-6 = ▇
 ramp-coreload-7 = █
-format-underline = ${colors.two}
+;format-underline = ${colors.two}
 
 [module/memory]
 type = internal/memory
