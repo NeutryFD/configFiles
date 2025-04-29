@@ -36,20 +36,21 @@ super + v
 
 #clean clipboard
 super + alt + c
-  clipdel -d ".*" > /dev/null
+	clipdel -d ".*" > /dev/null
 
 #Volume UP
 XF86AudioRaiseVolume
-  amixer sset 'Master' 5%+
+  amixer -c 2 sset 'G435 Wireless Gaming Headset Playback Volum' 2%+
+  amixer sset 'Master' 2%+
 
 #Volume Down
 XF86AudioLowerVolume
-  amixer sset 'Master' 5%-
-
+  amixer -c 2 sset 'G435 Wireless Gaming Headset Playback Volum' 2%-
+  amixer sset 'Master' 2%-
 #Mute Audio
 XF86AudioMute
-	amixer sset 'Master' toggle
-
+  amixer -c 2 sset 'G435 Wireless Gaming Headset Playback Volum' toggle
+  amixer sset 'Master' toggle
 
 
 # Move to the previous desktop
