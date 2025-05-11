@@ -2,78 +2,42 @@
 
 PLAYER="spotify"
 FORMAT="{{ artist }} - {{ title }}"
-PARENT_BAR_PID=$(pgrep -f "polybar") 
 SCROLL_SPEED=0.2
 PADDING="    "
+last_metadata=""
 
 scroll_text() {
     local text="$1$PADDING"
-    while true; do
-        echo "%{l}${text}"
+    for ((i = 0; i < ${#text}; i++)); do
+        echo "${text}"
         text="${text:1}${text:0:1}"
         sleep $SCROLL_SPEED
     done
 }
 
 get_status() {
-    PLAYERCTL_STATUS=$(playerctl --player=$PLAYER status 2>/dev/null)
-    if [ $? -eq 0 ]; then
-        echo "$PLAYERCTL_STATUS"
-    else
-        echo "No player is running"
-    fi
+    playerctl --player=$PLAYER status 2>/dev/null || echo "No player is running"
 }
 
-#main() {
-#    last_metadata=""
-#
-#    while true; do
-#        STATUS=$(get_status)
-#
-#        if [ "$STATUS" = "Stopped" ] || [ "$STATUS" = "No player is running" ]; then
-#            scroll_text "No music is playing"
-#        else
-#            metadata=$(playerctl --player=$PLAYER metadata --format "$FORMAT")
-#            if [ "$metadata" != "$last_metadata" ]; then
-#                last_metadata="$metadata"
-#
-#                polybar-msg -p $(pgrep -f "music") cmd restart > /dev/null 2>&1
-#            fi
-#            scroll_text "$metadata"
-#        fi
-#    done
-#}
+get_metadata() {
+    playerctl --player=$PLAYER metadata --format "$FORMAT" 2>/dev/null
+}
 
-main() {
+while true; do
     STATUS=$(get_status)
 
-    if [ "$1" == "--status" ]; then
-        echo "$STATUS"
-        exit 0
-    fi
-
-    if [ "$STATUS" = "Stopped" ]; then
-        scroll_text "No music is playing"
-    elif [ "$STATUS" = "Paused" ]; then
-        playerctl --player=$PLAYER metadata --format "$FORMAT" | while read -r metadata; do
-            update_hooks "$PARENT_BAR_PID" 2
-            scroll_text "$metadata"
-        done
-    elif [ "$STATUS" = "No player is running" ]; then
-        scroll_text "$STATUS"
+    if [[ "$STATUS" == "Stopped" || "$STATUS" == "No player is running" ]]; then
+        metadata="No music is playing"
     else
-        playerctl --player=$PLAYER metadata --format "$FORMAT" | while read -r metadata; do
-            update_hooks "$PARENT_BAR_PID" 1
-            scroll_text "$metadata"
-        done
+        metadata=$(get_metadata)
     fi
-}
 
-update_hooks() {
-    echo "$1" | while IFS= read -r id
-    do
-        polybar-msg -p "$id" hook spotify-play-pause $2 1>/dev/null 2>&1
-    done
-}
+    if [[ "$metadata" != "$last_metadata" ]]; then
+        last_metadata="$metadata"
+        # En lugar de reiniciar la barra, actualiza el módulo
+        polybar-msg hook spotify 1 > /dev/null 2>&1
+    fi
 
-main "$@"
+    scroll_text "$metadata"
+done
+
