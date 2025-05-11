@@ -2,9 +2,9 @@
 
 PLAYER="spotify"
 FORMAT="{{ artist }} - {{ title }}"
-PARENT_BAR_PID=$(pgrep -f "polybar")  # O ajústalo si tienes una mejor forma de obtener el ID
-SCROLL_SPEED=0.2  # segundos entre scroll
-PADDING="    "    # espacio entre repeticiones
+PARENT_BAR_PID=$(pgrep -f "polybar") 
+SCROLL_SPEED=0.2
+PADDING="    "
 
 scroll_text() {
     local text="$1$PADDING"
@@ -23,6 +23,26 @@ get_status() {
         echo "No player is running"
     fi
 }
+
+#main() {
+#    last_metadata=""
+#
+#    while true; do
+#        STATUS=$(get_status)
+#
+#        if [ "$STATUS" = "Stopped" ] || [ "$STATUS" = "No player is running" ]; then
+#            scroll_text "No music is playing"
+#        else
+#            metadata=$(playerctl --player=$PLAYER metadata --format "$FORMAT")
+#            if [ "$metadata" != "$last_metadata" ]; then
+#                last_metadata="$metadata"
+#
+#                polybar-msg -p $(pgrep -f "music") cmd restart > /dev/null 2>&1
+#            fi
+#            scroll_text "$metadata"
+#        fi
+#    done
+#}
 
 main() {
     STATUS=$(get_status)
