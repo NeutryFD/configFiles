@@ -11,7 +11,7 @@ super + Return
 	ghostty
 
 super + n
-	bspc rule -a \* -o state=floating sticky=on layer=above rectangle=720x360+600+26 && kitty --config /home/neutry/configFiles/kitty/kitty.conf
+	bspc rule -a \* -o state=floating sticky=on layer=above rectangle=720x360+600+26 && ghostty
 # program launcher
 super + @space
 	export PATH=/snap/bin:$PATH && rofi -show run
@@ -40,17 +40,17 @@ super + alt + c
 
 #Volume UP
 XF86AudioRaiseVolume
-  amixer -c 2 sset 'G435 Wireless Gaming Headset Playback Volum' 2%+
-  amixer sset 'Master' 2%+
+  amixer -c 0 sset 'G435 Wireless Gaming Headset Playback Volum' 2%+
+  #amixer sset 'Master' 2%+
 
 #Volume Down
 XF86AudioLowerVolume
-  amixer -c 2 sset 'G435 Wireless Gaming Headset Playback Volum' 2%-
-  amixer sset 'Master' 2%-
+  amixer -c 0 sset 'G435 Wireless Gaming Headset Playback Volum' 2%-
+  #amixer sset 'Master' 2%-
 #Mute Audio
 XF86AudioMute
-  amixer -c 2 sset 'G435 Wireless Gaming Headset Playback Volum' toggle
-  amixer sset 'Master' toggle
+  amixer -c 0 sset 'G435 Wireless Gaming Headset Playback Volum' toggle
+  #amixer sset 'Master' toggle
 
 
 # Move to the previous desktop
@@ -63,6 +63,11 @@ super + Right
 
 
 # bspwm hotkeys
+
+#screenshot
+super + x 
+  flameshot gui
+
 
 # quit/restart bspwm
 super + alt + {q,r}
