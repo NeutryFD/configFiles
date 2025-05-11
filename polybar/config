@@ -47,7 +47,7 @@ ghost_blue     = #00FFFF    ; Azul (Inky)
 ghost_orange   = #FFA500    ; Naranja (Clyde)
 
 
-[bar/parrot]
+[bar/arch]
 ;monitor = ${env:MONITOR:HDMI-1}
 
 override-redirect = true
@@ -84,7 +84,7 @@ font-3 = MaterialIcons-Regular:style=Bold:pixelsize=13;1
 font-4 = HackNerdFont-Bold:style=Bold:pixelsize=12;1  
 
 modules-left = xkeyboard filesystem spotify spotify-prev spotify-play-pause spotify-next
-modules-center = bspwm 
+modules-center = bspwm
 modules-right = memory system-nvidia-smi cpu alsa eth temperature date
 
 tray-position = right
@@ -102,6 +102,165 @@ tray-padding = 2
 ;scroll-up = i3wm-wsnext
 ;scroll-down = i3wm-wsprev
 
+cursor-click = pointer
+cursor-scroll = ns-resize
+
+[bar/left]
+;monitor = ${env:MONITOR:HDMI-1}
+override-redirect = true
+wm-restack = bspwm
+enable-ipc = true
+
+width = 35%
+height = 30
+fixed-center = true
+radius = 6.0
+;offset-x = 45%
+
+background = ${colors.background}
+foreground = ${colors.foreground}
+line-size = 3
+line-color = #f00
+border-size = 4
+border-color = #00000000
+
+padding-left = 2
+padding-right = 2
+module-margin-left = 1
+module-margin-right = 2
+
+dpi = 96
+font-0 = fixed:pixelsize=12;1
+font-1 = unifont:fontformat=truetype:pixelsize=12:antialias=true;1
+font-2 = siji:pixelsize=12;1
+font-3 = MaterialIcons-Regular:style=Bold:pixelsize=13;1
+font-4 = HackNerdFont-Bold:style=Bold:pixelsize=12;1
+
+modules-left = xkeyboard filesystem
+modules-center = banner
+modules-right = eth
+
+tray-position = right
+tray-padding = 2
+cursor-click = pointer
+cursor-scroll = ns-resize
+
+[bar/center]
+;monitor = ${env:MONITOR:HDMI-1}
+override-redirect = true
+wm-restack = bspwm
+enable-ipc = true
+radius = 6.0
+
+width = 15%
+height = 30
+fixed-center = true
+offset-x = 45%
+
+background = ${colors.background}
+foreground = ${colors.foreground}
+
+line-size = 3
+line-color = #f00
+border-size = 4
+border-color = #00000000
+
+padding-left = 2
+padding-right = 2
+module-margin-left = 1
+module-margin-right = 2
+
+dpi = 96
+font-0 = fixed:pixelsize=12;1
+font-1 = unifont:fontformat=truetype:pixelsize=12:antialias=true;1
+font-2 = siji:pixelsize=12;1
+font-3 = MaterialIcons-Regular:style=Bold:pixelsize=13;1
+font-4 = HackNerdFont-Bold:style=Bold:pixelsize=12;1
+
+modules-center = bspwm
+
+tray-position = right
+tray-padding = 2
+cursor-click = pointer
+cursor-scroll = ns-resize
+
+
+
+[bar/music]
+;monitor = ${env:MONITOR:HDMI-1}
+override-redirect = true
+wm-restack = bspwm
+enable-ipc = true
+radius = 6.0
+
+width = 7%
+height = 30
+fixed-center = true
+offset-x = 66%
+
+background = ${colors.background}
+foreground = ${colors.foreground}
+
+line-size = 3
+line-color = #f00
+border-size = 4
+border-color = #00000000
+
+padding-left = 2
+padding-right = 2
+module-margin-left = 1
+module-margin-right = 2
+
+dpi = 96
+font-0 = fixed:pixelsize=12;1
+font-1 = unifont:fontformat=truetype:pixelsize=12:antialias=true;1
+font-2 = siji:pixelsize=12;1
+font-3 = MaterialIcons-Regular:style=Bold:pixelsize=13;1
+font-4 = HackNerdFont-Bold:style=Bold:pixelsize=12;1
+
+modules-center = spotify
+
+tray-position = right
+tray-padding = 2
+cursor-click = pointer
+cursor-scroll = ns-resize
+
+[bar/right]
+;monitor = ${env:MONITOR:HDMI-1}
+override-redirect = true
+wm-restack = bspwm
+enable-ipc = true
+radius = 6.0
+
+width = 27%
+height = 30
+fixed-center = true
+offset-x = 73%
+
+background = ${colors.background}
+foreground = ${colors.foreground}
+
+line-size = 3
+line-color = #f00
+border-size = 4
+border-color = #00000000
+
+padding-left = 2
+padding-right = 2
+module-margin-left = 1
+module-margin-right = 2
+
+dpi = 96
+font-0 = fixed:pixelsize=12;1
+font-1 = unifont:fontformat=truetype:pixelsize=12:antialias=true;1
+font-2 = siji:pixelsize=12;1
+font-3 = MaterialIcons-Regular:style=Bold:pixelsize=13;1
+font-4 = HackNerdFont-Bold:style=Bold:pixelsize=12;1
+
+modules-center = spotify-prev spotify-play-pause spotify-next memory system-nvidia-smi cpu temperature date
+
+tray-position = right
+tray-padding = 2
 cursor-click = pointer
 cursor-scroll = ns-resize
 
@@ -198,11 +357,14 @@ bar-empty-foreground = ${colors.foreground-alt}
 [module/spotify]
 type = custom/script
 tail = true
-interval = 1
+interval = 0
 ; prefix symbol is shown before the text
-format-prefix = "󰝚  "
+format-prefix = " "
 format = <label>
 exec = ~/configFiles/polybar/scripts/spotify_status.sh
+label-padding = 1
+label-maxlen = 20
+label-ellipsis = false
 
 [module/spotify-prev]
 type = custom/script
@@ -343,7 +505,7 @@ type = internal/memory
 internal = 3
 warn-percentange = 95 
 format = <label>
-label = RAM: %gb_used%/%gb_total%
+label =    %gb_used%
 
 [module/temperature]
 type = internal/temperature
@@ -404,5 +566,17 @@ screenchange-reload = true
 [global/wm]
 margin-top = 5
 margin-bottom = 5
+
+[module/banner]
+type = custom/script
+exec = /home/neutry/configFiles/polybar/scripts/banner.sh
+interval = 0
+tail = true
+format = <label>
+label-padding = 1
+label-maxlen = 45
+label-ellipsis = false
+
+
 
 ; vim:ft=dosini
