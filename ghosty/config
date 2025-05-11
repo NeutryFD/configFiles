@@ -66,7 +66,7 @@ background = #1a1b26
 #windows settings
 window-padding-x = 20
 window-padding-y = 20
-window-decoration = none
+window-decoration = server
 
 #Cursor
 cursor-style = bar
@@ -95,6 +95,21 @@ keybind = shift+up=scroll_page_lines:-5
 keybind = shift+down=scroll_page_lines:5
 
 
+#Tab config
 
+#window-titlebar-background = #1a1b26
+#window-titlebar-foreground = #1a1b26
+window-new-tab-position = end
+window-theme = ghostty
+window-subtitle = false
+
+
+
+gtk-titlebar = true
+gtk-tabs-location = top
+adw-toolbar-style = raised
+gtk-wide-tabs = true
+gtk-adwaita = true
+#gtk-custom-css = ./gtk-4.0/gtk.css
 #command = "neofetch"
 
