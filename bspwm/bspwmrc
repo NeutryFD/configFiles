@@ -12,6 +12,8 @@ sxhkd -c /home/neutry/configFiles/sxhkd/sxhkdrc &
 picom --config /home/neutry/configFiles/picom/picom.conf &
 feh --bg-scale /home/neutry/Downloads/oni.jpg
 polybar -c /home/neutry/configFiles/polybar/config  left &
+polybar -c /home/neutry/configFiles/polybar/config  banner &
+polybar -c /home/neutry/configFiles/polybar/config  ethernet &
 polybar -c /home/neutry/configFiles/polybar/config  center &
 polybar -c /home/neutry/configFiles/polybar/config  right &
 polybar -c /home/neutry/configFiles/polybar/config  music &
