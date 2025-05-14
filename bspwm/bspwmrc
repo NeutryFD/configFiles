@@ -2,48 +2,51 @@
 killall -q polybar
 killall -q sxhkd
 
+##  --- VARIABLES ---------------------------------
 INTERNAL_MONITOR="eDP"
 #EXTERNAL_MONITOR="HDMI-A-0"
 EXTERNAL_MONITOR="DisplayPort-0"
+
+
+##  --- Monitor configuration ----------------------
+xrandr --output "$EXTERNAL_MONITOR" --mode 1920x1200 --rate 60 --left-of "$INTERNAL_MONITOR" --auto
+xrandr --output "$INTERNAL_MONITOR" --mode 1920x1200 --rate 60
+
+##  --- Basic setup configuration -------------------
 setxkbmap eu
-# on first load setup default workspaces
-#if [[ $(xrandr -q | grep "${EXTERNAL_MONITOR} connected") ]]; then
-#	bspc monitor "$EXTERNAL_MONITOR" -d 1 2 3 4 5
-#	bspc monitor "$INTERNAL_MONITOR" -d 6 7 8 9 10
-#	bspc wm -O "$EXTERNAL_MONITOR" "$INTERNAL_MONITOR"
-#   polybar -c /home/lsantos/configFiles/polybar/config parrot2 &
-#   polybar -c /home/lsantos/configFiles/polybar/config parrot &
-#else
-#	bspc monitor "$INTERNAL_MONITOR" -d 1 2 3 4 5 6 7 8 9 10
-#  polybar -c /home/lsantos/configFiles/polybar/config parrot &
-#fi
+setxkbmap -option caps:escape
+xsetroot -cursor_name left_ptr
 
+##  --- BSPWM workspaces by monitor ------------------
 bspc monitor "$EXTERNAL_MONITOR" -d I II III IV V
-bspc monitor "$INTERNAL_MONITOR" -d VI VII VIII IX X 
+bspc monitor "$INTERNAL_MONITOR" -d VI VII VIII IX X
+bspc wm --reorder-monitors $EXTERNAL_MONITOR $INTERNAL_MONITOR
 
-polybar -c /home/lsantos/configFiles/polybar/config parrot2 &
-polybar -c /home/lsantos/configFiles/polybar/config parrot &
+bspc monitor -d 1 2 3 4 5 6 7 8 9 0
 
-xsetroot -cursor_name left_ptr 
-sxhkd -c /home/lsantos/configFiles/sxhkd/sxhkdrc &
-picom --config /home/lsantos/configFiles/picom/picom.conf &
-feh --bg-scale /home/lsantos/Pictures/df.jpg
-clipmenud &
-
-#feh --bg-scale /home/lsantos/Downloads/download.jpeg
-#pgrep -x sxhkd > /dev/null || sxhkd &
-
-
+##  --- BSPWM configuration ---------------------------
 bspc config border_width         0
-bspc config window_gap           2
+bspc config window_gap           0
 bspc config top_padding          35
-
-bspc config split_ratio          0.52
+bspc config bottom_padding       6
+bspc config split_ratio          0.49
 bspc config borderless_monocle   true
 bspc config gapless_monocle      true
 
-bspc rule -a Gimp desktop='^8' state=floating follow=on
-bspc rule -a Chromium desktop='^2'
-bspc rule -a mplayer2 state=floating
-bspc rule -a Kupfer.py focus=on
-bspc rule -a Screenkey manage=off
+##  --- Polybar init -----------------------------------
+polybar -c /home/lsantos/configFiles/polybar/config thinkpad-left &
+polybar -c /home/lsantos/configFiles/polybar/config thinkpad-center &
+polybar -c /home/lsantos/configFiles/polybar/config thinkpad-wifi &
+polybar -c /home/lsantos/configFiles/polybar/config thinkpad-ethernet &
+polybar -c /home/lsantos/configFiles/polybar/config thinkpad-right &
+polybar -c /home/lsantos/configFiles/polybar/config AOC-banner &
+polybar -c /home/lsantos/configFiles/polybar/config AOC-center &
+polybar -c /home/lsantos/configFiles/polybar/config AOC-music &
+polybar -c /home/lsantos/configFiles/polybar/config AOC-right &
+
+
+##  --- Software and Services --------------------------
+sxhkd -c /home/lsantos/configFiles/sxhkd/sxhkdrc &
+picom --config /home/lsantos/configFiles/picom/picom.conf &
+feh --bg-scale /home/lsantos/Pictures/Wallpapers/hyundai.png
+clipmenud &
