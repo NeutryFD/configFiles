@@ -1,21 +1,28 @@
 #!/bin/bash
-
-# The name of polybar bar which houses the main spotify module and the control modules.
-PARENT_BAR="parrot2"
-PARENT_BAR_PID=$(pgrep -a "polybar" | grep "$PARENT_BAR" | cut -d" " -f1)
-# Set the source audio player here.
-# Players supporting the MPRIS spec are supported.
-# Examples: spotify, vlc, chrome, mpv and others.
-# Use `playerctld` to always detect the latest player.
-# See more here: https://github.com/altdesktop/playerctl/#selecting-players-to-control
 PLAYER="spotify"
+FORMAT="{{ artist }} - {{ title }}"
+SCROLL_SPEED=0.2
+PADDING="    "
+last_metadata=""
+last_status=""
+PARENT_BAR_PID=$(pgrep -f "polybar")
 
-# Format of the information displayed
-# Eg. {{ artist }} - {{ album }} - {{ title }}
-# See more attributes here: https://github.com/altdesktop/playerctl/#printing-properties-and-metadata
-FORMAT="{{ title }} - {{ artist }}"
+scroll_text() {
+    local text="$1$PADDING"
+    for ((i = 0; i < ${#text}; i++)); do
+        echo "$text"
+        text="${text:1}${text:0:1}"
+        sleep $SCROLL_SPEED
+    done
+}
 
-# Sends $2 as message to all polybar PIDs that are part of $1
+get_status() {
+    playerctl --player=$PLAYER status 2>/dev/null || echo "No player is running"
+}
+
+get_metadata() {
+    playerctl --player=$PLAYER metadata --format "$FORMAT" 2>/dev/null
+}
 
 update_hooks() {
     echo "$1" | while IFS= read -r id
@@ -23,27 +30,29 @@ update_hooks() {
         polybar-msg -p "$id" hook spotify-play-pause $2 1>/dev/null 2>&1
     done
 }
-PLAYERCTL_STATUS=$(playerctl --player=$PLAYER status 2>/dev/null)
-EXIT_CODE=$?
 
-if [ $EXIT_CODE -eq 0 ]; then
-    STATUS=$PLAYERCTL_STATUS
-else
-    STATUS="No player is running"
-fi
+while true; do
+    STATUS=$(get_status)
 
-if [ "$1" == "--status" ]; then
-    echo "$STATUS"
-else
-    if [ "$STATUS" = "Stopped" ]; then
-        echo "No music is playing"
-    elif [ "$STATUS" = "Paused"  ]; then
-        update_hooks "$PARENT_BAR_PID" 2
-        playerctl --player=$PLAYER metadata --format "$FORMAT"
-    elif [ "$STATUS" = "No player is running"  ]; then
-        echo "$STATUS"
+    if [[ "$STATUS" == "Stopped" || "$STATUS" == "No player is running" ]]; then
+        metadata="No music is playing"
     else
-        update_hooks "$PARENT_BAR_PID" 1
-        playerctl --player=$PLAYER metadata --format "$FORMAT"
+        metadata=$(get_metadata)
     fi
-fi
+
+    if [[ "$metadata" != "$last_metadata" ]]; then
+        last_metadata="$metadata"
+        polybar-msg hook spotify 1 > /dev/null 2>&1
+    fi
+
+    if [[ "$STATUS" != "$last_status" ]]; then
+        last_status="$STATUS"
+        if [[ "$STATUS" == "Playing" ]]; then
+            update_hooks "$PARENT_BAR_PID" 1
+        else
+            update_hooks "$PARENT_BAR_PID" 0
+        fi
+    fi
+
+    scroll_text "$metadata"
+done
