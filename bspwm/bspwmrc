@@ -7,14 +7,17 @@ INTERNAL_MONITOR="eDP"
 #EXTERNAL_MONITOR="HDMI-A-0"
 EXTERNAL_MONITOR="DisplayPort-0"
 
-
 ##  --- Monitor configuration ----------------------
-xrandr --output "$EXTERNAL_MONITOR" --mode 1920x1200 --rate 60 --left-of "$INTERNAL_MONITOR" --auto
-xrandr --output "$INTERNAL_MONITOR" --mode 1920x1200 --rate 60
+xrandr --output "$INTERNAL_MONITOR" --rate 60
+xrandr --output "$EXTERNAL_MONITOR" --rate 60 --left-of "$INTERNAL_MONITOR"
 
 ##  --- Basic setup configuration -------------------
+
+##  --- Keyboard
 setxkbmap eu
 setxkbmap -option caps:escape
+
+##  --- Mouse
 xsetroot -cursor_name left_ptr
 
 ##  --- BSPWM workspaces by monitor ------------------
