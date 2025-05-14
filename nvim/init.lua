@@ -1,5 +1,5 @@
 -- Modules PAHT
-package.path = package.path .. ';/home/neutry/configFiles/nvim/lua/?.lua'
+package.path = package.path .. ';/home/lsantos/configFiles/nvim/lua/?.lua'
 
 -- set leader key
 vim.g.mapleader = " "  -- Set Space as the leader key
@@ -50,3 +50,45 @@ vim.api.nvim_exec([[
   au WinLeave,BufLeave * setlocal statusline=%!v:lua.Statusline.active()
   augroup END
 ]], false)
+
+-- Requiere nvim-cmp
+local cmp = require'cmp'
+
+cmp.setup({
+  snippet = {
+    expand = function(args)
+      require('luasnip').lsp_expand(args.body) -- Usa LuaSnip
+    end,
+  },
+  mapping = cmp.mapping.preset.insert({
+    ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-Space>'] = cmp.mapping.complete(),
+    ['<C-e>'] = cmp.mapping.abort(),
+    ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Confirmar selección
+  }),
+  sources = cmp.config.sources({
+    { name = 'nvim_lsp' },
+    { name = 'luasnip' }, -- Para snippets
+    { name = 'buffer' },
+    { name = 'path' },
+  })
+})
+
+-- Autocomplet for `/` (search)
+cmp.setup.cmdline('/', {
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = {
+    { name = 'buffer' }
+  }
+})
+
+-- Autocomplet for `:` (command)
+cmp.setup.cmdline(':', {
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = cmp.config.sources({
+    { name = 'path' }
+  }, {
+    { name = 'cmdline' }
+  })
+})

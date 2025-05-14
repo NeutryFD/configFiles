@@ -25,8 +25,6 @@ bspc monitor "$EXTERNAL_MONITOR" -d I II III IV V
 bspc monitor "$INTERNAL_MONITOR" -d VI VII VIII IX X
 bspc wm --reorder-monitors $EXTERNAL_MONITOR $INTERNAL_MONITOR
 
-bspc monitor -d 1 2 3 4 5 6 7 8 9 0
-
 ##  --- BSPWM configuration ---------------------------
 bspc config border_width         0
 bspc config window_gap           0
@@ -46,7 +44,6 @@ polybar -c /home/lsantos/configFiles/polybar/config AOC-banner &
 polybar -c /home/lsantos/configFiles/polybar/config AOC-center &
 polybar -c /home/lsantos/configFiles/polybar/config AOC-music &
 polybar -c /home/lsantos/configFiles/polybar/config AOC-right &
-
 
 ##  --- Software and Services --------------------------
 sxhkd -c /home/lsantos/configFiles/sxhkd/sxhkdrc &
