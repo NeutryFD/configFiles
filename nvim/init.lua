@@ -6,8 +6,8 @@ vim.g.mapleader = " "  -- Set Space as the leader key
 vim.g.maplocalleader = " "  -- Also set local leader to Space
 -- visualitation of tabs
 
-vim.o.list = true  -- Enable visualizing spaces and tabs
-vim.o.listchars = "tab:▸-,trail:·,lead:·"
+-- vim.o.list = true  -- Enable visualizing spaces and tabs
+-- vim.o.listchars = "tab:▸-,trail:·,lead:·"
 vim.o.tabstop = 4        -- Each tab is 4 spaces wide
 vim.o.shiftwidth = 4
 -- mouse funcionality
@@ -66,7 +66,25 @@ cmp.setup({
     ['<C-Space>'] = cmp.mapping.complete(),
     ['<C-e>'] = cmp.mapping.abort(),
     ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Confirmar selección
-  }),
+  
+    ['<Tab>'] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_next_item()
+      else
+        fallback()
+      end
+    end, { 'i', 's' }),
+
+    ['<S-Tab>'] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_prev_item()
+      else
+        fallback()
+      end
+    end, { 'i', 's' }),
+}),
+
+
   sources = cmp.config.sources({
     { name = 'nvim_lsp' },
     { name = 'luasnip' }, -- Para snippets
