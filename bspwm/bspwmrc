@@ -1,36 +1,34 @@
 #! /bin/sh
-xsetroot -cursor_name left_ptr
-setxkbmap eu
-setxkbmap -option caps:escape
-#sudo setAudioCard
-#sudo mountDisk
 killall -q sxhkd
-killall -q polybar
+killall -q Polybar
 
-clipmenud &
-sxhkd -c /home/neutry/configFiles/sxhkd/sxhkdrc &
-picom --config /home/neutry/configFiles/picom/picom.conf &
-feh --bg-scale /home/neutry/Downloads/oni.jpg
-polybar -c /home/neutry/configFiles/polybar/config  left &
-polybar -c /home/neutry/configFiles/polybar/config  banner &
-polybar -c /home/neutry/configFiles/polybar/config  ethernet &
-polybar -c /home/neutry/configFiles/polybar/config  center &
-polybar -c /home/neutry/configFiles/polybar/config  right &
-polybar -c /home/neutry/configFiles/polybar/config  music &
-#pgrep -x sxhkd > /dev/null || sxhkd &
+##  --- Init configuration -------------
+xsetroot -cursor_name left_ptr
+setxkbmap -option caps:escape
+setxkbmap eu
 
+##  --- BSPWM workspaces ----------------
 bspc monitor -d 1 2 3 4 5 6 7 8 9 0
 
+##  --- BSPWM config --------------------
 bspc config border_width         0
-bspc config window_gap           2
+bspc config window_gap           1
 bspc config top_padding          35
-
-bspc config split_ratio          0.52
+bspc config bottom_padding       6
+bspc config split_ratio          0.49
 bspc config borderless_monocle   true
 bspc config gapless_monocle      true
 
-bspc rule -a Gimp desktop='^8' state=floating follow=on
-bspc rule -a Chromium desktop='^2'
-bspc rule -a mplayer2 state=floating
-bspc rule -a Kupfer.py focus=on
-bspc rule -a Screenkey manage=off
+##  --- Polybar init --------------------
+polybar -c /home/neutry/configFiles/polybar/config  left &
+polybar -c /home/neutry/configFiles/polybar/config  banner &
+polybar -c /home/neutry/configFiles/polybar/config  ethernet &
+polybar -c /home/neutry/configFiles/polybar/config  bspwm &
+polybar -c /home/neutry/configFiles/polybar/config  right &
+polybar -c /home/neutry/configFiles/polybar/config  music &
+
+##  --- Software and Sercices -----------
+sxhkd -c /home/neutry/configFiles/sxhkd/sxhkdrc &
+picom --config /home/neutry/configFiles/picom/picom.conf &
+feh --bg-scale /home/neutry/Downloads/oni.jpg
+clipmenud &
