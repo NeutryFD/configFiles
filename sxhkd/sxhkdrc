@@ -11,12 +11,14 @@ super + Return
 	ghostty
 
 super + n
-	bspc rule -a \* -o state=floating sticky=on layer=above rectangle=720x360+600+26 && kitty --config /home/lsantos/configFiles/kitty/kitty.conf
+	bspc rule -a \* -o state=floating sticky=on layer=above rectangle=720x360+600+26 && ghostty
 # program laulsantosuper + @space
 
-super + @space	
-   rofi -show run
+super + shift + n
+	bspc rule -a \* -o state=floating sticky=on layer=above rectangle=720x500+600+340 && ghostty --font-size=15 -e python3 ~/slots/terminal-slotmachine/app.py
 
+super + @space
+···rofi -show run
 # make sxhkd reload its configuration files:
 super + Escape
 	pkill -USR1 -x sxhkd
