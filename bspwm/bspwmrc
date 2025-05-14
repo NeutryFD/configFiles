@@ -1,6 +1,7 @@
 #! /bin/sh
 killall -q sxhkd
 killall -q Polybar
+killall -q clipmenud
 
 ##  --- Init configuration -------------
 xsetroot -cursor_name left_ptr
@@ -10,25 +11,32 @@ setxkbmap eu
 ##  --- BSPWM workspaces ----------------
 bspc monitor -d 1 2 3 4 5 6 7 8 9 0
 
-##  --- BSPWM config --------------------
-bspc config border_width         0
-bspc config window_gap           1
-bspc config top_padding          35
-bspc config bottom_padding       6
-bspc config split_ratio          0.49
-bspc config borderless_monocle   true
-bspc config gapless_monocle      true
 
-##  --- Polybar init --------------------
-polybar -c /home/neutry/configFiles/polybar/config  left &
-polybar -c /home/neutry/configFiles/polybar/config  banner &
-polybar -c /home/neutry/configFiles/polybar/config  ethernet &
-polybar -c /home/neutry/configFiles/polybar/config  bspwm &
-polybar -c /home/neutry/configFiles/polybar/config  right &
-polybar -c /home/neutry/configFiles/polybar/config  music &
+if [ $(hostnamectl chassis) == "desktop" ]; then
 
-##  --- Software and Sercices -----------
-sxhkd -c /home/neutry/configFiles/sxhkd/sxhkdrc &
-picom --config /home/neutry/configFiles/picom/picom.conf &
-feh --bg-scale /home/neutry/Downloads/oni.jpg
+		##  --- BSPWM config --------------------
+		bspc config border_width         0
+		bspc config window_gap           1
+		bspc config top_padding          35
+		bspc config bottom_padding       6
+		bspc config split_ratio          0.49
+		bspc config borderless_monocle   true
+		bspc config gapless_monocle      true
+		
+		##  --- Polybar init --------------------
+		polybar -c /home/neutry/configFiles/polybar/config  left &
+		polybar -c /home/neutry/configFiles/polybar/config  banner &
+		polybar -c /home/neutry/configFiles/polybar/config  ethernet &
+		polybar -c /home/neutry/configFiles/polybar/config  bspwm &
+		polybar -c /home/neutry/configFiles/polybar/config  right &
+		polybar -c /home/neutry/configFiles/polybar/config  music &
+		
+		##  --- Software and Sercices -----------
+		sxhkd -c /home/neutry/configFiles/sxhkd/sxhkdrc &
+		picom --config /home/neutry/configFiles/picom/picom.conf &
+		feh --bg-scale /home/neutry/Downloads/oni.jpg
+
+fi
+
+
 clipmenud &
