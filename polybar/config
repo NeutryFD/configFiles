@@ -425,8 +425,11 @@ label-empty-padding = 1
 type = custom/script
 tail = true
 interval = 1
+label-padding = 1
+label-maxlen = 70
+label-ellipsis = false
 ; prefix symbol is shown before the text
-format-prefix = "󰝚  "
+format-prefix = " "
 format = <label>
 exec = ~/configFiles/polybar/scripts/spotify_status.sh
 
