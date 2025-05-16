@@ -1,29 +1,22 @@
-#!/bin/sh
+#!/bin/bash
 killall -q polybar
 killall -q sxhkd
+killall -q clipmenud
 
 ##  --- VARIABLES ---------------------------------
+
 INTERNAL_MONITOR="eDP"
-#EXTERNAL_MONITOR="HDMI-A-0"
-EXTERNAL_MONITOR="DisplayPort-0"
+HDMI_PORT="HDMI-A-0"
+DISPLAYPORT="DisplayPort-0"
+EXTERNAL_MONITOR=$DISPLAYPORT
 
-##  --- Monitor configuration ----------------------
-xrandr --output "$INTERNAL_MONITOR" --rate 60
-xrandr --output "$EXTERNAL_MONITOR" --rate 60 --left-of "$INTERNAL_MONITOR"
-
-##  --- Basic setup configuration -------------------
-
+##  --- Init Configuration ----------------
 ##  --- Keyboard
 setxkbmap eu
 setxkbmap -option caps:escape
 
 ##  --- Mouse
 xsetroot -cursor_name left_ptr
-
-##  --- BSPWM workspaces by monitor ------------------
-bspc monitor "$EXTERNAL_MONITOR" -d I II III IV V
-bspc monitor "$INTERNAL_MONITOR" -d VI VII VIII IX X
-bspc wm --reorder-monitors $EXTERNAL_MONITOR $INTERNAL_MONITOR
 
 ##  --- BSPWM configuration ---------------------------
 bspc config border_width         0
@@ -34,16 +27,61 @@ bspc config split_ratio          0.49
 bspc config borderless_monocle   true
 bspc config gapless_monocle      true
 
-##  --- Polybar init -----------------------------------
-polybar -c /home/lsantos/configFiles/polybar/config thinkpad-left &
-polybar -c /home/lsantos/configFiles/polybar/config thinkpad-center &
-polybar -c /home/lsantos/configFiles/polybar/config thinkpad-wifi &
-polybar -c /home/lsantos/configFiles/polybar/config thinkpad-ethernet &
-polybar -c /home/lsantos/configFiles/polybar/config thinkpad-right &
-polybar -c /home/lsantos/configFiles/polybar/config AOC-banner &
-polybar -c /home/lsantos/configFiles/polybar/config AOC-center &
-polybar -c /home/lsantos/configFiles/polybar/config AOC-music &
-polybar -c /home/lsantos/configFiles/polybar/config AOC-right &
+
+if [ $(hostnamectl chassis) == "laptop" ]; then
+
+	if [ $(xrandr | grep -o '\bconnected' | wc -l) -eq 2 ]; then
+ 
+		if [ $(xrandr | grep "$HDMI_PORT" | awk '{print $2}') == "connected" ]; then
+	
+			EXTERNAL_MONITOR=$HDMI_PORT
+		
+			##  --- Monitor configuration ----------------------
+			xrandr --output "$INTERNAL_MONITOR" --rate 60
+			xrandr --output "$EXTERNAL_MONITOR" --rate 60 --left-of "$INTERNAL_MONITOR"
+			
+			
+		    ##  --- BSPWM workspaces by monitor ------------------
+			bspc monitor "$EXTERNAL_MONITOR" -d I II III IV V
+			bspc monitor "$INTERNAL_MONITOR" -d VI VII VIII IX X
+			bspc wm --reorder-monitors $EXTERNAL_MONITOR $INTERNAL_MONITOR
+			
+			
+			
+			##  --- Polybar init -----------------------------------
+			polybar -c /home/lsantos/configFiles/polybar/config-II thinkpad-left &
+			polybar -c /home/lsantos/configFiles/polybar/config-II thinkpad-center &
+			polybar -c /home/lsantos/configFiles/polybar/config-II thinkpad-wifi &
+			polybar -c /home/lsantos/configFiles/polybar/config-II thinkpad-ethernet &
+			polybar -c /home/lsantos/configFiles/polybar/config-II thinkpad-right &
+		
+			MONITOR=$EXTERNAL_MONITOR polybar -c /home/lsantos/configFiles/polybar/config-II AOC-banner &
+			MONITOR=$EXTERNAL_MONITOR polybar -c /home/lsantos/configFiles/polybar/config-II AOC-center &
+			MONITOR=$EXTERNAL_MONITOR polybar -c /home/lsantos/configFiles/polybar/config-II AOC-music &
+			MONITOR=$EXTERNAL_MONITOR polybar -c /home/lsantos/configFiles/polybar/config-II AOC-right &
+			
+		fi
+		
+	else
+	
+		##  --- Monitor configuration ----------------------
+		xrandr --output "$INTERNAL_MONITOR" --rate 60
+		
+		bspc wm --reorder-monitors $INTERNAL_MONITOR
+		##  --- BSPWM workspaces by monitor ------------------
+		bspc monitor "$INTERNAL_MONITOR" -d I II III IV V VI VII VIII IX X
+		
+		##  --- Polybar init -----------------------------------
+		polybar -c /home/lsantos/configFiles/polybar/config left &
+		polybar -c /home/lsantos/configFiles/polybar/config banner &
+		polybar -c /home/lsantos/configFiles/polybar/config wifi &
+		polybar -c /home/lsantos/configFiles/polybar/config ethernet &
+		polybar -c /home/lsantos/configFiles/polybar/config bspwm &
+		polybar -c /home/lsantos/configFiles/polybar/config music &
+		polybar -c /home/lsantos/configFiles/polybar/config right &
+
+	fi	
+fi
 
 ##  --- Software and Services --------------------------
 sxhkd -c /home/lsantos/configFiles/sxhkd/sxhkdrc &

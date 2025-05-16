@@ -1,16 +1,3 @@
-
-; THIS IS AN EXAMPLE CONFIGURATION FILE!
-; IT IS NOT SUPPOSED TO WORK OUT OF THE BOX SINCE IS CONTAINS
-; SETTINGS THAT ARE SPECIFIC TO THE MACHINE WHICH WAS USED
-; TO GENERATE IT.
-; Please refer to the web documentation hosted at:
-; https://github.com/polybar/polybar#configuration
-; and
-; https://github.com/polybar/polybar/wiki/Configuration
-; if you want to automatically generate one for you.
-;
-;==========================================================
-;
 ;
 ;   ██████╗  ██████╗ ██╗  ██╗   ██╗██████╗  █████╗ ██████╗
 ;   ██╔══██╗██╔═══██╗██║  ╚██╗ ██╔╝██╔══██╗██╔══██╗██╔══██╗
@@ -18,45 +5,67 @@
 ;   ██╔═══╝ ██║   ██║██║    ╚██╔╝  ██╔══██╗██╔══██║██╔══██╗
 ;   ██║     ╚██████╔╝███████╗██║   ██████╔╝██║  ██║██║  ██║
 ;   ╚═╝      ╚═════╝ ╚══════╝╚═╝   ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝
-;
-;
-;   To learn more about how to configure Polybar
-;   go to https://github.com/polybar/polybar
-;
-;   The README contains a lot of information
-;
-;==========================================================
 
 [colors]
-;background = ${xrdb:color0:#222}
-#background = #aa161320
-background     = #E61a1b26
-#background = #aa2F343F
+background = #161320
 background-alt = #232133
-;foreground = ${xrdb:color7:#222}
-foreground     = #dfdfdf
-bg1            = #232133
-bg2            = #38354c
+foreground = #dfdfdf
+bg1 = #232133
+bg2 = #38354c
 foreground-alt = #555
-primary        = #dfdfdf
-secondary      = #e60053
-alert          = #bd2c40
-ghost_red      = #FF0000    ; Rojo (Blinky)
-ghost_pink     = #FFC0CB    ; Rosa (Pinky)
-ghost_blue     = #00FFFF    ; Azul (Inky)
-ghost_orange   = #FFA500    ; Naranja (Clyde)
+primary = #dfdfdf
+secondary = #e60053
+alert = #bd2c40
 
-
-[bar/thinkpad]
-;monitor = ${env:MONITOR:HDMI-1}
-
+[bar/thinkpad-left]
 override-redirect = true
 wm-restack = bspwm
-enable-ipc = true
 
-width = 100%
-height = 30
-;offset-x = 1%
+width = 27%
+height = 27
+radius = 6.0
+fixed-center = true
+
+background = ${colors.background}
+foreground = ${colors.foreground}
+
+line-size = 3
+line-color = #f00
+
+border-size = 4
+border-color = #00000000
+
+padding-left = 2
+padding-right = 2
+
+module-margin-left = 1
+module-margin-right = 2
+
+font-0 = fixed:pixelsize=12;1
+font-1 = unifont:fontformat=truetype:size=8:antialias=false;0
+font-2 = siji:pixelsize=10;1
+font-3 = "Material Icons:style=Bold:size=12;4"
+font-4 = "Hack Nerd Font:pixelsize=12;1"
+
+modules-center = battery  filesystem xkeyboard memory cpu
+
+tray-position = right
+tray-padding = 2
+;override-redirect = true
+
+;scroll-up = bspwm-desknext
+;scroll-down = bspwm-deskprev
+
+cursor-click = pointer
+cursor-scroll = ns-resize
+
+[bar/thinkpad-center]
+override-redirect = true
+wm-restack = bspwm
+
+width = 10%
+height = 27
+offset-x = 44%
 ;offset-y = 1%
 radius = 6.0
 fixed-center = true
@@ -76,310 +85,286 @@ padding-right = 2
 module-margin-left = 1
 module-margin-right = 2
 
-dpi = 96
-font-0 = fixed:pixelsize=12;1   
-font-1 = unifont:fontformat=truetype:pixelsize=12:antialias=true;1
-font-2 = siji:pixelsize=12;1                   
-font-3 = MaterialIcons-Regular:style=Bold:pixelsize=13;1
-font-4 = HackNerdFont-Bold:style=Bold:pixelsize=12;1  
+font-0 = fixed:pixelsize=12;1
+font-1 = unifont:fontformat=truetype:size=8:antialias=false;0
+font-2 = siji:pixelsize=10;1
+font-3 = "Material Icons:style=Bold:size=12;4"
+font-4 = "Hack Nerd Font:pixelsize=12;1"
 
-modules-left = xkeyboard filesystem spotify spotify-prev spotify-play-pause spotify-next
 modules-center = bspwm
-modules-right = memory cpu alsa eth temperature date
-
-tray-position = right
-tray-padding = 2
-;tray-background = #0063ff
-
-;wm-restack = bspwm
-;wm-restack = i3
-
-;override-redirect = true
-
-;scroll-up = bspwm-desknext
-;scroll-down = bspwm-deskprev
-
-;scroll-up = i3wm-wsnext
-;scroll-down = i3wm-wsprev
-
-cursor-click = pointer
-cursor-scroll = ns-resize
-
-[bar/left]
-;monitor = ${env:MONITOR:HDMI-1}
-override-redirect = true
-wm-restack = bspwm
-enable-ipc = true
-
-width = 5%
-height = 30
-fixed-center = true
-radius = 6.0
-;offset-x = 45%
-
-background = ${colors.background}
-foreground = ${colors.foreground}
-line-size = 3
-line-color = #f00
-border-size = 4
-border-color = #00000000
-
-padding-left = 0
-padding-right = 0
-module-margin-left = 0
-module-margin-right = 0
-
-dpi = 96
-font-0 = fixed:pixelsize=12;1
-font-1 = unifont:fontformat=truetype:pixelsize=12:antialias=true;1
-font-2 = siji:pixelsize=12;1
-font-3 = MaterialIcons-Regular:style=Bold:pixelsize=13;1
-font-4 = HackNerdFont-Bold:style=Bold:pixelsize=12;1
-
-modules-center = xkeyboard filesystem
-
 tray-position = right
 tray-padding = 2
 cursor-click = pointer
 cursor-scroll = ns-resize
 
-[bar/banner]
-;monitor = ${env:MONITOR:HDMI-1}
+[bar/thinkpad-right]
 override-redirect = true
 wm-restack = bspwm
-enable-ipc = true
 
-width = 14%
-height = 30
-fixed-center = true
+width = 19%
+height = 27
+offset-x = 81%
+;offset-y =1%
 radius = 6.0
-offset-x = 5%
+fixed-center = true
 
 background = ${colors.background}
 foreground = ${colors.foreground}
+
 line-size = 3
 line-color = #f00
+
 border-size = 4
 border-color = #00000000
 
 padding-left = 2
 padding-right = 2
-module-margin-left = 2
-module-margin-right = 2
 
-dpi = 96
-font-0 = fixed:pixelsize=12;1
-font-1 = unifont:fontformat=truetype:pixelsize=12:antialias=true;1
-font-2 = siji:pixelsize=12;1
-font-3 = MaterialIcons-Regular:style=Bold:pixelsize=13;1
-font-4 = HackNerdFont-Bold:style=Bold:pixelsize=12;1
-
-modules-center = banner
-
-tray-position = right
-tray-padding = 2
-cursor-click = pointer
-cursor-scroll = ns-resize
-
-[bar/wifi]
-;monitor = ${env:MONITOR:HDMI-1}
-override-redirect = true
-wm-restack = bspwm
-enable-ipc = true
-
-width = 8%
-height = 30
-fixed-center = true
-radius = 6.0
-offset-x = 19%
-
-background = ${colors.background}
-foreground = ${colors.foreground}
-line-size = 3
-line-color = #f00
-border-size = 4
-border-color = #00000000
-
-padding-left = 2
-padding-right = 2
 module-margin-left = 1
 module-margin-right = 2
 
-dpi = 96
 font-0 = fixed:pixelsize=12;1
-font-1 = unifont:fontformat=truetype:pixelsize=12:antialias=true;1
-font-2 = siji:pixelsize=12;1
-font-3 = MaterialIcons-Regular:style=Bold:pixelsize=13;1
-font-4 = HackNerdFont-Bold:style=Bold:pixelsize=12;1
+font-1 = unifont:fontformat=truetype:size=8:antialias=false;0
+font-2 = siji:pixelsize=10;1
+font-3 = "Material Icons:style=Bold:size=12;4"
+font-4 = "Hack Nerd Font:pixelsize=12;1"
 
-modules-center = wlan
+modules-center = alsa temperature date
 
 tray-position = right
 tray-padding = 2
 cursor-click = pointer
 cursor-scroll = ns-resize
 
-[bar/ethernet]
-;monitor = ${env:MONITOR:HDMI-1}
+[bar/thinkpad-wifi]
 override-redirect = true
 wm-restack = bspwm
-enable-ipc = true
 
-width = 8%
-height = 30
-fixed-center = true
+width = 9%
+height = 27
+offset-x = 63%
+;offset-y = 1%
 radius = 6.0
-offset-x = 27%
+fixed-center = true
 
 background = ${colors.background}
 foreground = ${colors.foreground}
+
 line-size = 3
 line-color = #f00
+
 border-size = 4
 border-color = #00000000
 
 padding-left = 2
 padding-right = 2
+
 module-margin-left = 1
 module-margin-right = 2
 
-dpi = 96
 font-0 = fixed:pixelsize=12;1
-font-1 = unifont:fontformat=truetype:pixelsize=12:antialias=true;1
-font-2 = siji:pixelsize=12;1
-font-3 = MaterialIcons-Regular:style=Bold:pixelsize=13;1
-font-4 = HackNerdFont-Bold:style=Bold:pixelsize=12;1
+font-1 = unifont:fontformat=truetype:size=8:antialias=false;0
+font-2 = siji:pixelsize=10;1
+font-3 = "Material Icons:style=Bold:size=12;4"
+font-4 = "Hack Nerd Font:pixelsize=12;1"
+
+modules-center =  wlan
+
+tray-position = right
+tray-padding = 2
+cursor-click = pointer
+cursor-scroll = ns-resize
+
+[bar/thinkpad-ethernet]
+override-redirect = true
+wm-restack = bspwm
+
+width = 9%
+height = 27
+offset-x = 72%
+radius = 6.0
+fixed-center = true
+
+background = ${colors.background}
+foreground = ${colors.foreground}
+
+line-size = 3
+line-color = #f00
+
+border-size = 4
+border-color = #00000000
+
+padding-left = 2
+padding-right = 2
+
+module-margin-left = 1
+module-margin-right = 2
+
+font-0 = fixed:pixelsize=12;1
+font-1 = unifont:fontformat=truetype:size=8:antialias=false;0
+font-2 = siji:pixelsize=10;1
+font-3 = "Material Icons:style=Bold:size=12;4"
+font-4 = "Hack Nerd Font:pixelsize=12;1"
 
 modules-center = eth
 
 tray-position = right
 tray-padding = 2
+
 cursor-click = pointer
 cursor-scroll = ns-resize
 
-[bar/bspwm]
-;monitor = ${env:MONITOR:HDMI-1}
+[bar/AOC-banner]
 override-redirect = true
-wm-restack = bspwm
 enable-ipc = true
+wm-restack = bspwm
+
+monitor = ${env:MONITOR}
+width = 20%
+height = 27
+;offset-x = 1%
+;offset-y = 1%
 radius = 6.0
-
-width = 17%
-height = 30
-fixed-center = true
-offset-x = 41.5%
-
 background = ${colors.background}
 foreground = ${colors.foreground}
 
 line-size = 3
 line-color = #f00
+
 border-size = 4
 border-color = #00000000
 
-padding-left = 1
-padding-right = 1
-module-margin-left = 1
-module-margin-right = 1
+padding-left = 2
+padding-right = 2
 
-dpi = 96
+module-margin-left = 1
+module-margin-right = 2
+
 font-0 = fixed:pixelsize=12;1
-font-1 = unifont:fontformat=truetype:pixelsize=12:antialias=true;1
-font-2 = siji:pixelsize=12;1
-font-3 = MaterialIcons-Regular:style=Bold:pixelsize=13;1
-font-4 = HackNerdFont-Bold:style=Bold:pixelsize=12;1
+font-1 = unifont:fontformat=truetype:size=8:antialias=false;0
+font-2 = siji:pixelsize=10;1
+font-3 = "Material Icons:style=Bold:size=12;4"
+font-4 = "Hack Nerd Font:pixelsize=12;1"
+
+modules-left = banner
+
+tray-position = right
+tray-padding = 2
+;tray-background = #0063ff
+
+[bar/AOC-center]
+override-redirect = true
+enable-ipc = true
+wm-restack = bspwm
+
+monitor = ${env:MONITOR}
+
+width = 8%
+height = 27
+offset-x = 45%
+;offset-y = 1%
+radius = 6.0
+background = ${colors.background}
+foreground = ${colors.foreground}
+
+line-size = 3
+line-color = #f00
+
+border-size = 4
+border-color = #00000000
+
+padding-left = 2
+padding-right = 2
+
+module-margin-left = 1
+module-margin-right = 2
+
+font-0 = fixed:pixelsize=12;1
+font-1 = unifont:fontformat=truetype:size=8:antialias=false;0
+font-2 = siji:pixelsize=10;1
+font-3 = "Material Icons:style=Bold:size=12;4"
+font-4 = "Hack Nerd Font:pixelsize=12;1"
 
 modules-center = bspwm
 
 tray-position = right
 tray-padding = 2
-cursor-click = pointer
-cursor-scroll = ns-resize
 
+[bar/AOC-music]
 
-
-[bar/music]
-;monitor = ${env:MONITOR:HDMI-1}
 override-redirect = true
-wm-restack = bspwm
 enable-ipc = true
+wm-restack = bspwm
+
+monitor = ${env:MONITOR}
+
+width = 13%
+height = 27
+offset-x = 72%
+;offset-y = 1%
 radius = 6.0
-
-width = 7%
-height = 30
-fixed-center = true
-offset-x = 66%
-
 background = ${colors.background}
 foreground = ${colors.foreground}
 
 line-size = 3
 line-color = #f00
+
 border-size = 4
 border-color = #00000000
 
 padding-left = 2
 padding-right = 2
+
 module-margin-left = 1
 module-margin-right = 2
 
-dpi = 96
 font-0 = fixed:pixelsize=12;1
-font-1 = unifont:fontformat=truetype:pixelsize=12:antialias=true;1
-font-2 = siji:pixelsize=12;1
-font-3 = MaterialIcons-Regular:style=Bold:pixelsize=13;1
-font-4 = HackNerdFont-Bold:style=Bold:pixelsize=12;1
+font-1 = unifont:fontformat=truetype:size=8:antialias=false;0
+font-2 = siji:pixelsize=10;1
+font-3 = "Material Icons:style=Bold:size=12;4"
+font-4 = "Hack Nerd Font:pixelsize=12;1"
 
 modules-center = spotify
-
 tray-position = right
 tray-padding = 2
-cursor-click = pointer
-cursor-scroll = ns-resize
+;tray-background = #0063ff
 
-[bar/right]
-;monitor = ${env:MONITOR:HDMI-1}
+
+[bar/AOC-right]
 override-redirect = true
-wm-restack = bspwm
 enable-ipc = true
+wm-restack = bspwm
+
+monitor = ${env:MONITOR}
+
+width = 15%
+height = 27
+offset-x = 85%
 radius = 6.0
-
-width = 27%
-height = 30
-fixed-center = true
-offset-x = 73%
-
 background = ${colors.background}
 foreground = ${colors.foreground}
 
 line-size = 3
 line-color = #f00
+
 border-size = 4
 border-color = #00000000
 
 padding-left = 2
 padding-right = 2
+
 module-margin-left = 1
 module-margin-right = 2
 
-dpi = 96
 font-0 = fixed:pixelsize=12;1
-font-1 = unifont:fontformat=truetype:pixelsize=12:antialias=true;1
-font-2 = siji:pixelsize=12;1
-font-3 = MaterialIcons-Regular:style=Bold:pixelsize=13;1
-font-4 = HackNerdFont-Bold:style=Bold:pixelsize=12;1
+font-1 = unifont:fontformat=truetype:size=8:antialias=false;0
+font-2 = siji:pixelsize=10;1
+font-3 = "Material Icons:style=Bold:size=12;4"
+font-4 = "Hack Nerd Font:pixelsize=12;1"
 
-modules-center = spotify-prev spotify-play-pause spotify-next memory cpu temperature date
-
+modules-right = spotify-prev spotify-play-pause spotify-next date
 tray-position = right
 tray-padding = 2
-cursor-click = pointer
-cursor-scroll = ns-resize
-
-[module/system-nvidia-smi]
-type = custom/script
-exec = /home/neutry/configFiles/polybar/scripts/usage_gpu.sh
-interval = 2
 
 [module/xwindow]
 type = internal/xwindow
@@ -389,37 +374,39 @@ label = %title:0:30:...%
 type = internal/xkeyboard
 blacklist-0 = num lock
 
+format-prefix = "󰌌  "
 format-prefix-foreground = ${colors.foreground-alt}
 
 label-layout = %layout%
 
-label-indicator-padding = 5
+label-indicator-padding = 2
 label-indicator-margin = 1
 label-indicator-background = ${colors.secondary}
 label-indicator-underline = ${colors.secondary}
 
 [module/filesystem]
 type = internal/fs
-interval = 10
+interval = 25
 
 mount-0 = /
+
 label-mounted =   %{F#0a81f5}%mountpoint%%{F-}: %percentage_used%%
 label-unmounted = %mountpoint% not mounted
 label-unmounted-foreground = ${colors.foreground-alt}
-#label-mounted-1 =   Games: %percentage_used%%
-#label-mounted =   %{F#0a81f5}%mountpoint%%{F-}: %percentage_used%%
 
 [module/bspwm]
 type = internal/bspwm
 format-padding = 2
 
+
 label-focused = " 󰮯 " 
+#label-focused = "󰊠 " 
 label-focused-background = ${colors.background}
 label-focused-underline= ${colors.primary}
 label-focused-padding = 1
-label-focused-foreground = #FFD700
+label-focused-foreground = #FFD700 
 
-label-occupied = " 󰊠 "
+label-occupied = "󰊠 "
 label-occupied-foreground = #96CDFB
 label-occupied-padding = 1
 
@@ -427,55 +414,24 @@ label-urgent = %index%!
 label-urgent-background = ${colors.alert}
 label-urgent-padding = 1
 
-label-empty = " 󰧵 "
-label-empty-foreground = #FFC0CB
+label-empty = "󰧵 "
+label-empty-foreground  = #FFC0CB
 label-empty-padding = 1
-#label-empty-font = 10
 ; Separator in between workspaces
 ;label-separator = |
 
 
-[module/mpd]
-type = internal/mpd
-format-online = <label-song>  <icon-prev> <icon-stop> <toggle> <icon-next>
-
-icon-prev = 
-icon-stop = 
-icon-play = 
-icon-pause = 
-icon-next = 
-
-label-song-maxlen = 25
-label-song-ellipsis = true
-
-[module/xbacklight]
-type = internal/xbacklight
-
-format = <label> <bar>
-label = BL
-
-bar-width = 10
-bar-indicator = |
-bar-indicator-foreground = #fff
-bar-indicator-font = 2
-bar-fill = ─
-bar-fill-font = 2
-bar-fill-foreground = #9f78e1
-bar-empty = ─
-bar-empty-font = 2
-bar-empty-foreground = ${colors.foreground-alt}
-
 [module/spotify]
 type = custom/script
 tail = true
-interval = 0
+interval = 1
+label-padding = 2
+label-maxlen = 25
+label-ellipsis = false
 ; prefix symbol is shown before the text
 format-prefix = " "
 format = <label>
 exec = ~/configFiles/polybar/scripts/spotify_status.sh
-label-padding = 1
-label-maxlen = 20
-label-ellipsis = false
 
 [module/spotify-prev]
 type = custom/script
@@ -495,10 +451,29 @@ type = custom/script
 exec = echo "󰙡 "
 format = <label>
 click-left = playerctl next -p spotify
+
+[module/xbacklight]
+type = internal/xbacklight
+
+format = <label> <bar>
+label = BL
+
+bar-width = 10
+bar-indicator = |
+bar-indicator-foreground = #fff
+bar-indicator-font = 2
+bar-fill = ─
+bar-fill-font = 2
+bar-fill-foreground = #9f78e1
+bar-empty = ─
+bar-empty-font = 2
+bar-empty-foreground = ${colors.foreground-alt}
+
 [module/backlight-acpi]
 inherit = module/xbacklight
 type = internal/backlight
 card = intel_backlight
+
 [module/wlan]
 type = internal/network
 interface = wlp2s0
@@ -542,7 +517,7 @@ interva = 1
 
 radius = 90.0 
 
-date = "%d-%m-%Y"
+date  = "%Y-%m-%d"
 
 time = "%H:%M:%S"
 
@@ -550,31 +525,21 @@ format-padding = 1
 format-prefix-foreground = #6381C4
 
 format-foreground = #6381C4
-#format-background = #2c2e42
+;format-background = #2c2e42
 
 
 label = %date% %time%
 
 [module/alsa]
 type = internal/alsa
-;master-soundcard=hw:0
-
-master-soundcard    =hw:2
-;speaker-soundcard   =hw:0
-;headphone-soundcard =hw:2
-
-master-mixer = "G435 Wireless Gaming Headset Playback Volum"
-
-mapped = true
-interval = 5
 
 format-volume = <label-volume> <bar-volume>
 label-volume = VOL
 label-volume-foreground = ${root.foreground}
 
-;format-muted-prefix = ""
+format-muted-prefix = " "
 format-muted-foreground = ${colors.foreground-alt}
-label-muted =  ALSA
+label-muted = sound muted
 
 bar-volume-width = 10
 bar-volume-foreground-0 = #55aa55
@@ -596,8 +561,8 @@ bar-volume-empty-foreground = ${colors.foreground-alt}
 [module/cpu]
 type = internal/cpu
 format = <label>
-format-prefix = "   :"
-;format-prefix-foreground = ${colors.two}
+format-prefix = " :"
+format-prefix-foreground = ${colors.two}
 label = %percentage%%
 ; Spacing between individual per-core ramps
 ramp-coreload-spacing = 0
@@ -609,33 +574,55 @@ ramp-coreload-4 = ▅
 ramp-coreload-5 = ▆
 ramp-coreload-6 = ▇
 ramp-coreload-7 = █
-;format-underline = ${colors.two}
+format-underline = ${colors.two}
 
 [module/memory]
 type = internal/memory
 internal = 3
 warn-percentange = 95 
 format = <label>
-label =    %gb_used%
+label = RAM: %gb_used%
 
 [module/temperature]
 type = internal/temperature
 thermal-zone = 0
 warn-temperature = 60
 
-#format = <label>
-#format-underline = #f50a4d
-#format-warn = <label-warn>
-#format-warn-underline = ${self.format-underline}
-
-#label = %temperature-c%
-#label-warn = %temperature-c%
-#label-warn-foreground = ${colors.secondary}
-
-#ramp-0 = 
-#ramp-1 = 
-#ramp-2 = 
-#ramp-foreground = ${colors.foreground-alt}
+[module/battery]
+type = internal/battery
+full-at = 99
+low-at = 5
+battery = BAT0
+adapter = ADP1
+poll-interval = 5
+time-format = %H:%M
+format-charging = <animation-charging>    <label-charging>
+format-discharging = <ramp-capacity>   <label-discharging>
+label-charging = Charging %percentage%%
+label-discharging = Discharging %percentage%%
+label-full = Fully charged
+label-low = BATTERY LOW
+ramp-capacity-0 = 
+ramp-capacity-1 = 
+ramp-capacity-2 = 
+ramp-capacity-3 = 
+ramp-capacity-4 = 
+bar-capacity-width = 10
+animation-charging-0 = 
+animation-charging-1 = 
+animation-charging-2 = 
+animation-charging-3 = 
+animation-charging-4 = 
+animation-charging-framerate = 750
+animation-discharging-0 = 
+animation-discharging-1 = 
+animation-discharging-2 = 
+animation-discharging-3 = 
+animation-discharging-4 = 
+animation-discharging-framerate = 500
+animation-low-0 = !
+animation-low-1 = 
+animation-low-framerate = 200
 
 [module/powermenu]
 type = custom/menu
@@ -680,11 +667,11 @@ margin-bottom = 5
 
 [module/banner]
 type = custom/script
-exec = ~/configFiles/polybar/scripts/banner.sh
+exec = /home/lsantos/configFiles/polybar/scripts/banner.sh
 interval = 0
 tail = true
 format = <label>
 label-padding = 1
-label-maxlen = 43
+label-maxlen = 45
 label-ellipsis = false
 ; vim:ft=dosini
