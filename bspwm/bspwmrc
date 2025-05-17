@@ -25,12 +25,12 @@ if [ $(hostnamectl chassis) == "desktop" ]; then
 		bspc config gapless_monocle      true
 		
 		##  --- Polybar init --------------------
-		polybar -c /home/neutry/configFiles/polybar/config  left &
-		polybar -c /home/neutry/configFiles/polybar/config  banner &
-		polybar -c /home/neutry/configFiles/polybar/config  ethernet &
-		polybar -c /home/neutry/configFiles/polybar/config  bspwm &
-		polybar -c /home/neutry/configFiles/polybar/config  right &
-		polybar -c /home/neutry/configFiles/polybar/config  music &
+		polybar -c /home/neutry/configFiles/polybar/arch.conf left &
+		polybar -c /home/neutry/configFiles/polybar/arch.conf  banner &
+		polybar -c /home/neutry/configFiles/polybar/arch.conf   ethernet &
+		polybar -c /home/neutry/configFiles/polybar/arch.conf  bspwm &
+		polybar -c /home/neutry/configFiles/polybar/arch.conf  right &
+		polybar -c /home/neutry/configFiles/polybar/arch.conf   music &
 		
 		##  --- Software and Sercices -----------
 		sxhkd -c /home/neutry/configFiles/sxhkd/sxhkdrc &
