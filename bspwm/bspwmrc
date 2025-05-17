@@ -2,6 +2,7 @@
 killall -q sxhkd
 killall -q Polybar
 killall -q clipmenud
+killall -q picom
 
 ##  --- Init configuration -------------
 xsetroot -cursor_name left_ptr
