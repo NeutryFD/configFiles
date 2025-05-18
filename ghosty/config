@@ -1,115 +1,49 @@
-# This is the configuration file for Ghostty.
-#
-# This template file has been automatically created at the following
-# path since Ghostty couldn't find any existing config files on your system:
-#
-#   /home/neutry/.config/ghostty/config
-#
-# The template does not set any default options, since Ghostty ships
-# with sensible defaults for all options. Users should only need to set
-# options that they want to change from the default.
-#
-# Run `ghostty +show-config --default --docs` to view a list of
-# all available config options and their default values.
-#
-# Additionally, each config option is also explained in detail
-# on Ghostty's website, at https://ghostty.org/docs/config.
-
-# Config syntax crash course
-# ==========================
-# # The config file consists of simple key-value pairs,
-# # separated by equals signs.
-# window-padding-x = 2
-#
-# # Spacing around the equals sign does not matter.
-# # All of these are identical:
-# key=value
-# key= value
-# key =value
-# key = value
-#
-# # Any line beginning with a # is a comment. It's not possible to put
-# # a comment after a config option, since it would be interpreted as a
-# # part of the value. For example, this will have a value of "#123abc":
-# background = #123abc
-#
-# # Empty values are used to reset config keys to default.
-# key =
-#
-# # Some config options have unique syntaxes for their value,
-# # which is explained in the docs for that config option.
-# # Just for example:
-# resize-overlay-duration = 4s 200msi
-
- 
-#theme = Apple System Colors
-#theme = Argonaut
-
-#General
+##  --- General ------------------------
 
 confirm-close-surface = false
-#git push -uf origin main
 clipboard-paste-protection = false
 
-
-#Style
-#Font
+##  --- Style --------------------------
+##  --- Font
 font-family = HackNerdFont
 
-#Theme
+##  --- Theme
 theme = Calamity
 
-#Background
-background-opacity = 0.90
+##  --- Background
+background-opacity = 0.95
 background = #1a1b26
 
-#windows settings
+##  --- windows settings
 window-padding-x = 20
 window-padding-y = 20
 window-decoration = server
 
-#Cursor
+##  --- Cursor
 cursor-style = bar
 
-
-#Selection highlight    
-selection-foreground = #7aa2f7    
+##  --- Selection highlight
+selection-foreground = #7aa2f7
 selection-background = #28344a
 
-#Control Tabs
-## add tabs
+##  --- Controls ----------------------
+##  --- Panels
 keybind = ctrl+shift+right=new_split:right
 keybind = ctrl+shift+down=new_split:down
-## Move between tabs
+
+##  --- Move between Panels
 keybind = ctrl+up=goto_split:up
 keybind = ctrl+down=goto_split:down
 keybind = ctrl+right=goto_split:right
 keybind = ctrl+left=goto_split:left
 
-#Close tab
+##  --- Close tab
 keybind = ctrl+x=close_surface
 
-
-#Scrool with keys
+##  --- Scrool with keys
 keybind = shift+up=scroll_page_lines:-5
 keybind = shift+down=scroll_page_lines:5
 
-
-#Tab config
-
-#window-titlebar-background = #1a1b26
-#window-titlebar-foreground = #1a1b26
+##  --- Tabs
 window-new-tab-position = end
 window-theme = ghostty
-window-subtitle = false
-
-
-
-gtk-titlebar = true
-gtk-tabs-location = top
-adw-toolbar-style = raised
-gtk-wide-tabs = true
-gtk-adwaita = true
-#gtk-custom-css = ./gtk-4.0/gtk.css
-#command = "neofetch"
-

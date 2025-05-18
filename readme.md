@@ -14,18 +14,9 @@
 │   └── picon.conf
 ├── polybar
 │   ├── config
-│   ├── .gitkeep
 │   ├── launch.sh
 │   └── scripts
-│       ├── spotify_status.sh
-│       └── system-nvidia-smi.sh
-├── readme.md
-├── rofi
-│   └── squared-theme.rasi
-├── scripts
-│   ├── chkeylayout
-│   ├── mountDisk
-│   └── setAudioCard
+│       └── spotify_status.sh
 ├── sxhkd
 │   ├── sxhkdrc
 │   └── sxhkdrc.txt

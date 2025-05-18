@@ -1,5 +1,4 @@
 #!/bin/bash
-
 PLAYER="spotify"
 FORMAT="{{ artist }} - {{ title }}"
 SCROLL_SPEED=0.2
@@ -57,4 +56,3 @@ while true; do
 
     scroll_text "$metadata"
 done
-

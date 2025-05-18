@@ -1,5 +1,5 @@
 -- Modules PAHT
-package.path = package.path .. ';/home/neutry/configFiles/nvim/lua/?.lua'
+package.path = package.path .. ';' .. os.getenv("HOME") .. '/configFiles/nvim/lua/?.lua'
 
 -- set leader key
 vim.g.mapleader = " "  -- Set Space as the leader key
@@ -66,7 +66,6 @@ cmp.setup({
     ['<C-Space>'] = cmp.mapping.complete(),
     ['<C-e>'] = cmp.mapping.abort(),
     ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Confirmar selección
-  
     ['<Tab>'] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_next_item()
@@ -81,9 +80,9 @@ cmp.setup({
       else
         fallback()
       end
-    end, { 'i', 's' }),
-}),
+    end, { 'i', 's' }), 
 
+}),
 
   sources = cmp.config.sources({
     { name = 'nvim_lsp' },
@@ -110,5 +109,3 @@ cmp.setup.cmdline(':', {
     { name = 'cmdline' }
   })
 })
-
-
