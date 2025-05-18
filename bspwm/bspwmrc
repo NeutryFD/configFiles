@@ -41,13 +41,10 @@ if [ $(hostnamectl chassis) == "laptop" ]; then
 			xrandr --output "$INTERNAL_MONITOR" --rate 60
 			xrandr --output "$EXTERNAL_MONITOR" --rate 60 --left-of "$INTERNAL_MONITOR"
 			
-			
 		    ##  --- BSPWM workspaces by monitor ------------------
 			bspc monitor "$EXTERNAL_MONITOR" -d I II III IV V
 			bspc monitor "$INTERNAL_MONITOR" -d VI VII VIII IX X
 			bspc wm --reorder-monitors $EXTERNAL_MONITOR $INTERNAL_MONITOR
-			
-			
 			
 			##  --- Polybar init -----------------------------------
 			polybar -c $HOME/configFiles/polybar/thinkpad-II.conf thinkpad-left &
@@ -60,12 +57,16 @@ if [ $(hostnamectl chassis) == "laptop" ]; then
 			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-center &
 			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-music &
 			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-right &
-
 			
 		fi
 		
 	else
-	
+
+		# Move all windows from the now-nonexistent monitor to the internal one
+		for wid in $(bspc query -N); do
+		    bspc node "$wid" --to-monitor "$INTERNAL_MONITOR"
+		done
+
 		##  --- Monitor configuration ----------------------
 		xrandr --output "$INTERNAL_MONITOR" --rate 60
 		
