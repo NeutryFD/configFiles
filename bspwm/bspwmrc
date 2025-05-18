@@ -1,43 +1,107 @@
-#! /bin/sh
+#!/bin/bash
+killall -q polybar
 killall -q sxhkd
-killall -q Polybar
 killall -q clipmenud
-killall -q picom
 
-##  --- Init configuration -------------
-xsetroot -cursor_name left_ptr
-setxkbmap -option caps:escape
+##  --- VARIABLES ---------------------------------
+
+INTERNAL_MONITOR="eDP"
+HDMI_PORT="HDMI-A-0"
+DISPLAYPORT="DisplayPort-0"
+EXTERNAL_MONITOR=$DISPLAYPORT
+INTERNAL_MONITOr_ARCH="HDMI-0"
+
+##  --- Init Configuration ----------------
+##  --- Keyboard
 setxkbmap eu
+setxkbmap -option caps:escape
 
-##  --- BSPWM workspaces ----------------
-bspc monitor -d 1 2 3 4 5 6 7 8 9 0
+##  --- Mouse
+xsetroot -cursor_name left_ptr
+
+##  --- BSPWM configuration ---------------------------
+bspc config border_width         0
+bspc config window_gap           2
+bspc config top_padding          35
+bspc config bottom_padding       6
+bspc config split_ratio          0.49
+bspc config borderless_monocle   true
+bspc confir gapless_monocle      true
 
 
-if [ $(hostnamectl chassis) == "desktop" ]; then
+if [ $(hostnamectl chassis) == "laptop" ]; then
 
-		##  --- BSPWM config --------------------
-		bspc config border_width         0
-		bspc config window_gap           1
-		bspc config top_padding          35
-		bspc config bottom_padding       6
-		bspc config split_ratio          0.49
-		bspc config borderless_monocle   true
-		bspc config gapless_monocle      true
+	if [ $(xrandr | grep -o '\bconnected' | wc -l) -eq 2 ]; then
+ 
+		if [ $(xrandr | grep "$HDMI_PORT" | awk '{print $2}') == "connected" ]; then
+	
+			EXTERNAL_MONITOR=$HDMI_PORT
 		
-		##  --- Polybar init --------------------
-		polybar -c /home/neutry/configFiles/polybar/arch.conf left &
-		polybar -c /home/neutry/configFiles/polybar/arch.conf  banner &
-		polybar -c /home/neutry/configFiles/polybar/arch.conf   ethernet &
-		polybar -c /home/neutry/configFiles/polybar/arch.conf  bspwm &
-		polybar -c /home/neutry/configFiles/polybar/arch.conf  right &
-		polybar -c /home/neutry/configFiles/polybar/arch.conf   music &
+			##  --- Monitor configuration ----------------------
+			xrandr --output "$INTERNAL_MONITOR" --rate 60
+			xrandr --output "$EXTERNAL_MONITOR" --rate 60 --left-of "$INTERNAL_MONITOR"
+			
+			
+		    ##  --- BSPWM workspaces by monitor ------------------
+			bspc monitor "$EXTERNAL_MONITOR" -d I II III IV V
+			bspc monitor "$INTERNAL_MONITOR" -d VI VII VIII IX X
+			bspc wm --reorder-monitors $EXTERNAL_MONITOR $INTERNAL_MONITOR
+			
+			
+			
+			##  --- Polybar init -----------------------------------
+			polybar -c $HOME/configFiles/polybar/thinkpad-II.conf thinkpad-left &
+			polybar -c $HOME/configFiles/polybar/thinkpad-II.conf thinkpad-center &
+			polybar -c $HOME/configFiles/polybar/thinkpad-II.conf thinkpad-wifi &
+			polybar -c $HOME/configFiles/polybar/thinkpad-II.conf thinkpad-ethernet &
+			polybar -c $HOME/configFiles/polybar/thinkpad-II.conf thinkpad-right &
 		
-		##  --- Software and Sercices -----------
-		sxhkd -c /home/neutry/configFiles/sxhkd/sxhkdrc &
-		picom --config /home/neutry/configFiles/picom/picom.conf &
-		feh --bg-scale /home/neutry/Downloads/oni.jpg
+			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-banner &
+			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-center &
+			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-music &
+			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-right &
+
+			
+		fi
+		
+	else
+	
+		##  --- Monitor configuration ----------------------
+		xrandr --output "$INTERNAL_MONITOR" --rate 60
+		
+		bspc wm --reorder-monitors $INTERNAL_MONITOR
+		##  --- BSPWM workspaces by monitor ------------------
+		bspc monitor "$INTERNAL_MONITOR" -d I II III IV V VI VII VIII IX X
+		
+		##  --- Polybar init -----------------------------------
+		polybar -c $HOME/configFiles/polybar/thinkpad.conf left &
+		polybar -c $HOME/configFiles/polybar/thinkpad.conf banner &
+		polybar -c $HOME/configFiles/polybar/thinkpad.conf wifi &
+		polybar -c $HOME/configFiles/polybar/thinkpad.conf ethernet &
+		polybar -c $HOME/configFiles/polybar/thinkpad.conf bspwm &
+		polybar -c $HOME/configFiles/polybar/thinkpad.conf music &
+		polybar -c $HOME/configFiles/polybar/thinkpad.conf right &
+
+	fi
+
+else
+	            
+ ##  --- Monitor configuration ----------------------
+ xrandr --output "$INTERNAL_MONITOR_ARCH" --rate 60
+ bspc monitor "$INTERNAL_MONITOR_ARCH" -d I II III IV V VI VII VIII IX X
+ 
+ ##  --- Polybar init --------------------
+ polybar -c $HOME/configFiles/polybar/arch.conf  left &
+ polybar -c $HOME/configFiles/polybar/arch.conf  banner &
+ polybar -c $HOME/configFiles/polybar/arch.conf  ethernet &
+ polybar -c $HOME/configFiles/polybar/arch.conf  bspwm &
+ polybar -c $HOME/configFiles/polybar/arch.conf  right &
+ polybar -c $HOME/configFiles/polybar/arch.conf  music &
 
 fi
 
-
+##  --- Software and Services --------------------------
+sxhkd -c $HOME/configFiles/sxhkd/sxhkdrc &
+picom --config $HOME/configFiles/picom/picom.conf &
+feh --bg-scale $HOME/Pictures/Wallpapers/hyundai.png
 clipmenud &
