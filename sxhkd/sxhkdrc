@@ -3,16 +3,16 @@
 #
 
 # terminal emulator
-#super + Return
-#	kitty --config /home/lsantos/configFiles/kitty/kitty.conf
-
 
 super + Return
 	ghostty
 
 super + n
 	bspc rule -a \* -o state=floating sticky=on layer=above rectangle=720x360+600+26 && ghostty
-# program laulsantosuper + @space
+
+# program launcher
+super + @space
+	export PATH=/snap/bin:$PATH && rofi -show run
 
 super + shift + n
 	bspc rule -a \* -o state=floating sticky=on layer=above rectangle=720x500+600+340 && ghostty --font-size=15 -e python3 ~/slots/terminal-slotmachine/app.py
@@ -23,8 +23,9 @@ super + @space
 super + Escape
 	pkill -USR1 -x sxhkd
 
+#lockScreean
 super + b 
-  betterlockscreen -l dim 
+ betterlockscreen -l dim
 
 # Show clipmenu
 super + v
@@ -36,6 +37,7 @@ super + v
         -theme-str 'window \{ width: 20em; anchor: center; location: center; \}'
 
 
+#clean clipboard
 super + alt + c
   clipdel -d ".*" > /dev/null
 
@@ -52,10 +54,12 @@ XF86AudioMute
 	amixer -D pulse sset Master toggle
 
 
-
-
 # bspwm hotkeys
-#
+
+#screenshot
+super + x 
+  flameshot gui
+
 
 super + Left
 	bspc {desktop -f} prev.local
@@ -89,7 +93,7 @@ super + g
 #
 # state/flags
 super + p
-	google-chrome
+	google-chrome-stable
 
 # set the window state
 super + {t,shift + t,s,f}
@@ -101,10 +105,10 @@ super + ctrl + {m,x,y,z}
 
 #
 # focus/swap
-#
+
 super + alt + {1-9,0}
-        current=$(bspc query -D --names -d focused) && bspc desktop $current -s '^{1-9,10}' && bspc desktop -f ^$current
-        #bspc desktop focused -s '^{1-9,10}' && bspc desktop -f ^$( bspc query -D --names -d last)
+	current=$(bspc query -D --names -d focused) && bspc desktop $current -s '^{1-9,10}' && bspc desktop -f ^$current 
+ 	#bspc desktop focused -s '^{1-9,10}' && bspc desktop -f ^$( bspc query -D --names -d last)
 
 # focus the node in the given direction
 super + {_,shift + }{h,j,k,l}
