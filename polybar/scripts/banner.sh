@@ -1,8 +1,16 @@
 #!/bin/bash
-LINUX=$(hostnamectl | grep System | awk '{print $3}')
-HOSTNAME=$(hostname)
+LINUX=$(hostnamectl hostname)
+USER=$(echo $USER)
 
-text="| 󱓞  $HOSTNAME  |  󰕈  $LINUX |    Neovim |   Stay Tiling "
+ARCH_ICON=󰣇
+UBUNTU_ICON=󰕈
+
+if [ $LINUX == "archlinux" ]; then
+
+	ICON=$ARCH_ICON
+fi
+
+text="| 󱓞  $USER  | $ICON  $LINUX |    Neovim |   Stay Tiling "
 
 while true; do
     echo "${text}"

@@ -9,7 +9,7 @@ INTERNAL_MONITOR="eDP"
 HDMI_PORT="HDMI-A-0"
 DISPLAYPORT="DisplayPort-0"
 EXTERNAL_MONITOR=$DISPLAYPORT
-INTERNAL_MONITOr_ARCH="HDMI-0"
+INTERNAL_MONITOR_ARCH="HDMI-0"
 
 ##  --- Init Configuration ----------------
 ##  --- Keyboard
@@ -42,7 +42,7 @@ if [ $(hostnamectl chassis) == "laptop" ]; then
 			xrandr --output "$INTERNAL_MONITOR" --rate 60
 			xrandr --output "$EXTERNAL_MONITOR" --rate 60 --left-of "$INTERNAL_MONITOR"
 			
-		    ##  --- BSPWM workspaces by monitor ------------------
+		  ##  --- BSPWM workspaces by monitor ------------------
 			bspc monitor "$EXTERNAL_MONITOR" -d I II III IV V
 			bspc monitor "$INTERNAL_MONITOR" -d VI VII VIII IX X
 			bspc wm --reorder-monitors $EXTERNAL_MONITOR $INTERNAL_MONITOR
@@ -62,7 +62,6 @@ if [ $(hostnamectl chassis) == "laptop" ]; then
 			
 		
 	else
-		
 		xrandr --auto
 
 		##  --- Monitor configuration ----------------------
