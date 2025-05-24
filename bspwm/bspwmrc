@@ -74,12 +74,11 @@ if [ $(hostnamectl chassis) == "laptop" ]; then
 		
 		# Move all windows from the now-nonexistent monitor to the internal one follow the current desktop 
 		for wid in $(bspc query -N -n .window); do
-			CURRENT_MONITOR=$(bspc query -M -n "$wid" --names)
-			#if [ "$CURRENT_MONITOR" != "$INTERNAL_MONITOR" ]; then
+		#	CURRENT_MONITOR=$(bspc query -M -n "$wid" --names)
+		#	if [ "$CURRENT_MONITOR" != "$INTERNAL_MONITOR" ]; then
 				CURRENT_DESKTOP=$(bspc query -D -n "$wid" --names)
-				bspc node "$wid" --to-monitor "$INTERNAL_MONITOR"
-				bspc node "$wid" -d "^$CURRENT_DESKTOP"
-			#fi
+				bspc node "$wid" --to-monitor "$INTERNAL_MONITOR" -d "$CURRENT_DESKTOP"
+		#	fi
 		done
 		
 		##  --- Polybar init -----------------------------------
