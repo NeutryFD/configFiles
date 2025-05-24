@@ -1,0 +1,5 @@
+#!/bin/bash
+
+id=$(alsactl info | grep -B 2 "name: G435 Wireless Gaming Headset" | grep card | cut -d " " -f 3)
+echo -e  "defaults.pcm.card $id\ndefaults.ctl.card $id" > /etc/asound.conf
+alsactl restore

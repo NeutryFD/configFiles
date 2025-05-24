@@ -10,6 +10,7 @@ sshfslocal (){
 if [ -z "$dir" ]; then
         mkdir -p $HOME/remoteDir
         dir="$HOME/remoteDir"
+
 fi
 sshfs -o  idmap=user $host $dir &&cd $dir
 }
@@ -35,18 +36,21 @@ clean-copy (){
 
 ################################################### plugins
 plugins=(git
-                zsh-autosuggestions
-                zsh-syntax-highlighting
-                )
-
+		     zsh-autosuggestions
+		     zsh-syntax-highlighting
+		)
 
 source $ZSH/oh-my-zsh.sh
 ################################################### alias
 alias lc="lsd -la"
+
 alias icat="kitty +kitten icat"
 #alias cat="bat --style=plain --theme TwoDark"
 alias copy="xclip -sel clip"
 alias ll="lsd -la"
 alias vim="nvim"
 alias lazygit="git-set && lazygit"
+alias master="sudo /usr/local/bin/reconnect-mm712.sh"
+alias lazygit="git-set && lazygit"
+alias mountvault="sudo mount -t nfs santos.local:/Plex /NFS-Vault"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

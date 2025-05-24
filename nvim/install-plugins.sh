@@ -1,10 +1,10 @@
 mkdir -p ~/.local/share/nvim/site/pack/plugins/start/
 cd ~/.local/share/nvim/site/pack/plugins/start/
 
-# Clonar nvim-cmp
+# Clone nvim-cmp
 git clone https://github.com/hrsh7th/nvim-cmp
 
-# Clonar dependencias mínimas
+# Cline depencies
 git clone https://github.com/hrsh7th/cmp-nvim-lsp
 git clone https://github.com/hrsh7th/cmp-buffer
 git clone https://github.com/hrsh7th/cmp-path

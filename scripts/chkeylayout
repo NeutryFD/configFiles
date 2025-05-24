@@ -1,0 +1,12 @@
+#!/bin/bash
+
+
+currentLayout=$(setxkbmap -query | tail -n2 | head -n1 | awk '{print $2}')
+
+if [[ $currentLayout == 'us' ]]; then
+  setxkbmap es
+  echo "es"
+elif [[ $currentLayout == 'es' ]]; then
+  setxkbmap us
+  echo "us"
+fi     

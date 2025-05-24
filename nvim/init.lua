@@ -1,5 +1,5 @@
 -- Modules PAHT
-package.path = package.path .. ';/home/lsantos/configFiles/nvim/lua/?.lua'
+package.path = package.path .. ';' .. os.getenv("HOME") .. '/configFiles/nvim/lua/?.lua'
 
 -- set leader key
 vim.g.mapleader = " "  -- Set Space as the leader key
