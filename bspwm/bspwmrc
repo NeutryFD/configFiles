@@ -21,8 +21,8 @@ xsetroot -cursor_name left_ptr
 
 ##  --- BSPWM configuration ---------------------------
 bspc config border_width         0
-bspc config window_gap           2
-bspc config top_padding          35
+bspc config window_gap           3
+bspc config top_padding          40
 bspc config bottom_padding       6
 bspc config split_ratio          0.49
 bspc config borderless_monocle   true
@@ -36,8 +36,9 @@ if [ $(hostnamectl chassis) == "laptop" ]; then
 		if [ $(xrandr | grep "$HDMI_PORT" | awk '{print $2}') == "connected" ]; then
 	
 			EXTERNAL_MONITOR=$HDMI_PORT
-		
+	    fi	
 			##  --- Monitor configuration ----------------------
+			xrandr --auto
 			xrandr --output "$INTERNAL_MONITOR" --rate 60
 			xrandr --output "$EXTERNAL_MONITOR" --rate 60 --left-of "$INTERNAL_MONITOR"
 			
@@ -54,18 +55,15 @@ if [ $(hostnamectl chassis) == "laptop" ]; then
 			polybar -c $HOME/configFiles/polybar/thinkpad-II.conf thinkpad-right &
 		
 			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-banner &
+			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-VPN &
 			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-center &
 			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-music &
 			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-right &
 			
-		fi
 		
 	else
-
-		# Move all windows from the now-nonexistent monitor to the internal one
-		for wid in $(bspc query -N); do
-		    bspc node "$wid" --to-monitor "$INTERNAL_MONITOR"
-		done
+		
+		xrandr --auto
 
 		##  --- Monitor configuration ----------------------
 		xrandr --output "$INTERNAL_MONITOR" --rate 60
@@ -73,6 +71,16 @@ if [ $(hostnamectl chassis) == "laptop" ]; then
 		bspc wm --reorder-monitors $INTERNAL_MONITOR
 		##  --- BSPWM workspaces by monitor ------------------
 		bspc monitor "$INTERNAL_MONITOR" -d I II III IV V VI VII VIII IX X
+		
+		# Move all windows from the now-nonexistent monitor to the internal one follow the current desktop 
+		for wid in $(bspc query -N -n .window); do
+			CURRENT_MONITOR=$(bspc query -M -n "$wid" --names)
+			#if [ "$CURRENT_MONITOR" != "$INTERNAL_MONITOR" ]; then
+				CURRENT_DESKTOP=$(bspc query -D -n "$wid" --names)
+				bspc node "$wid" --to-monitor "$INTERNAL_MONITOR"
+				bspc node "$wid" -d "^$CURRENT_DESKTOP"
+			#fi
+		done
 		
 		##  --- Polybar init -----------------------------------
 		polybar -c $HOME/configFiles/polybar/thinkpad.conf left &
