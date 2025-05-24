@@ -103,8 +103,9 @@ super + ctrl + {m,x,y,z}
 # focus/swap
 
 super + alt + {1-9,0}
-	current=$(bspc query -D --names -d focused) && bspc desktop $current -s '^{1-9,10}' && bspc desktop -f ^$current 
- 	#bspc desktop focused -s '^{1-9,10}' && bspc desktop -f ^$( bspc query -D --names -d last)
+
+  current=$(bspc query -D --names -d focused) && bspc desktop $current -s '^{1-9,10}' && bspc desktop -f last
+  #bspc desktop focused -s '^{1-9,10}' && bspc desktop -f ^$( bspc query -D --names -d last)
 
 # focus the node in the given direction
 super + {_,shift + }{h,j,k,l}
