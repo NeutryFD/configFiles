@@ -4,6 +4,12 @@ ZSH_THEME="robbyrussell"
 
 
 ################################################## funtions
+
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd () {
+  printf '\033[6 q'
+}
+
 sshfslocal (){
         host=$1
         dir=$2
@@ -53,4 +59,8 @@ alias lazygit="git-set && lazygit"
 alias master="sudo /usr/local/bin/reconnect-mm712.sh"
 alias lazygit="git-set && lazygit"
 alias mountvault="sudo mount -t nfs santos.local:/Plex /NFS-Vault"
+alias tn="tmux new -s"
+alias tl="tmux ls"
+alias ta="tmux a -t"
+
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
