@@ -97,6 +97,7 @@ else
  polybar -c $HOME/configFiles/polybar/arch.conf  bspwm &
  polybar -c $HOME/configFiles/polybar/arch.conf  right &
  polybar -c $HOME/configFiles/polybar/arch.conf  music &
+ feh --bg-scale $HOME/Pictures/Wallpapers/hyundai.png
 
 fi
 
