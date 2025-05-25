@@ -5,10 +5,9 @@ ZSH_THEME="robbyrussell"
 
 ################################################## funtions
 
-autoload -Uz add-zsh-hook
-add-zsh-hook precmd () {
-  printf '\033[6 q'
-}
+#add-zsh-hook precmd () {
+#  printf '\033[6 q'
+#}
 
 sshfslocal (){
         host=$1
@@ -63,4 +62,5 @@ alias tn="tmux new -s"
 alias tl="tmux ls"
 alias ta="tmux a -t"
 
+#autoload -Uz add-zsh-hook
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
