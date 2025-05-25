@@ -39,15 +39,15 @@ super + alt + c
 
 #Volume UP
 XF86AudioRaiseVolume
-  amixer -D pulse sset Master 5%+
+  pamixer  --increase 1
 
 #Volume Down
 XF86AudioLowerVolume
-  amixer -D pulse sset Master 5%-
+  pamixer --decrease 1
 
 #Mute Audio
 XF86AudioMute
-	amixer -D pulse sset Master toggle
+  pamixer  --toggle-mute
 
 
 # bspwm hotkeys
@@ -57,11 +57,11 @@ super + x
   flameshot gui
 
 
-super + Left
-	bspc {desktop -f} prev.local
-
-super + Right
-	bspc {desktop -f} next.local
+#super + Left
+#	bspc {desktop -f} prev.local
+#
+#super + Right
+#	bspc {desktop -f} next.local
 
 super + x 
   flameshot gui
