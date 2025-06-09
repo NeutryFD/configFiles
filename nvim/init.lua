@@ -110,3 +110,9 @@ cmp.setup.cmdline(':', {
     { name = 'cmdline' }
   })
 })
+
+
+
+require('telescope').setup{
+ vim.keymap.set('n', '<leader>ff', require('telescope.builtin').find_files, {})
+}
