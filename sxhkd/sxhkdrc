@@ -39,15 +39,15 @@ super + alt + c
 
 #Volume UP
 XF86AudioRaiseVolume
-  pamixer  --increase 1
+  pamixer  -i 2
 
 #Volume Down
 XF86AudioLowerVolume
-  pamixer --decrease 1
+  pamixer -d 2
 
 #Mute Audio
 XF86AudioMute
-  pamixer  --toggle-mute
+  pamixer  -t
 
 
 # bspwm hotkeys
