@@ -17,7 +17,7 @@ if [ -z "$dir" ]; then
         dir="$HOME/remoteDir"
 
 fi
-sshfs -o  idmap=user ${host}: $dir && cd $dir
+sshfs -o  idmap=user ${host} $dir && cd $dir
 }
 
 
