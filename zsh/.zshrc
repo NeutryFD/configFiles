@@ -25,10 +25,16 @@ public (){
         xclip -sel clip ~/.ssh/id_rsa.pub
 }
 
-git-set (){
+github-set (){
         pkill ssh-agent 2>/dev/null
         eval "$(ssh-agent -s)"
         ssh-add ~/.ssh/github
+}
+
+gitlab-set (){
+        pkill ssh-agent 2>/dev/null
+        eval "$(ssh-agent -s)"
+        ssh-add ~/.ssh/gitlab.dev.hpcnow.com
 }
 
 clean-copy (){
@@ -37,6 +43,11 @@ clean-copy (){
         bspc wm -r
         echo "clipboard cleaned"
 }
+
+sky(){
+~/astroterm-linux-x86_64 --color --constellations --speed 100 --fps 20 --city Barcelona
+}
+
 
 
 ################################################### plugins
@@ -54,9 +65,7 @@ alias icat="kitty +kitten icat"
 alias copy="xclip -sel clip"
 alias ll="lsd -la"
 alias vim="nvim"
-alias lazygit="git-set && lazygit"
 alias master="sudo /usr/local/bin/reconnect-mm712.sh"
-alias lazygit="git-set && lazygit"
 alias mountvault="sudo mount -t nfs santos.local:/Plex /NFS-Vault"
 alias tn="tmux new -s"
 alias tl="tmux ls"
