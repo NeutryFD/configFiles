@@ -37,8 +37,6 @@ keybind = ctrl+down=goto_split:down
 keybind = ctrl+right=goto_split:right
 keybind = ctrl+left=goto_split:left
 
-##  --- Close tab
-keybind = ctrl+x=close_surface
 
 ##  --- Scrool with keys
 keybind = shift+up=scroll_page_lines:-5
@@ -47,3 +45,7 @@ keybind = shift+down=scroll_page_lines:5
 ##  --- Tabs
 window-new-tab-position = end
 window-theme = ghostty
+
+##  --- Close tab
+keybind = ctrl+shift+'=close_surface
+keybind = ctrl+shift+;=new_tab
