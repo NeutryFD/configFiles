@@ -18,3 +18,12 @@ git clone https://github.com/nvim-telescope/telescope.nvim.git
 # Depencies for Telescope
 git clone https://github.com/nvim-lua/plenary.nvim.git
 
+#Nvimtree
+git clone https://github.com/nvim-tree/nvim-tree.lua.git
+
+#Use HackNerdFont in Nvim
+git clone https://github.com/nvim-tree/nvim-web-devicons.git
+
+#theme
+git clone https://github.com/catppuccin/nvim.git
+git clone https://github.com/folke/tokyonight.nvim.git
