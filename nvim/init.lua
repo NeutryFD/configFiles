@@ -212,10 +212,34 @@ require("tokyonight").setup({
 -- Apply the colorscheme after setup
 vim.cmd.colorscheme("tokyonight")
 -- terminal
-vim.keymap.set("n", "<leader><CR>", ":botright 10split | terminal<CR>", { desc = "Open terminal in bottom split" })
+--vim.keymap.set("n", "<leader><CR>", ":botright 10split | terminal<CR>", { desc = "Open terminal in bottom split" })
+
+vim.keymap.set("n", "<leader><CR>", function()
+  -- Create new unlisted, scratch buffer
+  local buf = vim.api.nvim_create_buf(false, true)
+
+  -- Open a horizontal split and set the buffer
+  vim.cmd("botright 10split")
+  vim.api.nvim_win_set_buf(0, buf)
+
+  -- Set the buffer to wipe when hidden (optional)
+  vim.bo[buf].bufhidden = "wipe"
+
+  -- Launch terminal and close split when it exits
+  vim.fn.termopen(os.getenv("SHELL") or "bash", {
+    on_exit = function()
+      local win = vim.api.nvim_get_current_win()
+      if vim.api.nvim_win_is_valid(win) then
+        vim.api.nvim_win_close(win, true)
+      end
+    end,
+  })
+
+  vim.cmd("startinsert")
+end, { desc = "Open terminal in bottom split" })
 
 -- lazygit
-vim.keymap.set("n", "<leader>gg", function()
+vim.keymap.set("n", "<leader>lg", function()
   local buf = vim.api.nvim_create_buf(false, true)
 
   local width = math.floor(vim.o.columns * 0.9)
