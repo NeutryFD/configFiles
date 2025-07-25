@@ -213,3 +213,36 @@ require("tokyonight").setup({
 vim.cmd.colorscheme("tokyonight")
 -- terminal
 vim.keymap.set("n", "<leader><CR>", ":botright 10split | terminal<CR>", { desc = "Open terminal in bottom split" })
+
+-- lazygit
+vim.keymap.set("n", "<leader>gg", function()
+  local buf = vim.api.nvim_create_buf(false, true)
+
+  local width = math.floor(vim.o.columns * 0.9)
+  local height = math.floor(vim.o.lines * 0.9)
+  local row = math.floor((vim.o.lines - height) / 2)
+  local col = math.floor((vim.o.columns - width) / 2)
+
+  local win = vim.api.nvim_open_win(buf, true, {
+    relative = "editor",
+    row = row,
+    col = col,
+    width = width,
+    height = height,
+    style = "minimal",
+    border = "single",
+  })
+
+  vim.bo[buf].bufhidden = "wipe"
+
+  local term_job_id = vim.fn.termopen("lazygit", {
+    on_exit = function(_, _, _)
+      -- Close the window when the process exits
+      if vim.api.nvim_win_is_valid(win) then
+        vim.api.nvim_win_close(win, true)
+      end
+    end,
+  })
+
+  vim.cmd("startinsert")
+end, { noremap = true, silent = true })
