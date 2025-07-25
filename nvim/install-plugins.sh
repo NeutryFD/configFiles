@@ -27,3 +27,6 @@ git clone https://github.com/nvim-tree/nvim-web-devicons.git
 #theme
 git clone https://github.com/catppuccin/nvim.git
 git clone https://github.com/folke/tokyonight.nvim.git
+
+#indentation lines
+git clone https://github.com/lukas-reineke/indent-blankline.nvim.git
