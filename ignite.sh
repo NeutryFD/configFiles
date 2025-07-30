@@ -9,11 +9,11 @@ echo -e "
 
     Dependencies:
 
-     [+] i3lock-color 
-     [+] xorg-xdpyinfo
-     [+] imagemagick 
-     [+] xorg-xrandr 
-     [+] bc
+    [+] i3lock-color 
+    [+] xorg-xdpyinfo
+    [+] imagemagick 
+    [+] xorg-xrandr 
+    [+] bc
     
     Repository URL: https://github.com/betterlockscreen/betterlockscreen \n
 	"
@@ -21,7 +21,7 @@ echo -e "
 ##  --- Installation ----------
    
 echo -e "[*] Init Installation..."
-   sudo pacman -S i3lock-color xorg-xrandr xorg-xdpyinfo imagemagick bc -y
+sudo pacman -S i3lock-color xorg-xrandr xorg-xdpyinfo imagemagick bc -y
 
 echo -e "\n[*] Creating symbolic link..."
 
