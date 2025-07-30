@@ -214,6 +214,12 @@ vim.cmd.colorscheme("tokyonight")
 -- terminal
 --vim.keymap.set("n", "<leader><CR>", ":botright 10split | terminal<CR>", { desc = "Open terminal in bottom split" })
 
+-- In normal mode, pressing <Esc>\ moves to previous window
+vim.api.nvim_set_keymap('n', '<Esc>\\', '<C-w>p', { noremap = true, silent = true })
+
+-- In terminal mode, pressing <Esc>\ exits terminal mode and moves to previous window
+vim.api.nvim_set_keymap('t', '<Esc>\\', [[<C-\><C-n><C-w>p]], { noremap = true, silent = true })
+
 vim.keymap.set("n", "<leader><CR>", function()
   -- Check if a terminal buffer already exists
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
