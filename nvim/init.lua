@@ -289,3 +289,9 @@ require("ibl").setup {
   },
 }
 vim.opt.termguicolors = true
+
+
+-- uset the system clipboardvim.opt.clipboard = "unnamedplus"
+vim.keymap.set("n", "yy", '"+yy', { noremap = true })
+vim.keymap.set("v", "y", '"+y', { noremap = true })
+
