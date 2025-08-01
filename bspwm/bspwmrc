@@ -9,6 +9,7 @@ INTERNAL_MONITOR="eDP"
 HDMI_PORT="HDMI-A-0"
 DISPLAYPORT="DisplayPort-0"
 EXTERNAL_MONITOR=$DISPLAYPORT
+EXTERNAL_MONITOR_2=$HDMI_PORT	
 INTERNAL_MONITOR_ARCH="HDMI-0"
 
 ##  --- Init Configuration ----------------
@@ -31,10 +32,49 @@ bspc confir gapless_monocle      true
 
 if [ $(hostnamectl chassis) == "laptop" ]; then
 
-	if [ $(xrandr | grep -o '\bconnected' | wc -l) -eq 2 ]; then
+	if [ $(xrandr | grep -o '\bconnected' | wc -l) -eq 3 ]; then
+ 
+		if [ "$(xrandr | grep "$HDMI_PORT" | awk '{print $2}')" == "connected" ] && [ "$(xrandr | grep "$DISPLAYPORT" | awk '{print $2}')" == "connected" ]; then
+
+			EXTERNAL_MONITOR=$DISPLAYPORT
+			EXTERNAL_MONITOR_2=$HDMI_PORT
+	    fi	
+			##  --- Monitor configuration ----------------------
+			xrandr --auto
+			xrandr --output "$INTERNAL_MONITOR" --rate 60
+			xrandr --output "$EXTERNAL_MONITOR" --rate 60 --left-of "$INTERNAL_MONITOR"
+			xrandr --output "$EXTERNAL_MONITOR_2" --rate 60 --left-of "$EXTERNAL_MONITOR"
+			
+		  	##  --- BSPWM workspaces by monitor ------------------
+		  	bspc monitor "$EXTERNAL_MONITOR_2" -d I II
+		    bspc monitor "$EXTERNAL_MONITOR" -d III IV
+			bspc monitor "$INTERNAL_MONITOR" -d V V VI
+
+			bspc wm --reorder-monitors "$EXTERNAL_MONITOR_2" "$EXTERNAL_MONITOR" "$INTERNAL_MONITOR"
+
+			
+			##  --- Polybar init -----------------------------------
+			polybar -c $HOME/configFiles/polybar/thinkpad-II.conf thinkpad-left &
+			polybar -c $HOME/configFiles/polybar/thinkpad-II.conf thinkpad-center &
+			polybar -c $HOME/configFiles/polybar/thinkpad-II.conf thinkpad-wifi &
+			polybar -c $HOME/configFiles/polybar/thinkpad-II.conf thinkpad-ethernet &
+			polybar -c $HOME/configFiles/polybar/thinkpad-II.conf thinkpad-right &
+		
+			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-banner &
+			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-VPN &
+			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-center &
+			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-music &
+			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-right &
+			
+			MONITOR=$EXTERNAL_MONITOR_2 polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-banner &
+			MONITOR=$EXTERNAL_MONITOR_2 polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-VPN &
+			MONITOR=$EXTERNAL_MONITOR_2 polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-center &
+			MONITOR=$EXTERNAL_MONITOR_2 polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-music &
+			MONITOR=$EXTERNAL_MONITOR_2 polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-right &
+		
+	elif [ $(xrandr | grep -o '\bconnected' | wc -l) -eq 2 ]; then
  
 		if [ $(xrandr | grep "$HDMI_PORT" | awk '{print $2}') == "connected" ]; then
-	
 			EXTERNAL_MONITOR=$HDMI_PORT
 	    fi	
 			##  --- Monitor configuration ----------------------
@@ -59,8 +99,6 @@ if [ $(hostnamectl chassis) == "laptop" ]; then
 			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-center &
 			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-music &
 			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-right &
-			
-		
 	else
 		xrandr --auto
 
