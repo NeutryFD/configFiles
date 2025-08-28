@@ -147,7 +147,9 @@ require("nvim-tree").setup({
     },
   },
   filters = {
-    dotfiles = true,
+    dotfiles = false,
+	git_ignored = false,
+	custom = {}, -- Add any other patterns you want to ignore
   },
 })
 
