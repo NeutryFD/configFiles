@@ -77,5 +77,5 @@
     - [indent-blankline.nvim](https://github.com/lukas-reineke/indent-blankline.nvim)  
 - **Task Bar:** [Polybar](https://github.com/polybar/polybar)  
 - **Hotkey Daemon:** [sxhkd](https://github.com/baskerville/sxhkd)  
-- **Lauche:** [rofi](https://github.com/davatorium/rofi) 
+- **Laucher:** [rofi](https://github.com/davatorium/rofi) 
 - **Shell:** [zsh](https://sourceforge.net/projects/zsh/)
