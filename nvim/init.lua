@@ -283,7 +283,42 @@ vim.keymap.set("n", "<leader>lg", function()
 
   vim.bo[buf].bufhidden = "wipe"
 
-  local term_job_id = vim.fn.termopen("lazygit", {
+   -- Lua: get all private SSH keys
+  local keys = {}
+  local handle = io.popen('for f in ~/.ssh/*; do [[ "$f" != *.pub ]] && file "$f" | grep -q "private key" && echo "$f"; done')
+  if handle then
+    for line in handle:lines() do
+      table.insert(keys, line)
+    end
+    handle:close()
+  end
+
+  if #keys == 0 then
+    print("No private SSH keys found!")
+    return
+  end
+
+  -- Prompt user to pick a key
+  local choices = { "Select SSH key to use:" }
+  for i, key in ipairs(keys) do
+    table.insert(choices, string.format("%d. %s", i, key))
+  end
+  local choice = vim.fn.inputlist(choices)
+  if choice < 1 or choice > #keys then
+    print("Invalid choice")
+    return
+  end
+
+  local selected_key = keys[choice]
+  -- Run ssh-agent reset + add key, then LazyGit
+  local cmd = string.format([[
+    pkill ssh-agent 2>/dev/null
+    eval "$(ssh-agent -s)"
+    ssh-add %s
+    lazygit
+  ]], selected_key)
+
+  local term_job_id = vim.fn.termopen(cmd, {
     on_exit = function(_, _, _)
       -- Close the window when the process exits
       if vim.api.nvim_win_is_valid(win) then
