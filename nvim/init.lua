@@ -277,7 +277,7 @@ vim.keymap.set("n", "<leader>lg", function()
       border = "rounded",
     })
     vim.bo[buf].bufhidden = "wipe"
-    vim.api.nvim_win_set_option(win, "winblend", 15)  -- transparency
+    --vim.api.nvim_win_set_option(win, "winblend", 15)  -- transparency
     vim.api.nvim_win_set_option(win, "winhl", "Normal:NormalFloat,FloatBorder:FloatBorder")
     return win
   end
