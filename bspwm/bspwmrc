@@ -46,9 +46,9 @@ if [ $(hostnamectl chassis) == "laptop" ]; then
 			xrandr --output "$EXTERNAL_MONITOR_2" --rate 60 --left-of "$EXTERNAL_MONITOR"
 			
 		  	##  --- BSPWM workspaces by monitor ------------------
-		  	bspc monitor "$EXTERNAL_MONITOR_2" -d I II
-		    bspc monitor "$EXTERNAL_MONITOR" -d III IV
-			bspc monitor "$INTERNAL_MONITOR" -d V V VI
+		  	bspc monitor "$EXTERNAL_MONITOR_2" -d I II III
+		    bspc monitor "$EXTERNAL_MONITOR" -d IV V VI
+			bspc monitor "$INTERNAL_MONITOR" -d VII VII IX
 
 			bspc wm --reorder-monitors "$EXTERNAL_MONITOR_2" "$EXTERNAL_MONITOR" "$INTERNAL_MONITOR"
 
