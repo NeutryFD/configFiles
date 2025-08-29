@@ -75,3 +75,17 @@ alias k8s-dev='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-sydney"'
 
 #autoload -Uz add-zsh-hook
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+
+# nvm (node version manager)
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/home/neutry/.lmstudio/bin"
+# End of LM Studio CLI section
+
+
+# opencode
+export PATH=/home/neutry/.opencode/bin:$PATH
