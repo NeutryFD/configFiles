@@ -57,6 +57,7 @@ plugins=(git
 		)
 
 source $ZSH/oh-my-zsh.sh
+source <(kubectl completion zsh)
 ################################################### alias
 alias lc="lsd -la"
 
@@ -67,9 +68,10 @@ alias ll="lsd -la"
 alias vim="nvim"
 alias master="sudo /usr/local/bin/reconnect-mm712.sh"
 alias mountvault="sudo mount -t nfs santos.local:/Plex /NFS-Vault"
-alias tn="tmux new -s"
+alias tn="tmux -L"
 alias tl="tmux ls"
 alias ta="tmux a -t"
+alias k8s-dev='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-sydney"'
 
 #autoload -Uz add-zsh-hook
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
