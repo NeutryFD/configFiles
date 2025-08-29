@@ -284,7 +284,8 @@ vim.keymap.set("n", "<leader>lg", function()
 
   -- === collect private keys ===
   local keys = {}
-  local handle = io.popen('for f in ~/.ssh/*; do [[ "$f" != *.pub ]] && file "$f" | grep -qi "private key" && echo "$f"; done')
+  --local handle = io.popen('ls ~/.ssh | grep -v ".pub$"')
+  local handle = io.popen('bash -c \'for f in $HOME/.ssh/*; do [[ "$f" != *.pub ]] && file "$f" | grep -qi "private key" && echo "$f"; done\'')
   if handle then
     for line in handle:lines() do
       table.insert(keys, line)
