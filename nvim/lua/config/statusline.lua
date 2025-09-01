@@ -57,6 +57,14 @@ local function filetype()
   return string.format(" %s ", vim.bo.filetype):upper()
 end
 
+local function git_branch()
+  local branch = vim.fn.systemlist("git branch --show-current")[1]
+  if branch == nil or branch == "" then
+    return ""
+  end
+  return " " .. branch
+end
+
 -- Define the statusline function
 Statusline = {}
 
@@ -68,6 +76,7 @@ Statusline.active = function()
     "%#Normal# ",
     filepath(),
     filename(),
+	git_branch(),
     "%#Normal#",
     "%=%#StatusLineExtra#",
     filetype(),
