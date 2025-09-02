@@ -52,7 +52,7 @@ vim.api.nvim_exec([[
 ]], false)
 
 
--- Requiere nvim-cmp
+-- Requiere nvim-cmp autocompletation
 local cmp = require'cmp'
 
 cmp.setup({
@@ -213,6 +213,8 @@ require("tokyonight").setup({
 
 -- Apply the colorscheme after setup
 vim.cmd.colorscheme("tokyonight")
+
+
 -- terminal
 --vim.keymap.set("n", "<leader><CR>", ":botright 10split | terminal<CR>", { desc = "Open terminal in bottom split" })
 
