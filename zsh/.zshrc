@@ -26,13 +26,10 @@ public (){
 }
 
 git-ssh-agent (){
+	# Terminate any existing ssh-agent instances
+	pkill ssh-agent 2>/dev/null
     # Start the ssh-agent if it's not running
-    if [ -z "$SSH_AUTH_SOCK" ]; then
-        eval "$(ssh-agent -s)"
-        echo "Started ssh-agent"
-    else
-        echo "ssh-agent is already running"
-    fi
+    eval "$(ssh-agent -s)"
     
     # Find all private keys using file command to check file type
     private_keys=()
