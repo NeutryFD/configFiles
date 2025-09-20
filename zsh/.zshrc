@@ -25,17 +25,44 @@ public (){
         xclip -sel clip ~/.ssh/id_rsa.pub
 }
 
-github-set (){
-        pkill ssh-agent 2>/dev/null
+git-ssh-agent (){
+    # Start the ssh-agent if it's not running
+    if [ -z "$SSH_AUTH_SOCK" ]; then
         eval "$(ssh-agent -s)"
-        ssh-add ~/.ssh/github
+        echo "Started ssh-agent"
+    else
+        echo "ssh-agent is already running"
+    fi
+    
+    # Find all private keys using file command to check file type
+    private_keys=()
+    for f in $HOME/.ssh/*; do
+        if [[ -f "$f" && "$f" != *.pub ]] && file "$f" | grep -qi "private key"; then
+            private_keys+=("$f")
+        fi
+    done
+    
+    # Use fzf for interactive selection if keys are found
+    if [ ${#private_keys[@]} -gt 0 ]; then
+        selected_keys=$(printf "%s\n" "${private_keys[@]}" | fzf --multi --header="Select SSH keys (TAB to select multiple, ENTER to confirm)")
+        
+        if [ -n "$selected_keys" ]; then
+            echo "$selected_keys" | while read -r key; do
+                ssh-add "$key" 2>/dev/null
+                if [ $? -eq 0 ]; then
+                    echo "Added key: $key"
+                fi
+            done
+        else
+            echo "No keys selected."
+        fi
+    else
+        echo "No private keys found in ~/.ssh/"
+    fi
 }
 
-gitlab-set (){
-        pkill ssh-agent 2>/dev/null
-        eval "$(ssh-agent -s)"
-        ssh-add ~/.ssh/gitlab.dev.hpcnow.com
-}
+
+# Keep old functions for backwards compatibility
 
 clean-copy (){
         rm -rf /run/user/1000/clipmenu*
