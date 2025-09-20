@@ -62,8 +62,6 @@ git-ssh-agent (){
 }
 
 
-# Keep old functions for backwards compatibility
-
 clean-copy (){
         rm -rf /run/user/1000/clipmenu*
         pgrep -f clipmenu | xargs  kill > /dev/null
