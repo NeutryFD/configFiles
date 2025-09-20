@@ -68,7 +68,7 @@ alias ll="lsd -la"
 alias vim="nvim"
 alias master="sudo /usr/local/bin/reconnect-mm712.sh"
 alias mountvault="sudo mount -t nfs santos.local:/Plex /NFS-Vault"
-alias tn="tmux -L"
+alias tn="tmux new -s"
 alias tl="tmux ls"
 alias ta="tmux a -t"
 alias k8s-dev='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-sydney"'
