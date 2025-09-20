@@ -98,6 +98,8 @@ alias mountvault="sudo mount -t nfs santos.local:/Plex /NFS-Vault"
 alias tn="tmux new -s"
 alias tl="tmux ls"
 alias ta="tmux a -t"
+alias workspace="cd ~/workspace"
+alias config="cd ~/configFiles"
 alias k8s-dev='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-sydney"'
 
 #autoload -Uz add-zsh-hook
