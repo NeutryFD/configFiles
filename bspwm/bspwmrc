@@ -80,7 +80,7 @@ if [ $(hostnamectl chassis) == "laptop" ]; then
 			##  --- Monitor configuration ----------------------
 			xrandr --auto
 			xrandr --output "$INTERNAL_MONITOR" --rate 60
-			xrandr --output "$INTERNAL_MONITOR" --rate 60 --left-of "$EXTERNAL_MONITOR"
+			xrandr --output "$INTERNAL_MONITOR" --rate 60 --right-of "$EXTERNAL_MONITOR"
 			
 		  ##  --- BSPWM workspaces by monitor ------------------
 			bspc monitor "$EXTERNAL_MONITOR" -d I II III IV V
