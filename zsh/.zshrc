@@ -89,3 +89,6 @@ export PATH="$PATH:/home/neutry/.lmstudio/bin"
 
 # opencode
 export PATH=/home/neutry/.opencode/bin:$PATH
+
+autoload -U +X bashcompinit && bashcompinit
+complete -o nospace -C /usr/bin/terraform terraform
