@@ -66,6 +66,28 @@ clean-copy (){
         echo "clipboard cleaned"
 }
 
+function kubeclt_resources() {
+    local namespace="$1"
+
+    if [[ -z "$namespace" ]]; then
+        echo "Uso: kubeclt_resources <namespace>"
+        return 1
+    fi
+
+    kubectl -n "$namespace" top pod | awk 'NR>1 {
+        cpu=$2;
+        mem=$3;
+        mem_gb=mem/1024;
+        sub(/m$/,"",cpu);
+        printf "%-30s %-10s %-10s\n", $1, cpu/1000 " cores", mem_gb " GiB"
+    }'
+}
+
+function k8s_node_resources() {
+kubectl get nodes -o custom-columns=NODE:.metadata.name,CPU:.status.capacity.cpu,MEMORY:.status.capacity.memory | \
+awk 'NR>1 {mem=$3; gsub(/[KMGi]+/, "", mem); printf "%-20s CPU: %s cores  Memory: %.2f GB\n", $1, $2, $3/1048576}'
+}
+
 sky(){
 ~/astroterm-linux-x86_64 --color --constellations --speed 100 --fps 20 --city Barcelona
 }
