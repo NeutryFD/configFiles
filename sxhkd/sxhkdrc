@@ -139,6 +139,16 @@ super + {_,shift + }{1-9,0}
 
 super + alt + {1-9,0}
 	bspc desktop focused -s ^'{1-9,10}' --follow
+
+# Expand focus keybindings for 3 monitors
+super + Home
+	bspc desktop -f ^4 
+
+super + Page_Up
+	bspc desktop -f ^5
+
+super + Page_Down
+	bspc desktop -f ^6
 #
 # preselect
 #
