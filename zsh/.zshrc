@@ -66,31 +66,72 @@ clean-copy (){
         echo "clipboard cleaned"
 }
 
-function kubeclt_resources() {
+# Kubernetes functions 
+
+function kubectl_pod_usage() {
+
     local namespace="$1"
+    local label_selector="$2"
 
     if [[ -z "$namespace" ]]; then
-        echo "Uso: kubeclt_resources <namespace>"
+        echo "Uso: kubectl_pod_usage <namespace> [label_selector]"
+        echo "Ejemplo: kubectl_pod_usage default"
+        echo "         kubectl_pod_usage default app=nginx"
+        echo "         kubectl_pod_usage default app=nginx,version=v1"
         return 1
     fi
 
-    kubectl -n "$namespace" top pod | awk 'NR>1 {
-        cpu=$2;
-        mem=$3;
-        mem_gb=mem/1024;
-        sub(/m$/,"",cpu);
-        printf "%-30s %-10s %-10s\n", $1, cpu/1000 " cores", mem_gb " GiB"
-    }'
+    # Build the metrics API URL with optional label selector
+    local metrics_url="/apis/metrics.k8s.io/v1beta1/namespaces/$namespace/pods"
+    if [[ -n "$label_selector" ]]; then
+        metrics_url="$metrics_url?labelSelector=$label_selector"
+    fi
+
+    echo -e "POD_NAME\tCPU_USAGE\tMEMORY_USAGE"
+    echo -e "--------\t---------\t------------"
+    kubectl get --raw "$metrics_url" | jq -r '.items[] | 
+        (.containers[0].usage.cpu // "0") as $cpu |
+        (.containers[0].usage.memory // "0") as $mem |
+        ($cpu | gsub("n$"; "") | tonumber / 1000000000) as $cpu_cores |
+        ($mem | gsub("Ki$"; "") | tonumber / 1048576) as $mem_gb |
+        "\(.metadata.name)\t\($cpu_cores | . * 1000 | round / 1000) cpu\t\($mem_gb | . * 100 | round / 100) GB"' | column -t | head -15
 }
 
-function k8s_node_resources() {
-kubectl get nodes -o custom-columns=NODE:.metadata.name,CPU:.status.capacity.cpu,MEMORY:.status.capacity.memory | \
-awk 'NR>1 {mem=$3; gsub(/[KMGi]+/, "", mem); printf "%-20s CPU: %s cores  Memory: %.2f GB\n", $1, $2, $3/1048576}'
+function kubectl_pod_request() {
+    local namespace="$1"
+    local label_selector="$2"
+
+    if [[ -z "$namespace" ]]; then
+        echo "Uso: kubectl_pod_request <namespace> [label_selector]"
+        echo "Ejemplo: kubectl_pod_request default"
+        echo "         kubectl_pod_request default app=nginx"
+        echo "         kubectl_pod_request default app=nginx,version=v1"
+        return 1
+    fi
+
+    echo -e "POD_NAME\tCPU_REQUEST\tMEMORY_REQUEST"
+    echo -e "--------\t-----------\t--------------"
+
+    # Call kubectl directly to avoid zsh interpreting an entire command string as a single command
+    if [[ -n "$label_selector" ]]; then
+        kubectl get pods -n "$namespace" -l "$label_selector" -o json | \
+            jq -r '.items[] | select(.status.phase=="Running") | "\(.metadata.name)\t\(.spec.containers[0].resources.requests.cpu // "N/A")\t\(.spec.containers[0].resources.requests.memory // "N/A")"' | column -t | head -15
+    else
+        kubectl get pods -n "$namespace" -o json | \
+            jq -r '.items[] | select(.status.phase=="Running") | "\(.metadata.name)\t\(.spec.containers[0].resources.requests.cpu // "N/A")\t\(.spec.containers[0].resources.requests.memory // "N/A")"' | column -t | head -15
+    fi
 }
+
+function kubectl_node_resources() {
+	kubectl get nodes -o custom-columns=NODE:.metadata.name,CPU:.status.capacity.cpu,MEMORY:.status.capacity.memory | \
+	awk 'NR>1 {mem=$3; gsub(/[KMGi]+/, "", mem); printf "%-20s CPU: %s cores  Memory: %.2f GB\n", $1, $2, $3/1048576}'
+}
+
 
 sky(){
 ~/astroterm-linux-x86_64 --color --constellations --speed 100 --fps 20 --city Barcelona
 }
+
 
 
 
@@ -117,7 +158,8 @@ alias tl="tmux ls"
 alias ta="tmux a -t"
 alias workspace="cd ~/workspace"
 alias config="cd ~/configFiles"
-alias k8s-dev='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-sydney"'
+alias k8s-syd='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-sydney"'
+alias k8s-tek='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-tekniker"'
 
 #autoload -Uz add-zsh-hook
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
