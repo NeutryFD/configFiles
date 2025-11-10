@@ -77,15 +77,18 @@ if [ $(hostnamectl chassis) == "laptop" ]; then
 		if [ $(xrandr | grep "$HDMI_PORT" | awk '{print $2}') == "connected" ]; then
 			EXTERNAL_MONITOR=$HDMI_PORT
 	    fi	
+
+	  	    #xrandr --output "$INTERNAL_MONITOR" --auto --output "$EXTERNAL_MONITOR" --auto --same-as $EXTERNAL_MONITOR
+
 			##  --- Monitor configuration ----------------------
 			xrandr --auto
 			xrandr --output "$INTERNAL_MONITOR" --rate 60
-			xrandr --output "$INTERNAL_MONITOR" --rate 60 --left-of "$EXTERNAL_MONITOR"
+			xrandr --output "$INTERNAL_MONITOR" --rate 60 --left-of "$EXTERNAL_MONITOR" # for Mouse continuity (home)
 			
-		  ##  --- BSPWM workspaces by monitor ------------------
+		    ##  --- BSPWM workspaces by monitor ------------------
 			bspc monitor "$EXTERNAL_MONITOR" -d I II III IV V
 			bspc monitor "$INTERNAL_MONITOR" -d VI VII VIII IX X
-			bspc wm --reorder-monitors $EXTERNAL_MONITOR $INTERNAL_MONITOR
+			bspc wm --reorder-monitors $INTERNAL_MONITOR $EXTERNAL_MONITOR #for bspwm desktop order
 			
 			##  --- Polybar init -----------------------------------
 			polybar -c $HOME/configFiles/polybar/thinkpad-II.conf thinkpad-left &
