@@ -174,6 +174,8 @@ export NVM_DIR="$HOME/.nvm"
 export PATH="$PATH:/home/neutry/.lmstudio/bin"
 # End of LM Studio CLI section
 
+# go lang
+export PATH=$PATH:/usr/local/go/bin
 
 # opencode
 export PATH=/home/neutry/.opencode/bin:$PATH
