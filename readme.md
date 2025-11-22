@@ -2,7 +2,7 @@
 
 This repository contains configuration files and scripts for my Linux desktop environment. These configurations provide a cohesive and efficient workflow with a focus on productivity and aesthetics.
 
-## 📋 Overview
+## Overview
 
 ```
 .
@@ -59,7 +59,7 @@ This repository contains configuration files and scripts for my Linux desktop en
     └── .zshrc
 ```
 
-## 🚀 Components
+## Components
 
 ### Core System
 
@@ -100,7 +100,7 @@ This repository contains configuration files and scripts for my Linux desktop en
     - [tokyonight.nvim](https://github.com/folke/tokyonight.nvim) - Clean, dark theme
     - [indent-blankline.nvim](https://github.com/lukas-reineke/indent-blankline.nvim) - Indentation guides
 
-## 🛠️ TODO Installation
+## TODO Installation
 
 The repository includes an `ignite.sh` script (Work In Progress) to help install and configure various components. When completed, this script will:
 - Handle dependency installation
