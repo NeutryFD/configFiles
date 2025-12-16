@@ -3,6 +3,7 @@ export EDITOR=/usr/local/bin/nvim
 ZSH_THEME="robbyrussell"
 
 
+# HELPERS
 ################################################## funtions
 
 #add-zsh-hook precmd () {
@@ -124,7 +125,7 @@ function kubectl_pod_request() {
 
 function kubectl_node_resources() {
 	kubectl get nodes -o custom-columns=NODE:.metadata.name,CPU:.status.capacity.cpu,MEMORY:.status.capacity.memory | \
-	awk 'NR>1 {mem=$3; gsub(/[KMGi]+/, "", mem); printf "%-20s CPU: %s cores  Memory: %.2f GB\n", $1, $2, $3/1048576}'
+	awk 'NR>1 {mem=$3; gsub(/[KMGi]+/, "", mem); printf "%-20s CPU: %s cores  Memory: %.1f GB\n", $1, $2, $3/1024000}'
 }
 
 
@@ -159,7 +160,8 @@ alias ta="tmux a -t"
 alias workspace="cd ~/workspace"
 alias config="cd ~/configFiles"
 alias k8s-syd='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-sydney"'
-alias k8s-tek='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-tekniker"'
+alias k8s-dev-tekniker='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-dev-tekniker"'
+alias k8s-pro-tekiner='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-pro-tekniker"'
 
 #autoload -Uz add-zsh-hook
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
