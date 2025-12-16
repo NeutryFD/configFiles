@@ -3,7 +3,18 @@ export EDITOR=/usr/local/bin/nvim
 ZSH_THEME="robbyrussell"
 
 
-# HELPERS
+
+
+################################################### plugins
+plugins=(git
+		     zsh-autosuggestions
+		     zsh-syntax-highlighting
+		)
+
+source $ZSH/oh-my-zsh.sh
+source <(kubectl completion zsh)
+
+#HELPERS
 ################################################## funtions
 
 #add-zsh-hook precmd () {
@@ -133,20 +144,8 @@ sky(){
 ~/astroterm-linux-x86_64 --color --constellations --speed 100 --fps 20 --city Barcelona
 }
 
-
-
-
-################################################### plugins
-plugins=(git
-		     zsh-autosuggestions
-		     zsh-syntax-highlighting
-		)
-
-source $ZSH/oh-my-zsh.sh
-source <(kubectl completion zsh)
-################################################### alias
+################################################### aliases
 alias lc="lsd -la"
-
 alias icat="kitty +kitten icat"
 #alias cat="bat --style=plain --theme TwoDark"
 alias copy="xclip -sel clip"
@@ -181,6 +180,7 @@ export PATH=$PATH:/usr/local/go/bin
 
 # opencode
 export PATH=/home/neutry/.opencode/bin:$PATH
+export PATH=$PATH:/usr/local/go/bin
 
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /usr/bin/terraform terraform
