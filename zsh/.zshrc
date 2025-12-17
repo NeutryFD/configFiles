@@ -144,6 +144,12 @@ sky(){
 ~/astroterm-linux-x86_64 --color --constellations --speed 100 --fps 20 --city Barcelona
 }
 
+push(){
+	git add .
+	git commit -m "$*"
+	git push
+}
+
 ################################################### aliases
 alias lc="lsd -la"
 alias icat="kitty +kitten icat"
@@ -152,7 +158,7 @@ alias copy="xclip -sel clip"
 alias ll="lsd -la"
 alias vim="nvim"
 alias master="sudo /usr/local/bin/reconnect-mm712.sh"
-alias mountvault="sudo mount -t nfs santos.local:/Plex /NFS-Vault"
+alias mountvault="sudo mount -t nfs 192.168.1.130:/Plex /NFS-Vault"
 alias tn="tmux new -s"
 alias tl="tmux ls"
 alias ta="tmux a -t"
