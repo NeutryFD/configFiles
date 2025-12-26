@@ -167,6 +167,8 @@ alias k8s-tek='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-tekniker"'
 #autoload -Uz add-zsh-hook
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+# starship config
+export STARSHIP_CONFIG=$HOME/configFiles/starship/starship.toml
 
 # nvm (node version manager)
 export NVM_DIR="$HOME/.nvm"
