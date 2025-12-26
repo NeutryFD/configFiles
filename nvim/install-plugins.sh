@@ -36,3 +36,6 @@ git clone --depth=1 https://github.com/github/copilot.vim.git
 
 # cyberdream theme
 git clone https://github.com/scottmckendry/cyberdream.nvim.git
+
+#Markdown renderer
+git clone https://github.com/MeanderingProgrammer/render-markdown.nvim.git
