@@ -71,8 +71,3 @@ require('config.terminal')
 require('config.identation')
 require('config.telescope')
 require('config.cmp')
-
-
-
-
-
