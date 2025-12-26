@@ -65,9 +65,6 @@ local function git_branch()
   return " " .. branch
 end
 
--- Define the statusline function
-Statusline = {}
-
 
 Statusline.active = function()
   return table.concat {

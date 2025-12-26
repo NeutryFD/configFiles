@@ -2,9 +2,6 @@ export ZSH="$HOME/.oh-my-zsh"
 export EDITOR=/usr/local/bin/nvim
 ZSH_THEME="robbyrussell"
 
-
-
-
 ################################################### plugins
 plugins=(git
 		     zsh-autosuggestions
@@ -189,3 +186,5 @@ export PATH=$PATH:/usr/local/go/bin
 
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /usr/bin/terraform terraform
+
+eval "$(starship init zsh)"
