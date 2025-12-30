@@ -1,9 +1,19 @@
+#zmodload zsh/zprof
+# =========================
+# Zsh optimnizations options
+# =========================
+DISABLE_AUTO_UPDATE="true"
+DISABLE_MAGIC_FUNCTIONS="true"
+DISABLE_COMPFIX="true"
+ZSH_COMPDUMP="$HOME/.zcompdump-$ZSH_VERSION"
+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE="20"
+ZSH_AUTOSUGGEST_USE_ASYNC=1
+
 # =========================
 # Oh-My-Zsh Setup
 # =========================
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="robbyrussell" 
-export EDITOR="/usr/local/bin/nvim"
 
 # =========================
 # Plugins
@@ -13,9 +23,9 @@ plugins=(
   zsh-autosuggestions
   zsh-syntax-highlighting
 )
-
 source "$ZSH/oh-my-zsh.sh"
 source <(kubectl completion zsh)
+export EDITOR="/usr/local/bin/nvim"
 
 # =========================
 # Helpers
@@ -112,7 +122,6 @@ kubectl_node_resources() {
     awk 'NR>1 {mem=$3; gsub(/[KMGi]+/, "", mem); printf "%-20s CPU: %s cores  Memory: %.2f GB\n", $1, $2, $3/1048576}'
 }
 
-# Fun / Misc
 sky() { ~/astroterm-linux-x86_64 --color --constellations --speed 100 --fps 20 --city Barcelona; }
 push() { git add . && git commit -m "$*" && git push; }
 
@@ -135,6 +144,15 @@ alias k8s-syd='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-sydney"'
 alias k8s-tek='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-tekniker"'
 
 # =========================
+# fnm: Copilot dependency
+# ========================
+FNM_PATH="/home/neutry/.local/share/fnm"
+if [ -d "$FNM_PATH" ]; then
+  export PATH="$FNM_PATH:$PATH"
+  eval "`fnm env`"
+fi
+
+# =========================
 # FZF
 # =========================
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -144,13 +162,6 @@ alias k8s-tek='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-tekniker"'
 # =========================
 export STARSHIP_CONFIG="$HOME/configFiles/starship/starship.toml"
 eval "$(starship init zsh)"
-
-# =========================
-# NVM
-# =========================
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
 # =========================
 # Other PATHs
@@ -164,3 +175,4 @@ export PATH="/home/neutry/.opencode/bin:$PATH"
 # =========================
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /usr/bin/terraform terraform
+#zprof
