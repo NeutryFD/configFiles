@@ -6,17 +6,14 @@ VPN_ENTRY=$(nmcli connection  show  | grep vpn | awk '{print $1}')
 ACTIVE_CONNECTION=$(nmcli --mode tabular --terse connection show --active | grep vpn | cut -d ':' -f1) || true
 
 
-if [[ "$ACTIVE_CONNECTION" == "$VPN_ENTRY" ]]; then
-        echo "$VPN_ENTRY"
+if [[ "$ACTIVE_CONNECTION" ]]; then
+        echo "$ACTIVE_CONNECTION"
 fi
 
 
-if [[ "$ACTIVE_CONNECTION" != "$VPN_ENTRY" ]]; then
+if [[ !"$ACTIVE_CONNECTION" ]]; then
         echo "Disconnect"
 fi
-
-
-
 
 vpn_toggle_connection() {
 # connects or disconnects vpn

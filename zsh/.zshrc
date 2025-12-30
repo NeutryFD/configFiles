@@ -117,9 +117,9 @@ kubectl_pod_request() {
   fi
 }
 
-kubectl_node_resources() {
-  kubectl get nodes -o custom-columns=NODE:.metadata.name,CPU:.status.capacity.cpu,MEMORY:.status.capacity.memory | \
-    awk 'NR>1 {mem=$3; gsub(/[KMGi]+/, "", mem); printf "%-20s CPU: %s cores  Memory: %.2f GB\n", $1, $2, $3/1048576}'
+function kubectl_node_resources() {
+	kubectl get nodes -o custom-columns=NODE:.metadata.name,CPU:.status.capacity.cpu,MEMORY:.status.capacity.memory | \
+	awk 'NR>1 {mem=$3; gsub(/[KMGi]+/, "", mem); printf "%-20s CPU: %s cores  Memory: %.1f GB\n", $1, $2, $3/1024000}'
 }
 
 sky() { ~/astroterm-linux-x86_64 --color --constellations --speed 100 --fps 20 --city Barcelona; }
@@ -141,7 +141,8 @@ alias ta="tmux a -t"
 alias workspace="cd ~/workspace"
 alias config="cd ~/configFiles"
 alias k8s-syd='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-sydney"'
-alias k8s-tek='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-tekniker"'
+alias k8s-dev-tekniker='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-dev-tekniker"'
+alias k8s-pro-tekiner='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-pro-tekniker"'
 
 # =========================
 # fnm: Copilot dependency
