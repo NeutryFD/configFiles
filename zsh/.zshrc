@@ -147,7 +147,7 @@ alias k8s-pro-tekiner='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-pro
 # =========================
 # fnm: Copilot dependency
 # ========================
-FNM_PATH="/home/neutry/.local/share/fnm"
+FNM_PATH="$HOME/.local/share/fnm"
 if [ -d "$FNM_PATH" ]; then
   export PATH="$FNM_PATH:$PATH"
   eval "`fnm env`"
