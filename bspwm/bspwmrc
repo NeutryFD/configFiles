@@ -2,6 +2,7 @@
 killall -q polybar
 killall -q sxhkd
 killall -q clipmenud
+killall -q picom
 
 ##  --- VARIABLES ---------------------------------
 
@@ -151,6 +152,6 @@ fi
 
 ##  --- Software and Services --------------------------
 sxhkd -c $HOME/configFiles/sxhkd/sxhkdrc &
-picom --config $HOME/configFiles/picom/picom.conf &
+pgrep -x picom > /dev/null || picom --config "$HOME/configFiles/picom/picom.conf"
 feh --bg-scale $HOME/Pictures/Wallpapers/hyundai.png
 clipmenud &
