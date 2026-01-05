@@ -10,8 +10,14 @@ format = '''
 
 
 [battery]
-format = '\[[$symbol$percentage]($style)\]'
+full_symbol = '🔋 '
+charging_symbol = '⚡️ '
+discharging_symbol = '💀 '
 disabled = false
+
+[[battery.display]]
+threshold = 10
+style = 'bold red'
 
 [status]
 symbol = "💥"
@@ -29,7 +35,6 @@ disabled = false
 style = 'bold #ff006e'
 format = '\[[$time]($style)\]'
 disabled = false
-
 
 [username]
 format = '\[[$user]($style)\]'
