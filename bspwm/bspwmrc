@@ -62,18 +62,21 @@ if [ $(hostnamectl chassis) == "laptop" ]; then
 			polybar -c $HOME/configFiles/polybar/thinkpad-II.conf thinkpad-wifi &
 			polybar -c $HOME/configFiles/polybar/thinkpad-II.conf thinkpad-ethernet &
 			polybar -c $HOME/configFiles/polybar/thinkpad-II.conf thinkpad-right &
-		
+			polybar -c $HOME/configFiles/polybar/thinkpad-II.conf tray &
+
 			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-banner &
 			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-VPN &
 			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-center &
 			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-music &
 			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-right &
+			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf tray &
 			
 			MONITOR=$EXTERNAL_MONITOR_2 polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-banner &
 			MONITOR=$EXTERNAL_MONITOR_2 polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-VPN &
 			MONITOR=$EXTERNAL_MONITOR_2 polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-center &
 			MONITOR=$EXTERNAL_MONITOR_2 polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-music &
 			MONITOR=$EXTERNAL_MONITOR_2 polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-right &
+			MONITOR=$EXTERNAL_MONITOR_2 polybar -c $HOME/configFiles/polybar/thinkpad-II.conf tray &
 		
 	elif [ $(xrandr | grep -o '\bconnected' | wc -l) -eq 2 ]; then
  
