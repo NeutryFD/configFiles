@@ -23,9 +23,11 @@ xsetroot -cursor_name left_ptr
 
 ##  --- BSPWM configuration ---------------------------
 bspc config border_width         0
-bspc config window_gap           3
-bspc config top_padding          40
+bspc config window_gap           6
+bspc config top_padding          38
 bspc config bottom_padding       38
+bspc config right_padding        8
+bspc config left_padding         8
 bspc config split_ratio          0.49
 bspc config borderless_monocle   true
 bspc confir gapless_monocle      true
@@ -146,12 +148,14 @@ else
  polybar -c $HOME/configFiles/polybar/arch.conf  bspwm &
  polybar -c $HOME/configFiles/polybar/arch.conf  right &
  polybar -c $HOME/configFiles/polybar/arch.conf  music &
- feh --bg-scale $HOME/Pictures/Wallpapers/hyundai.png
+ polybar -c $HOME/configFiles/polybar/arch.conf  tray &
+
+ feh --bg-scale $HOME/Pictures/Wallpapers/wallpaper-ballon.jpg
 
 fi
 
 ##  --- Software and Services --------------------------
 sxhkd -c $HOME/configFiles/sxhkd/sxhkdrc &
 pgrep -x picom > /dev/null || picom --config "$HOME/configFiles/picom/picom.conf"
-feh --bg-scale $HOME/Pictures/Wallpapers/hyundai.png
+feh --bg-scale $HOME/Pictures/Wallpapers/wallpaper-ballon.jpg
 clipmenud &
