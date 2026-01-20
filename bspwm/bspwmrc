@@ -135,6 +135,7 @@ if [ $(hostnamectl chassis) == "laptop" ]; then
 		polybar -c $HOME/configFiles/polybar/thinkpad.conf bspwm &
 		polybar -c $HOME/configFiles/polybar/thinkpad.conf music &
 		polybar -c $HOME/configFiles/polybar/thinkpad.conf right &
+		polybar -c $HOME/configFiles/polybar/thinkpad.conf tray &
 
 	fi
 
