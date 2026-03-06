@@ -36,3 +36,6 @@ git clone --depth=1 https://github.com/github/copilot.vim.git
 
 #Markdown renderer
 git clone https://github.com/MeanderingProgrammer/render-markdown.nvim.git
+
+#Terraform syntax highlighting
+git clone https://github.com/hashivim/vim-terraform.git
