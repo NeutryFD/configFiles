@@ -5,8 +5,8 @@ add_newline = false
 format = '''
 [┌───────────────────>](bold green) 
 [│](bold green)  $username$hostname$sudo$time$battery $status 
-[│](bold green)  $directory
-[└─](bold green) $shell$character'''
+[│](bold green)  $directory$git_status$git_branch $git_metrics
+[└─](bold green) $shell$character '''
 
 
 [battery]
@@ -15,8 +15,34 @@ charging_symbol = '⚡️ '
 discharging_symbol = '💀 '
 disabled = false
 
+
+
+[git_status]
+conflicted = '🏳'
+ahead = '🏎💨'
+behind = '😰'
+diverged = '😵'
+up_to_date = '✓'
+untracked = '🤷'
+stashed = '📦'
+modified = '📝'
+staged = '[++\($count\)](green)'
+renamed = '👅'
+deleted = '🗑'
+
+
+[git_metrics]
+added_style = 'bold blue'
+format = '[+$added]($added_style)/[-$deleted]($deleted_style) '
+
+[git_branch]
+symbol = '🌱 '
+truncation_length = 4
+truncation_symbol = ''
+ignore_branches = ['master', 'main']
+
 [[battery.display]]
-threshold = 10
+threshold = 40
 style = 'bold red'
 
 [status]
