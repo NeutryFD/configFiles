@@ -141,6 +141,7 @@ alias tl="tmux ls"
 alias ta="tmux a -t"
 alias workspace="cd ~/workspace"
 alias config="cd ~/configFiles"
+alias k="kubectl"
 alias k8s-syd='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-sydney"'
 alias k8s-dev-tekniker='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-dev-tekniker"'
 alias k8s-pro-tekiner='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-pro-tekniker"'
