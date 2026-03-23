@@ -5,8 +5,8 @@ add_newline = false
 format = '''
 [┌───────────────────>](bold green) 
 [│](bold green)  $username$hostname$sudo$time$battery $status 
-[│](bold green)  $directory$git_status$git_branch $git_metrics
-[└─](bold green) $shell$character '''
+[│](bold green)  $directory
+[└─](bold green) $shell $python$character'''
 
 
 [battery]
@@ -44,6 +44,18 @@ ignore_branches = ['master', 'main']
 [[battery.display]]
 threshold = 40
 style = 'bold red'
+
+[python]
+symbol = "🐍 "
+style = "green"
+format = '[(${virtualenv})${symbol}]($style)'
+disabled = false
+
+# Only show when venv is active
+detect_extensions = []
+detect_files = []
+detect_folders = []
+detect_env_vars = ["VIRTUAL_ENV"]
 
 [status]
 symbol = "💥"
