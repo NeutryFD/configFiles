@@ -45,8 +45,18 @@ api.events.subscribe(api.events.Event.FileCreated, function(file)
   vim.cmd("edit " .. vim.fn.fnameescape(file.fname))
 end)
 
+-- Make nvim-tree commands silent (No show popoups when toggling or focusing)
+local function silent_cmd(cmd)
+  return function()
+    local old_notify = vim.notify
+    vim.notify = function() end
+    vim.cmd(cmd)
+    vim.notify = old_notify
+  end
+end
 
-vim.keymap.set("n", "<leader>e", ":NvimTreeToggle<CR>", { desc = "Toggle file explorer" })
-vim.keymap.set("n", "<leader>t", ":NvimTreeFocus<CR>", { desc = "Focus file explorer" })
-vim.keymap.set("n", "<leader>b", "<C-w>p", { desc = "Back to previous window" })
+vim.keymap.set("n", "<leader>e", silent_cmd("NvimTreeToggle"), { desc = "Toggle file explorer (silent)" })
+vim.keymap.set("n", "<leader>t", silent_cmd("NvimTreeFocus"),  { desc = "Focus file explorer (silent)" })
+vim.keymap.set("n", "<leader>b", silent_cmd("wincmd p"),       { desc = "Back to previous window (silent)" })
+
 vim.opt.termguicolors = true
