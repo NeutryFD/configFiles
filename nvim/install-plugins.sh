@@ -39,3 +39,13 @@ git clone https://github.com/MeanderingProgrammer/render-markdown.nvim.git
 
 #Terraform syntax highlighting
 git clone https://github.com/hashivim/vim-terraform.git
+
+#Notify
+git clone https://github.com/rcarriga/nvim-notify.git
+
+#Noice 
+git clone https://github.com/folke/noice.nvim.git
+
+#UI components (floating windows, input, select)
+git clone https://github.com/MunifTanjim/nui.nvim.git
+
