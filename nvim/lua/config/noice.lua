@@ -7,7 +7,7 @@ require("noice").setup({
 		},
 		cmdline_popup = {
         	position = {
-        		row = 20,
+        		row = 30,
         		col = "50%",
         	},
         size = {

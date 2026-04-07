@@ -15,4 +15,3 @@ require("ibl").setup {
   },
 }
 vim.opt.termguicolors = true
-
