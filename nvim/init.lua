@@ -61,6 +61,8 @@ vim.api.nvim_exec([[
 ]], false)
 
 -- #############################################################
+-- Download plugins
+require ('config.plugins')
 -- Load plugins and configurations
 require('config.tokyonight')
 require('config.markdown-renderer')
