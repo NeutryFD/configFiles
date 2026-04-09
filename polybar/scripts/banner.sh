@@ -1,19 +1,26 @@
 #!/bin/bash
-LINUX=$(hostnamectl hostname)
-USER=$(echo $USER)
 
-ARCH_ICON=󰣇
-UBUNTU_ICON=󰕈
+# =============================================================================
+# Banner Script for Polybar
+# Displays system information: user, OS, and tiling status
+# =============================================================================
 
-if [ $LINUX == "archlinux" ]; then
+# Get system hostname and current user
+HOSTNAME=$(hostnamectl hostname)
+USER="$USER"
 
-	ICON=$ARCH_ICON
-fi
+# OS icons based on hostname
+case "$HOSTNAME" in
+    archlinux) ICON="󰣇" ;;
+    *)         ICON="󰕈" ;;
+esac
 
-text="| 󱓞  $USER  | $ICON  $LINUX |    Neovim |   Stay Tiling "
+# Banner text to display (with icons)
+text="| 󱓞  $USER  | $ICON  $HOSTNAME |    Neovim |   Stay Tiling "
 
+# Main loop - scroll banner text horizontally
 while true; do
-    echo "${text}"
+    echo "$text"
     text="${text:1}${text:0:1}"
     sleep 0.2
 done
