@@ -1,7 +1,13 @@
 #!/bin/sh
 
-memory_total=16384
-memory_used=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits)
-#awk -v x="$memory_used" -v y="$memory_total" 'BEGIN { printf "GPU %.1f%",(x / y) * 100 }'
-#awk -v x="$memory_used" -v y="$memory_total" 'BEGIN { printf "GPU %.1fGB/%dGB", (x/1024), (y/1024) }'
-awk -v x="$memory_used" 'BEGIN { printf "   %.1fGB", (x/1024)}'
+# =============================================================================
+# GPU Usage Script for Polybar
+# Displays NVIDIA GPU memory usage
+# =============================================================================
+
+# Get GPU memory usage and total from nvidia-smi
+MEMORY_USED=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits)
+MEMORY_TOTAL=$(nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits)
+
+# Output GPU memory usage in GB format
+awk -v x="$MEMORY_USED" 'BEGIN { printf "   %.1fGB", (x/1024) }'
