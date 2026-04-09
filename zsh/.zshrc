@@ -86,6 +86,7 @@ alias k8s-syd='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-sydney"'
 alias k8s-dev-tek='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-dev-tekniker"'
 alias k8s-pro-tek='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-pro-tekniker"'
 alias lazygit='git-ssh-agent && lazygit'
+alias public='copy-ssh-pubkey.sh'
 
 # Simple functions
 sky() { ~/astroterm-linux-x86_64 --color --constellations --speed 100 --fps 20 --city Barcelona; }
@@ -93,7 +94,7 @@ push() { git add . && git commit -m "$*" && git push; }
 
 # SSH Agent - source to preserve environment variables
 git-ssh-agent() {
-  source "$HOME/configFiles/scripts/git-ssh-agent"
+  source "$HOME/configFiles/scripts/git-ssh-agent.sh"
 }
 
 # =============================================================================
