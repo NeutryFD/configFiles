@@ -1,36 +1,34 @@
 #!/usr/bin/env bash
 
-VPN_ENTRY=$(nmcli connection  show  | grep vpn | awk '{print $1}')
-
-
-ACTIVE_CONNECTION=$(nmcli --mode tabular --terse connection show --active | grep vpn | cut -d ':' -f1) || true
-
-
-if [[ "$ACTIVE_CONNECTION" ]]; then
-        echo "$ACTIVE_CONNECTION"
-fi
-
-
-if [[ !"$ACTIVE_CONNECTION" ]]; then
-        echo "Disconnect"
-fi
-
-vpn_toggle_connection() {
-# connects or disconnects vpn
-
-if [[ "$ACTIVE_CONNECTION" == "$VPN_ENTRY" ]]; then
-        nmcli c d $VPN_ENTRY 
-fi
-
-
-if [[ "$ACTIVE_CONNECTION" != "$VPN_ENTRY" ]]; then
-        nmcli c u $VPN_ENTRY 
-fi
-
+get_vpn_info() {
+    for iface in tun tap wireguard ppp; do
+        for num in 0 1 2 3 4 5 6 7 8 9; do
+            if ip link show "${iface}${num}" 2>/dev/null | grep -q "state UNKNOWN\|state UP"; then
+                VPN_IP=$(ip addr show "${iface}${num}" 2>/dev/null | grep "inet " | awk '{print $2}' | cut -d '/' -f1)
+                if [[ -n "$VPN_IP" ]]; then
+                    echo "${iface^^}${num} ($VPN_IP)"
+                    return 0
+                fi
+            fi
+        done
+    done
+    
+    for iface in $(ip -o link show | awk -F': ' '{print $2}'); do
+        case "$iface" in
+            tun*|tap*|wg*|ppp*)
+                if ip link show "$iface" 2>/dev/null | grep -q "state UNKNOWN\|state UP"; then
+                    VPN_IP=$(ip addr show "$iface" 2>/dev/null | grep "inet " | awk '{print $2}' | cut -d '/' -f1)
+                    if [[ -n "$VPN_IP" ]]; then
+                        echo "$iface ($VPN_IP)"
+                        return 0
+                    fi
+                fi
+                ;;
+        esac
+    done
+    
+    echo "Disconnected"
+    return 1
 }
 
-
-# cases for polybar click events
-case "$1" in
-	-t|--toggle-connection) vpn_toggle_connection ;;
-esac
+get_vpn_info
