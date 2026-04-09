@@ -1,13 +1,16 @@
 #!/bin/bash
 
+# =============================================================================
+# Kubectl Pod Request Script
 # Show pod resource requests (CPU/memory) in a namespace
-# Usage: kubectl_pod_request <namespace> [label_selector]
+# Usage: kubectl_pod_request.sh <namespace> [label_selector]
+# =============================================================================
 
 namespace="$1"
 label_selector="$2"
 
 if [[ -z "$namespace" ]]; then
-    echo "Usage: kubectl_pod_request <namespace> [label_selector]"
+    echo "Usage: kubectl_pod_request.sh <namespace> [label_selector]"
     exit 1
 fi
 

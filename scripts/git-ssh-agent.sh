@@ -7,6 +7,8 @@
 # Usage: source git-ssh-agent
 # =============================================================================
 
+FZF_OPTS="--layout=reverse"
+
 is_sourced() {
     [[ -z "${ZSH_VERSION}" ]] && [[ "${BASH_SOURCE[0]}" != "${0}" ]] && return 0
     [[ -n "${ZSH_VERSION}" ]] && [[ "$0" != *git-ssh-agent* ]] && return 0
@@ -35,7 +37,7 @@ done
 
 # Select keys with fzf and add them
 if [[ ${#private_keys[@]} -gt 0 ]]; then
-  selected_keys=$(printf "%s\n" "${private_keys[@]}" | fzf --multi --header="Select SSH keys (TAB to select multiple, ENTER to confirm)")
+  selected_keys=$(printf "%s\n" "${private_keys[@]}" | fzf --multi --layout=reverse --header="Select SSH keys to add")
   if [[ -n "$selected_keys" ]]; then
     while IFS= read -r key; do
       ssh-add "$key" 2>/dev/null && echo "Added key: $key"
