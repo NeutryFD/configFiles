@@ -32,7 +32,6 @@ super + v
         -theme-str 'listview \{ spacing: 0; \}' \
         -theme-str 'window \{ width: 20em; anchor: center; location: center; \}'
 
-
 #clean clipboard
 super + alt + c
   clipdel -d ".*" > /dev/null
