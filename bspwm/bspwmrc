@@ -103,19 +103,10 @@ if [ $(hostnamectl chassis) == "laptop" ]; then
 			bspc wm --reorder-monitors $INTERNAL_MONITOR $EXTERNAL_MONITOR #for bspwm desktop order
 			
 			##  --- Polybar init -----------------------------------
-			polybar -c $HOME/configFiles/polybar/thinkpad-II.conf thinkpad-left &
-			polybar -c $HOME/configFiles/polybar/thinkpad-II.conf thinkpad-center &
-			polybar -c $HOME/configFiles/polybar/thinkpad-II.conf thinkpad-wifi &
-			polybar -c $HOME/configFiles/polybar/thinkpad-II.conf thinkpad-ethernet &
-			polybar -c $HOME/configFiles/polybar/thinkpad-II.conf tray &
-
-		
-			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-banner &
-			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-VPN &
-			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-center &
-			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-music &
-			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf II-right &
-			MONITOR=$EXTERNAL_MONITOR polybar -c $HOME/configFiles/polybar/thinkpad-II.conf tray &
+		launch_polybar "$HOME/configFiles/polybar/thinkpad-II.conf" "" \
+			thinkpad-left thinkpad-center thinkpad-wifi thinkpad-ethernet tray
+		launch_polybar "$HOME/configFiles/polybar/thinkpad-II.conf" "$EXTERNAL_MONITOR" \
+			II-banner II-VPN II-center II-music II-right tray
 	else
 		xrandr --auto
 
