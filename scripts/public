@@ -1,0 +1,23 @@
+#!/bin/bash
+# Find public keys in ~/.ssh/
+private_keys=()
+for f in "$HOME/.ssh/"*; do
+  if [[ -f "$f" && "$f" = *.pub ]] && file "$f" | grep -qi "public key"; then
+    private_keys+=("$f")
+  fi
+done
+
+if [[ ${#private_keys[@]} -gt 0 ]]; then
+  selected_keys=$(printf "%s\n" "${private_keys[@]}" | fzf --multi --header="Select SSH keys (TAB to select multiple, ENTER to confirm)")
+  if [[ -n "$selected_keys" ]]; then
+    while IFS= read -r key; do
+     xclip -sel clip < "$key" &&
+	 echo "Copied key to clipboard: $key"
+    done <<< "$selected_keys"
+  else
+    echo "No keys selected."
+  fi
+else
+  echo "No private keys found in ~/.ssh/"
+fi
+# Copy public SSH key to clipboard

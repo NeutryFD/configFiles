@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Show pod resource requests (CPU/memory) in a namespace
+# Usage: kubectl_pod_request <namespace> [label_selector]
+
+namespace="$1"
+label_selector="$2"
+
+if [[ -z "$namespace" ]]; then
+    echo "Usage: kubectl_pod_request <namespace> [label_selector]"
+    exit 1
+fi
+
+echo -e "POD_NAME\tCPU_REQUEST\tMEMORY_REQUEST"
+echo -e "--------\t-----------\t--------------"
+
+if [[ -n "$label_selector" ]]; then
+    kubectl get pods -n "$namespace" -l "$label_selector" -o json | \
+      jq -r '.items[] | select(.status.phase=="Running") | "\(.metadata.name)\t\(.spec.containers[0].resources.requests.cpu // "N/A")\t\(.spec.containers[0].resources.requests.memory // "N/A")"' | column -t | head -15
+else
+    kubectl get pods -n "$namespace" -o json | \
+      jq -r '.items[] | select(.status.phase=="Running") | "\(.metadata.name)\t\(.spec.containers[0].resources.requests.cpu // "N/A")\t\(.spec.containers[0].resources.requests.memory // "N/A")"' | column -t | head -15
+fi
