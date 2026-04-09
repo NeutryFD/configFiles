@@ -79,10 +79,12 @@ if [ $(hostnamectl chassis) == "laptop" ]; then
 			MONITOR=$EXTERNAL_MONITOR_2 polybar -c $HOME/configFiles/polybar/thinkpad-II.conf tray &
 		
 	elif [ $(xrandr | grep -o '\bconnected' | wc -l) -eq 2 ]; then
- 
-		if [ $(xrandr | grep "$HDMI_PORT" | awk '{print $2}') == "connected" ]; then
+  
+		if [ "$(xrandr | grep "$HDMI_PORT" | awk '{print $2}')" == "connected" ]; then
 			EXTERNAL_MONITOR=$HDMI_PORT
-	    fi	
+		elif [ "$(xrandr | grep "$DISPLAYPORT" | awk '{print $2}')" == "connected" ]; then
+			EXTERNAL_MONITOR=$DISPLAYPORT
+		fi
 
 	  	    #xrandr --output "$INTERNAL_MONITOR" --auto --output "$EXTERNAL_MONITOR" --auto --same-as $EXTERNAL_MONITOR
 
