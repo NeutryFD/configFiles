@@ -109,8 +109,8 @@ if [ "$(hostnamectl chassis)" == "laptop" ]; then
 
         # Assign workspaces to monitors
         bspc monitor "$EXT_DISPLAY_2"   -d I II III
-        bspc monitor "$EXT_DISPLAY_1"     -d IV V VI
-        bspc monitor "$LAPTOP_DISPLAY"     -d VII VIII IX
+        bspc monitor "$EXT_DISPLAY_1"   -d IV V VI
+        bspc monitor "$LAPTOP_DISPLAY"  -d VII VIII IX
 
         # Set monitor order (left to right)
         bspc wm --reorder-monitors "$EXT_DISPLAY_2" "$EXT_DISPLAY_1" "$LAPTOP_DISPLAY"
@@ -142,7 +142,7 @@ if [ "$(hostnamectl chassis)" == "laptop" ]; then
         xrandr --output "$LAPTOP_DISPLAY" --rate 60 --left-of "$EXT_DISPLAY_1"
 
         # Assign workspaces to monitors
-        bspc monitor "$EXT_DISPLAY_1" -d I II III IV V
+        bspc monitor "$EXT_DISPLAY_1"  -d I II III IV V
         bspc monitor "$LAPTOP_DISPLAY" -d VI VII VIII IX X
         bspc wm --reorder-monitors "$LAPTOP_DISPLAY" "$EXT_DISPLAY_1"
 
@@ -183,7 +183,7 @@ else
 
     # Launch polybar
     launch_polybar "$HOME/configFiles/polybar/arch.conf" "" \
-        left banner ethernet bspwm right music tray
+        left banner ethernet bspwm right music tray vpn
 
     # Set wallpaper
     feh --bg-scale "$WALLPAPER"
