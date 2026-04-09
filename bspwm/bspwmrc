@@ -16,12 +16,12 @@ killall -q polybar sxhkd clipmenud picom
 # ============================================================================
 
 # Monitor definitions
-INTERNAL_MONITOR="eDP"
+LAPTOP_DISPLAY="eDP"
 HDMI_PORT="HDMI-A-0"
-DISPLAYPORT="DisplayPort-0"
-EXTERNAL_MONITOR=$DISPLAYPORT
-EXTERNAL_MONITOR_2=$HDMI_PORT
-INTERNAL_MONITOR_ARCH="HDMI-0"
+DP_PORT="DisplayPort-0"
+EXT_DISPLAY_1=$DP_PORT
+EXT_DISPLAY_2=$HDMI_PORT
+DESKTOP_DISPLAY="HDMI-0"
 
 # Wallpaper path
 WALLPAPER="$HOME/Pictures/Wallpapers/wallpaper-ballon.jpg"
@@ -74,15 +74,15 @@ setxkbmap -option caps:escape
 xsetroot -cursor_name left_ptr
 
 # BSPWM appearance settings
-bspc config border_width       0
-bspc config window_gap        6
-bspc config top_padding       38
-bspc config bottom_padding    38
-bspc config right_padding     8
-bspc config left_padding      8
-bspc config split_ratio       0.49
-bspc config borderless_monocle  true
-bspc config gapless_monocle     true
+bspc config border_width         0
+bspc config window_gap           6
+bspc config top_padding          38
+bspc config bottom_padding       38
+bspc config right_padding        8
+bspc config left_padding         8
+bspc config split_ratio          0.49
+bspc config borderless_monocle   true
+bspc config gapless_monocle      true
 
 # ============================================================================
 # MONITOR CONFIGURATION
@@ -96,33 +96,33 @@ if [ "$(hostnamectl chassis)" == "laptop" ]; then
         # Three monitors: DisplayPort + HDMI + Internal
 
         # Determine which ports are connected
-        if is_connected "$HDMI_PORT" && is_connected "$DISPLAYPORT"; then
-            EXTERNAL_MONITOR=$DISPLAYPORT
-            EXTERNAL_MONITOR_2=$HDMI_PORT
+        if is_connected "$HDMI_PORT" && is_connected "$DP_PORT"; then
+            EXT_DISPLAY_1=$DP_PORT
+            EXT_DISPLAY_2=$HDMI_PORT
         fi
 
         # Configure displays
         xrandr --auto
-        xrandr --output "$INTERNAL_MONITOR" --rate 60
-        xrandr --output "$EXTERNAL_MONITOR"     --rate 60 --left-of "$INTERNAL_MONITOR"
-        xrandr --output "$EXTERNAL_MONITOR_2"   --rate 60 --left-of "$EXTERNAL_MONITOR"
+        xrandr --output "$LAPTOP_DISPLAY"  --rate 60
+        xrandr --output "$EXT_DISPLAY_1"   --rate 60 --left-of "$LAPTOP_DISPLAY"
+        xrandr --output "$EXT_DISPLAY_2"   --rate 60 --left-of "$EXT_DISPLAY_1"
 
         # Assign workspaces to monitors
-        bspc monitor "$EXTERNAL_MONITOR_2"   -d I II III
-        bspc monitor "$EXTERNAL_MONITOR"     -d IV V VI
-        bspc monitor "$INTERNAL_MONITOR"     -d VII VIII IX
+        bspc monitor "$EXT_DISPLAY_2"   -d I II III
+        bspc monitor "$EXT_DISPLAY_1"     -d IV V VI
+        bspc monitor "$LAPTOP_DISPLAY"     -d VII VIII IX
 
         # Set monitor order (left to right)
-        bspc wm --reorder-monitors "$EXTERNAL_MONITOR_2" "$EXTERNAL_MONITOR" "$INTERNAL_MONITOR"
+        bspc wm --reorder-monitors "$EXT_DISPLAY_2" "$EXT_DISPLAY_1" "$LAPTOP_DISPLAY"
 
         # Launch polybar for each monitor
         launch_polybar "$HOME/configFiles/polybar/thinkpad-II.conf" "" \
             thinkpad-left thinkpad-center thinkpad-wifi thinkpad-ethernet thinkpad-right tray
 
-        launch_polybar "$HOME/configFiles/polybar/thinkpad-II.conf" "$EXTERNAL_MONITOR" \
+        launch_polybar "$HOME/configFiles/polybar/thinkpad-II.conf" "$EXT_DISPLAY_1" \
             II-banner II-VPN II-center II-music II-right tray
 
-        launch_polybar "$HOME/configFiles/polybar/thinkpad-II.conf" "$EXTERNAL_MONITOR_2" \
+        launch_polybar "$HOME/configFiles/polybar/thinkpad-II.conf" "$EXT_DISPLAY_2" \
             II-banner II-VPN II-center II-music II-right tray
 
 
@@ -131,42 +131,42 @@ if [ "$(hostnamectl chassis)" == "laptop" ]; then
 
         # Detect which port is in use
         if is_connected "$HDMI_PORT"; then
-            EXTERNAL_MONITOR=$HDMI_PORT
-        elif is_connected "$DISPLAYPORT"; then
-            EXTERNAL_MONITOR=$DISPLAYPORT
+            EXT_DISPLAY_1=$HDMI_PORT
+        elif is_connected "$DP_PORT"; then
+            EXT_DISPLAY_1=$DP_PORT
         fi
 
         # Configure displays
         xrandr --auto
-        xrandr --output "$INTERNAL_MONITOR" --rate 60
-        xrandr --output "$INTERNAL_MONITOR" --rate 60 --left-of "$EXTERNAL_MONITOR"
+        xrandr --output "$LAPTOP_DISPLAY" --rate 60
+        xrandr --output "$LAPTOP_DISPLAY" --rate 60 --left-of "$EXT_DISPLAY_1"
 
         # Assign workspaces to monitors
-        bspc monitor "$EXTERNAL_MONITOR" -d I II III IV V
-        bspc monitor "$INTERNAL_MONITOR" -d VI VII VIII IX X
-        bspc wm --reorder-monitors "$INTERNAL_MONITOR" "$EXTERNAL_MONITOR"
+        bspc monitor "$EXT_DISPLAY_1" -d I II III IV V
+        bspc monitor "$LAPTOP_DISPLAY" -d VI VII VIII IX X
+        bspc wm --reorder-monitors "$LAPTOP_DISPLAY" "$EXT_DISPLAY_1"
 
         # Launch polybar
         launch_polybar "$HOME/configFiles/polybar/thinkpad-II.conf" "" \
             thinkpad-left thinkpad-center thinkpad-wifi thinkpad-ethernet tray
 
-        launch_polybar "$HOME/configFiles/polybar/thinkpad-II.conf" "$EXTERNAL_MONITOR" \
+        launch_polybar "$HOME/configFiles/polybar/thinkpad-II.conf" "$EXT_DISPLAY_1" \
             II-banner II-VPN II-center II-music II-right tray
 
     else
         # Single monitor: Internal only
 
         xrandr --auto
-        xrandr --output "$INTERNAL_MONITOR" --rate 60
-        bspc wm --reorder-monitors "$INTERNAL_MONITOR"
+        xrandr --output "$LAPTOP_DISPLAY" --rate 60
+        bspc wm --reorder-monitors "$LAPTOP_DISPLAY"
 
         # All workspaces on internal monitor
-        bspc monitor "$INTERNAL_MONITOR" -d I II III IV V VI VII VIII IX X
+        bspc monitor "$LAPTOP_DISPLAY" -d I II III IV V VI VII VIII IX X
 
         # Migrate windows from disconnected external monitors
         for wid in $(bspc query -N -n .window); do
             CURRENT_DESKTOP=$(bspc query -D -n "$wid" --names)
-            bspc node "$wid" --to-monitor "$INTERNAL_MONITOR" -d "$CURRENT_DESKTOP"
+            bspc node "$wid" --to-monitor "$LAPTOP_DISPLAY" -d "$CURRENT_DESKTOP"
         done
 
         # Launch polybar
@@ -178,8 +178,8 @@ if [ "$(hostnamectl chassis)" == "laptop" ]; then
 else
     # ---- Desktop mode (non-laptop) ----
 
-    xrandr --output "$INTERNAL_MONITOR_ARCH" --rate 60
-    bspc monitor "$INTERNAL_MONITOR_ARCH" -d I II III IV V VI VII VIII IX X
+    xrandr --output "$DESKTOP_DISPLAY" --rate 60
+    bspc monitor "$DESKTOP_DISPLAY" -d I II III IV V VI VII VIII IX X
 
     # Launch polybar
     launch_polybar "$HOME/configFiles/polybar/arch.conf" "" \
