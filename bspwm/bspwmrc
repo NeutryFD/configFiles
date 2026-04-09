@@ -1,154 +1,207 @@
 #!/bin/bash
 
+# ============================================================================
+# BSPWM Startup Script
+# Configures display, polybar, and essential services on login
+# ============================================================================
+
+# Prevent race conditions by waiting for processes to terminate
 sleep 1
 
-killall -q polybar
-killall -q sxhkd
-killall -q clipmenud
-killall -q picom
+# Kill existing instances to avoid duplicates
+killall -q polybar sxhkd clipmenud picom
 
-##  --- VARIABLES ---------------------------------
+# ============================================================================
+# CONFIGURATION
+# ============================================================================
 
+# Monitor definitions
 INTERNAL_MONITOR="eDP"
 HDMI_PORT="HDMI-A-0"
 DISPLAYPORT="DisplayPort-0"
 EXTERNAL_MONITOR=$DISPLAYPORT
-EXTERNAL_MONITOR_2=$HDMI_PORT	
+EXTERNAL_MONITOR_2=$HDMI_PORT
 INTERNAL_MONITOR_ARCH="HDMI-0"
 
+# Wallpaper path
+WALLPAPER="$HOME/Pictures/Wallpapers/wallpaper-ballon.jpg"
+
+# ============================================================================
+# FUNCTIONS
+# ============================================================================
+
+# Launch polybar instances
+# Usage: launch_polybar <config> <monitor> <bar_names...>
+#   config  - path to polybar config file
+#   monitor - monitor name (empty for primary/internal)
+#   bars    - space-separated list of bar names from config
 launch_polybar() {
-	local config=$1
-	shift
-	local monitor=$1
-	shift
-	local bars=("$@")
-	for bar in "${bars[@]}"; do
-		if [ -n "$monitor" ]; then
-			MONITOR=$monitor polybar -c "$config" "$bar" &
-		else
-			polybar -c "$config" "$bar" &
-		fi
-	done
+    local config=$1
+    shift
+    local monitor=$1
+    shift
+    local bars=("$@")
+
+    for bar in "${bars[@]}"; do
+        if [ -n "$monitor" ]; then
+            MONITOR="$monitor" polybar -c "$config" "$bar" &
+        else
+            polybar -c "$config" "$bar" &
+        fi
+    done
 }
 
-##  --- Init Configuration ----------------
-##  --- Keyboard
+# Check if a monitor is connected
+# Usage: is_connected <port_name>
+is_connected() {
+    [ "$(xrandr | grep "$1" | awk '{print $2}')" == "connected" ]
+}
+
+# Count connected monitors
+connected_monitors() {
+    xrandr | grep -o '\bconnected' | wc -l
+}
+
+# ============================================================================
+# INITIALIZATION
+# ============================================================================
+
+# Keyboard: EU layout with caps as escape
 setxkbmap eu
 setxkbmap -option caps:escape
 
-##  --- Mouse
+# Mouse cursor
 xsetroot -cursor_name left_ptr
 
-##  --- BSPWM configuration ---------------------------
-bspc config border_width         0
-bspc config window_gap           6
-bspc config top_padding          38
-bspc config bottom_padding       38
-bspc config right_padding        8
-bspc config left_padding         8
-bspc config split_ratio          0.49
-bspc config borderless_monocle   true
-bspc config gapless_monocle      true
+# BSPWM appearance settings
+bspc config border_width       0
+bspc config window_gap        6
+bspc config top_padding       38
+bspc config bottom_padding    38
+bspc config right_padding     8
+bspc config left_padding      8
+bspc config split_ratio       0.49
+bspc config borderless_monocle  true
+bspc config gapless_monocle     true
+
+# ============================================================================
+# MONITOR CONFIGURATION
+# ============================================================================
+
+if [ "$(hostnamectl chassis)" == "laptop" ]; then
+
+    # ---- Laptop mode: check connected monitors ----
+
+    if [ $(connected_monitors) -eq 3 ]; then
+        # Three monitors: DisplayPort + HDMI + Internal
+
+        # Determine which ports are connected
+        if is_connected "$HDMI_PORT" && is_connected "$DISPLAYPORT"; then
+            EXTERNAL_MONITOR=$DISPLAYPORT
+            EXTERNAL_MONITOR_2=$HDMI_PORT
+        fi
+
+        # Configure displays
+        xrandr --auto
+        xrandr --output "$INTERNAL_MONITOR" --rate 60
+        xrandr --output "$EXTERNAL_MONITOR"     --rate 60 --left-of "$INTERNAL_MONITOR"
+        xrandr --output "$EXTERNAL_MONITOR_2"   --rate 60 --left-of "$EXTERNAL_MONITOR"
+
+        # Assign workspaces to monitors
+        bspc monitor "$EXTERNAL_MONITOR_2"   -d I II III
+        bspc monitor "$EXTERNAL_MONITOR"     -d IV V VI
+        bspc monitor "$INTERNAL_MONITOR"     -d VII VIII IX
+
+        # Set monitor order (left to right)
+        bspc wm --reorder-monitors "$EXTERNAL_MONITOR_2" "$EXTERNAL_MONITOR" "$INTERNAL_MONITOR"
+
+        # Launch polybar for each monitor
+        launch_polybar "$HOME/configFiles/polybar/thinkpad-II.conf" "" \
+            thinkpad-left thinkpad-center thinkpad-wifi thinkpad-ethernet thinkpad-right tray
+
+        launch_polybar "$HOME/configFiles/polybar/thinkpad-II.conf" "$EXTERNAL_MONITOR" \
+            II-banner II-VPN II-center II-music II-right tray
+
+        launch_polybar "$HOME/configFiles/polybar/thinkpad-II.conf" "$EXTERNAL_MONITOR_2" \
+            II-banner II-VPN II-center II-music II-right tray
 
 
-if [ $(hostnamectl chassis) == "laptop" ]; then
+    elif [ $(connected_monitors) -eq 2 ]; then
+        # Two monitors: External + Internal
 
-	if [ $(xrandr | grep -o '\bconnected' | wc -l) -eq 3 ]; then
- 
-		if [ "$(xrandr | grep "$HDMI_PORT" | awk '{print $2}')" == "connected" ] && [ "$(xrandr | grep "$DISPLAYPORT" | awk '{print $2}')" == "connected" ]; then
+        # Detect which port is in use
+        if is_connected "$HDMI_PORT"; then
+            EXTERNAL_MONITOR=$HDMI_PORT
+        elif is_connected "$DISPLAYPORT"; then
+            EXTERNAL_MONITOR=$DISPLAYPORT
+        fi
 
-			EXTERNAL_MONITOR=$DISPLAYPORT
-			EXTERNAL_MONITOR_2=$HDMI_PORT
-	    fi	
-			##  --- Monitor configuration ----------------------
-			xrandr --auto
-			xrandr --output "$INTERNAL_MONITOR" --rate 60
-			xrandr --output "$EXTERNAL_MONITOR" --rate 60 --left-of "$INTERNAL_MONITOR"
-			xrandr --output "$EXTERNAL_MONITOR_2" --rate 60 --left-of "$EXTERNAL_MONITOR"
-			
-		  	##  --- BSPWM workspaces by monitor ------------------
-		  	bspc monitor "$EXTERNAL_MONITOR_2" -d I II III
-		    bspc monitor "$EXTERNAL_MONITOR" -d IV V VI
-			bspc monitor "$INTERNAL_MONITOR" -d VII VIII IX
+        # Configure displays
+        xrandr --auto
+        xrandr --output "$INTERNAL_MONITOR" --rate 60
+        xrandr --output "$INTERNAL_MONITOR" --rate 60 --left-of "$EXTERNAL_MONITOR"
 
-			bspc wm --reorder-monitors "$EXTERNAL_MONITOR_2" "$EXTERNAL_MONITOR" "$INTERNAL_MONITOR"
+        # Assign workspaces to monitors
+        bspc monitor "$EXTERNAL_MONITOR" -d I II III IV V
+        bspc monitor "$INTERNAL_MONITOR" -d VI VII VIII IX X
+        bspc wm --reorder-monitors "$INTERNAL_MONITOR" "$EXTERNAL_MONITOR"
 
-			
-			##  --- Polybar init -----------------------------------
-			launch_polybar "$HOME/configFiles/polybar/thinkpad-II.conf" "" \
-				thinkpad-left thinkpad-center thinkpad-wifi thinkpad-ethernet thinkpad-right tray
-			launch_polybar "$HOME/configFiles/polybar/thinkpad-II.conf" "$EXTERNAL_MONITOR" \
-				II-banner II-VPN II-center II-music II-right tray
-			launch_polybar "$HOME/configFiles/polybar/thinkpad-II.conf" "$EXTERNAL_MONITOR_2" \
-				II-banner II-VPN II-center II-music II-right tray
-		
-	elif [ $(xrandr | grep -o '\bconnected' | wc -l) -eq 2 ]; then
-  
-		if [ "$(xrandr | grep "$HDMI_PORT" | awk '{print $2}')" == "connected" ]; then
-			EXTERNAL_MONITOR=$HDMI_PORT
-		elif [ "$(xrandr | grep "$DISPLAYPORT" | awk '{print $2}')" == "connected" ]; then
-			EXTERNAL_MONITOR=$DISPLAYPORT
-		fi
+        # Launch polybar
+        launch_polybar "$HOME/configFiles/polybar/thinkpad-II.conf" "" \
+            thinkpad-left thinkpad-center thinkpad-wifi thinkpad-ethernet tray
 
-	  	    #xrandr --output "$INTERNAL_MONITOR" --auto --output "$EXTERNAL_MONITOR" --auto --same-as $EXTERNAL_MONITOR
+        launch_polybar "$HOME/configFiles/polybar/thinkpad-II.conf" "$EXTERNAL_MONITOR" \
+            II-banner II-VPN II-center II-music II-right tray
 
-			##  --- Monitor configuration ----------------------
-			xrandr --auto
-			xrandr --output "$INTERNAL_MONITOR" --rate 60
-			xrandr --output "$INTERNAL_MONITOR" --rate 60 --left-of "$EXTERNAL_MONITOR" # for Mouse continuity (home)
-			
-		    ##  --- BSPWM workspaces by monitor ------------------
-			bspc monitor "$EXTERNAL_MONITOR" -d I II III IV V
-			bspc monitor "$INTERNAL_MONITOR" -d VI VII VIII IX X
-			bspc wm --reorder-monitors $INTERNAL_MONITOR $EXTERNAL_MONITOR #for bspwm desktop order
-			
-			##  --- Polybar init -----------------------------------
-		launch_polybar "$HOME/configFiles/polybar/thinkpad-II.conf" "" \
-			thinkpad-left thinkpad-center thinkpad-wifi thinkpad-ethernet tray
-		launch_polybar "$HOME/configFiles/polybar/thinkpad-II.conf" "$EXTERNAL_MONITOR" \
-			II-banner II-VPN II-center II-music II-right tray
-	else
-		xrandr --auto
+    else
+        # Single monitor: Internal only
 
-		##  --- Monitor configuration ----------------------
-		xrandr --output "$INTERNAL_MONITOR" --rate 60
-		
-		bspc wm --reorder-monitors $INTERNAL_MONITOR
-		##  --- BSPWM workspaces by monitor ------------------
-		bspc monitor "$INTERNAL_MONITOR" -d I II III IV V VI VII VIII IX X
-		
-		# Move all windows from the now-nonexistent monitor to the internal one follow the current desktop 
-		for wid in $(bspc query -N -n .window); do
-		#	CURRENT_MONITOR=$(bspc query -M -n "$wid" --names)
-		#	if [ "$CURRENT_MONITOR" != "$INTERNAL_MONITOR" ]; then
-				CURRENT_DESKTOP=$(bspc query -D -n "$wid" --names)
-				bspc node "$wid" --to-monitor "$INTERNAL_MONITOR" -d "$CURRENT_DESKTOP"
-		#	fi
-		done
-		
-		##  --- Polybar init -----------------------------------
-		launch_polybar "$HOME/configFiles/polybar/thinkpad.conf" "" \
-			left banner wifi ethernet bspwm music right tray II-VPN
+        xrandr --auto
+        xrandr --output "$INTERNAL_MONITOR" --rate 60
+        bspc wm --reorder-monitors "$INTERNAL_MONITOR"
 
+        # All workspaces on internal monitor
+        bspc monitor "$INTERNAL_MONITOR" -d I II III IV V VI VII VIII IX X
 
-	fi
+        # Migrate windows from disconnected external monitors
+        for wid in $(bspc query -N -n .window); do
+            CURRENT_DESKTOP=$(bspc query -D -n "$wid" --names)
+            bspc node "$wid" --to-monitor "$INTERNAL_MONITOR" -d "$CURRENT_DESKTOP"
+        done
+
+        # Launch polybar
+        launch_polybar "$HOME/configFiles/polybar/thinkpad.conf" "" \
+            left banner wifi ethernet bspwm music right tray II-VPN
+
+    fi
 
 else
-	            
- ##  --- Monitor configuration ----------------------
- xrandr --output "$INTERNAL_MONITOR_ARCH" --rate 60
- bspc monitor "$INTERNAL_MONITOR_ARCH" -d I II III IV V VI VII VIII IX X
- 
- ##  --- Polybar init --------------------
- launch_polybar "$HOME/configFiles/polybar/arch.conf" "" \
-  left banner ethernet bspwm right music tray
+    # ---- Desktop mode (non-laptop) ----
 
- feh --bg-scale $HOME/Pictures/Wallpapers/wallpaper-ballon.jpg
+    xrandr --output "$INTERNAL_MONITOR_ARCH" --rate 60
+    bspc monitor "$INTERNAL_MONITOR_ARCH" -d I II III IV V VI VII VIII IX X
+
+    # Launch polybar
+    launch_polybar "$HOME/configFiles/polybar/arch.conf" "" \
+        left banner ethernet bspwm right music tray
+
+    # Set wallpaper
+    feh --bg-scale "$WALLPAPER"
 
 fi
 
-##  --- Software and Services --------------------------
-sxhkd -c $HOME/configFiles/sxhkd/sxhkdrc &
+# ============================================================================
+# START SERVICES
+# ============================================================================
+
+# Keyboard shortcuts daemon
+sxhkd -c "$HOME/configFiles/sxhkd/sxhkdrc" &
+
+# Compositor (if not already running)
 pgrep -x picom > /dev/null || picom --config "$HOME/configFiles/picom/picom.conf"
-feh --bg-scale $HOME/Pictures/Wallpapers/wallpaper-ballon.jpg
+
+# Wallpaper (already set in desktop mode)
+feh --bg-scale "$WALLPAPER"
+
+# Clipboard manager
 clipmenud &
