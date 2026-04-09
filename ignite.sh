@@ -141,7 +141,45 @@ setup_tmux() {
 
 setup_zsh() {
     echo -e "\n${YELLOW}--- Zsh ---${NC}"
-    install_packages zsh fzf
+    install_packages zsh fzf lsd lazygit xclip
+
+    # Oh-My-Zsh
+    if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
+        info "Installing Oh-My-Zsh..."
+        if $DRY_RUN; then
+            dry "sh -c \"\$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)\" \"\" --unattended"
+        else
+            sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+        fi
+    else
+        info "Oh-My-Zsh already installed"
+    fi
+
+    # Plugins
+    local plugins_dir="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins"
+
+    if [[ ! -d "$plugins_dir/zsh-autosuggestions" ]]; then
+        info "Installing zsh-autosuggestions..."
+        if $DRY_RUN; then
+            dry "git clone https://github.com/zsh-users/zsh-autosuggestions $plugins_dir/zsh-autosuggestions"
+        else
+            git clone https://github.com/zsh-users/zsh-autosuggestions "$plugins_dir/zsh-autosuggestions"
+        fi
+    else
+        info "zsh-autosuggestions already installed"
+    fi
+
+    if [[ ! -d "$plugins_dir/zsh-syntax-highlighting" ]]; then
+        info "Installing zsh-syntax-highlighting..."
+        if $DRY_RUN; then
+            dry "git clone https://github.com/zsh-users/zsh-syntax-highlighting $plugins_dir/zsh-syntax-highlighting"
+        else
+            git clone https://github.com/zsh-users/zsh-syntax-highlighting "$plugins_dir/zsh-syntax-highlighting"
+        fi
+    else
+        info "zsh-syntax-highlighting already installed"
+    fi
+
     link_config "zsh/.zshrc" "$HOME/.zshrc"
     # scripts/ directory is added to PATH in .zshrc
     if $DRY_RUN; then
