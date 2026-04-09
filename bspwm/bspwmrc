@@ -51,7 +51,7 @@ if [ $(hostnamectl chassis) == "laptop" ]; then
 		  	##  --- BSPWM workspaces by monitor ------------------
 		  	bspc monitor "$EXTERNAL_MONITOR_2" -d I II III
 		    bspc monitor "$EXTERNAL_MONITOR" -d IV V VI
-			bspc monitor "$INTERNAL_MONITOR" -d VII VII IX
+			bspc monitor "$INTERNAL_MONITOR" -d VII VIII IX
 
 			bspc wm --reorder-monitors "$EXTERNAL_MONITOR_2" "$EXTERNAL_MONITOR" "$INTERNAL_MONITOR"
 
