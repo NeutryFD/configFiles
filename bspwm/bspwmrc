@@ -127,15 +127,8 @@ if [ $(hostnamectl chassis) == "laptop" ]; then
 		done
 		
 		##  --- Polybar init -----------------------------------
-		polybar -c $HOME/configFiles/polybar/thinkpad.conf left &
-		polybar -c $HOME/configFiles/polybar/thinkpad.conf banner &
-		polybar -c $HOME/configFiles/polybar/thinkpad.conf wifi &
-		polybar -c $HOME/configFiles/polybar/thinkpad.conf ethernet &
-		polybar -c $HOME/configFiles/polybar/thinkpad.conf bspwm &
-		polybar -c $HOME/configFiles/polybar/thinkpad.conf music &
-		polybar -c $HOME/configFiles/polybar/thinkpad.conf right &
-		polybar -c $HOME/configFiles/polybar/thinkpad.conf tray &
-		polybar -c $HOME/configFiles/polybar/thinkpad.conf II-VPN &
+		launch_polybar "$HOME/configFiles/polybar/thinkpad.conf" "" \
+			left banner wifi ethernet bspwm music right tray II-VPN
 
 
 	fi
@@ -147,13 +140,8 @@ else
  bspc monitor "$INTERNAL_MONITOR_ARCH" -d I II III IV V VI VII VIII IX X
  
  ##  --- Polybar init --------------------
- polybar -c $HOME/configFiles/polybar/arch.conf  left &
- polybar -c $HOME/configFiles/polybar/arch.conf  banner &
- polybar -c $HOME/configFiles/polybar/arch.conf  ethernet &
- polybar -c $HOME/configFiles/polybar/arch.conf  bspwm &
- polybar -c $HOME/configFiles/polybar/arch.conf  right &
- polybar -c $HOME/configFiles/polybar/arch.conf  music &
- polybar -c $HOME/configFiles/polybar/arch.conf  tray &
+ launch_polybar "$HOME/configFiles/polybar/arch.conf" "" \
+  left banner ethernet bspwm right music tray
 
  feh --bg-scale $HOME/Pictures/Wallpapers/wallpaper-ballon.jpg
 
