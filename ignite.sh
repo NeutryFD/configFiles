@@ -154,6 +154,16 @@ setup_zsh() {
 
 setup_opencode() {
     echo -e "\n${YELLOW}--- OpenCode ---${NC}"
+    if ! command -v opencode &>/dev/null; then
+        info "Installing opencode..."
+        if $DRY_RUN; then
+            dry "curl -fsSL https://opencode.ai/install | bash"
+        else
+            curl -fsSL https://opencode.ai/install | bash
+        fi
+    else
+        info "OpenCode already installed"
+    fi
     link_config "opencode/AGENTS.md" "$HOME/.config/opencode/AGENTS.md"
 }
 
