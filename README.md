@@ -41,5 +41,5 @@ configFiles/
 ---
 ## 📝 TODO
 
-- [ ] Complete `ignite.sh` installer
+- [x] Complete `ignite.sh` installer
 - [ ] Document nvim plugins
