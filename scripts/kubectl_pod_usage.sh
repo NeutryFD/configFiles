@@ -1,21 +1,29 @@
 #!/bin/bash
 
+# =============================================================================
+# Kubectl Pod Usage Script
 # Show pod resource usage (CPU/memory) in a namespace
-# Usage: kubectl_pod_usage <namespace> [label_selector]
+# Usage: kubectl_pod_usage.sh <namespace> [label_selector]
+# =============================================================================
 
 namespace="$1"
 label_selector="$2"
 
+# Check if namespace is provided
 if [[ -z "$namespace" ]]; then
-    echo "Usage: kubectl_pod_usage <namespace> [label_selector]"
+    echo "Usage: kubectl_pod_usage.sh <namespace> [label_selector]"
     exit 1
 fi
 
+# Build metrics API URL
 metrics_url="/apis/metrics.k8s.io/v1beta1/namespaces/$namespace/pods"
 [[ -n "$label_selector" ]] && metrics_url="$metrics_url?labelSelector=$label_selector"
 
+# Print header
 echo -e "POD_NAME\tCPU_USAGE\tMEMORY_USAGE"
 echo -e "--------\t---------\t------------"
+
+# Get and format pod usage data
 kubectl get --raw "$metrics_url" | jq -r '
   .items[] |
   (.containers[0].usage.cpu // "0") as $cpu |
