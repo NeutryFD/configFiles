@@ -265,7 +265,6 @@ setup_zsh() {
 
     # Plugins
     local plugins_dir="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins"
-	echo "Using plugins directory: $plugins_dir"
 
     if [[ ! -d "$plugins_dir/zsh-autosuggestions" ]]; then
         info "Installing zsh-autosuggestions..."
