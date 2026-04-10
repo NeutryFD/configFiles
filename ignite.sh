@@ -130,12 +130,18 @@ setup_nvim() {
     echo -e "\n${YELLOW}--- Neovim ---${NC}"
 	local package_mgmt
 	package_mgmt="$(get_package_mgmt)"
-	echo "Package manager: $package_mgmt"
 	if [ "$package_mgmt" == "ubuntu" ]; then
-		curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
-		sudo rm -rf /opt/nvim-linux-x86_64
-		sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
-		ln -s /opt/nvim-linux-x86_64/bin/nvim /usr/local/bin/nvim
+		if $DRY_RUN; then
+			dry "curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz"
+			dry "sudo rm -rf /opt/nvim-linux-x86_64"
+			dry "sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz"
+			dry "ln -s /opt/nvim-linux-x86_64/bin/nvim /usr/local/bin/nvim"
+		else
+			curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
+			sudo rm -rf /opt/nvim-linux-x86_64
+			sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
+			ln -s /opt/nvim-linux-x86_64/bin/nvim /usr/local/bin/nvim
+		fi
 	fi
     link_config "nvim/init.lua" "$HOME/.config/nvim/init.lua"
     # lua/ directory is loaded via package.path set in init.lua
