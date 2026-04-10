@@ -51,22 +51,54 @@ link_config() {
     info "Linked $dst -> $src"
 }
 
+# Determine package manager based on /etc/os-release
+get_package_mgmt() {
+	if [[ -f /etc/os-release ]]; then
+		. /etc/os-release
+		echo "$ID"
+		if [[ "$ID" == "arch" ]]; then
+		 	package_mgmt="pacman"
+		elif [[ "$ID" == "ubuntu" ]]; then
+			package_mgmt="apt"
+		else
+			echo "unknown"
+		fi
+	else
+		echo "unknown"
+	fi
+}
+
 # Install packages with pacman (skip already installed)
 install_packages() {
+	local package_mgmt
+	package_mgmt="$(get_package_mgmt)"
     local to_install=()
+    local install_cmd check_cmd
+
+    if [[ "$package_mgmt" == "unknown" ]]; then
+		error "Unsupported OS. Cannot determine package manager."
+		return 1
+	elif [[ "$package_mgmt" == "ubuntu" ]]; then
+	    install_cmd="apt install -y"
+		check_cmd="dpkg -s"
+	elif [[ "$package_mgmt" == "arch" ]]; then
+	    install_cmd="pacman -S --noconfirm"
+		check_cmd="pacman -Qi"
+	fi
+
     for pkg in "$@"; do
-        if ! pacman -Qi "$pkg" &>/dev/null; then
+        if ! $check_cmd "$pkg" &>/dev/null; then
             to_install+=("$pkg")
         fi
     done
 
     if [[ ${#to_install[@]} -gt 0 ]]; then
         if $DRY_RUN; then
-            dry "pacman -S --noconfirm ${to_install[*]}"
+            dry "sudo $install_cmd ${to_install[*]}"
             return
         fi
         info "Installing: ${to_install[*]}"
-        sudo pacman -S --noconfirm "${to_install[@]}"
+        sudo $install_cmd "${to_install[@]}"
     else
         info "All packages already installed"
     fi
@@ -96,7 +128,15 @@ setup_ghostty() {
 
 setup_nvim() {
     echo -e "\n${YELLOW}--- Neovim ---${NC}"
-    install_packages neovim
+	local package_mgmt
+	package_mgmt="$(get_package_mgmt)"
+	echo "Package manager: $package_mgmt"
+	if [ "$package_mgmt" == "ubuntu" ]; then
+		curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
+		sudo rm -rf /opt/nvim-linux-x86_64
+		sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
+		ln -s /opt/nvim-linux-x86_64/bin/nvim /usr/local/bin/nvim
+	fi
     link_config "nvim/init.lua" "$HOME/.config/nvim/init.lua"
     # lua/ directory is loaded via package.path set in init.lua
 }
