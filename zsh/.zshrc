@@ -16,6 +16,7 @@ export PATH="$HOME/configFiles/scripts:$PATH"
 export PATH="$PATH:$HOME/.lmstudio/bin"
 export PATH="$PATH:/usr/local/go/bin"
 export PATH="$HOME/.opencode/bin:$PATH"
+export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
 
 # fnm (Copilot dependency)
 FNM_PATH="$HOME/.local/share/fnm"
