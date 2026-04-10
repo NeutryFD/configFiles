@@ -3,7 +3,7 @@
 # ignite.sh - Bootstrap script for configFiles
 # ---------------------------------------------------------------
 # Creates symlinks and installs packages for the desktop setup.
-# Run from the repo root: ./ignite.sh [--dry-run]
+# Run from the repo root: ./ignite.sh [--dry-run] [--only <module>[,<module>...]]
 #
 # Configs that don't need symlinks (loaded by absolute path):
 #   - sxhkd     -> loaded via sxhkd -c in bspwmrc
@@ -68,48 +68,87 @@ get_package_mgmt() {
 	fi
 }
 
-# Install packages with pacman (skip already installed)
+# Check if all binaries are available via which
+# Usage: check_deps <binary>[:<package>] ...
+# Returns 0 if all found, 1 if any missing (and prints which ones)
+check_deps() {
+    local missing=()
+    for entry in "$@"; do
+        local bin
+        bin="${entry%%:*}"
+        if ! which "$bin" &>/dev/null; then
+            missing+=("$bin")
+        fi
+    done
+    if [[ ${#missing[@]} -gt 0 ]]; then
+        warn "Missing dependencies: ${missing[*]}"
+        return 1
+    fi
+    return 0
+}
+
+# Install packages (skip already available ones, regardless of how they were installed)
+# Each argument can be:
+#   "pkg"          - package name and binary name are the same
+#   "binary:pkg"   - binary name differs from package name (e.g. "i3lock:i3lock-color")
 install_packages() {
 	local package_mgmt
 	package_mgmt="$(get_package_mgmt)"
     local to_install=()
-    local install_cmd check_cmd
+    local install_cmd
 
     if [[ "$package_mgmt" == "unknown" ]]; then
 		error "Unsupported OS. Cannot determine package manager."
 		return 1
 	elif [[ "$package_mgmt" == "ubuntu" ]]; then
 	    install_cmd="apt install -y"
-		check_cmd="dpkg -s"
 	elif [[ "$package_mgmt" == "arch" ]]; then
 	    install_cmd="pacman -S --noconfirm"
-		check_cmd="pacman -Qi"
 	fi
 
-    for pkg in "$@"; do
-        if ! $check_cmd "$pkg" &>/dev/null; then
+    if check_deps "$@"; then
+        info "All packages already installed"
+        return 0
+    fi
+
+    for entry in "$@"; do
+        local bin pkg
+        if [[ "$entry" == *:* ]]; then
+            bin="${entry%%:*}"
+            pkg="${entry##*:}"
+        else
+            bin="$entry"
+            pkg="$entry"
+        fi
+        if ! which "$bin" &>/dev/null; then
             to_install+=("$pkg")
         fi
     done
 
-    if [[ ${#to_install[@]} -gt 0 ]]; then
-        if $DRY_RUN; then
-            dry "sudo $install_cmd ${to_install[*]}"
-            return
-        fi
-        info "Installing: ${to_install[*]}"
-        sudo $install_cmd "${to_install[@]}"
-    else
-        info "All packages already installed"
+    if $DRY_RUN; then
+        dry "sudo $install_cmd ${to_install[*]}"
+        return
     fi
+    info "Installing: ${to_install[*]}"
+    sudo $install_cmd "${to_install[@]}"
 }
 
 # --- Module functions ------------------------------------------
 
 setup_betterlockscreen() {
     echo -e "\n${YELLOW}--- Betterlockscreen ---${NC}"
-    info "Repo: https://github.com/betterlockscreen/betterlockscreen"
-    install_packages i3lock-color xorg-xrandr xorg-xdpyinfo imagemagick bc
+    install_packages i3lock:i3lock-color xrandr:xorg-xrandr xdpyinfo:xorg-xdpyinfo convert:imagemagick bc
+    if ! which betterlockscreen &>/dev/null; then
+        info "Installing betterlockscreen..."
+        info "Repo: https://github.com/betterlockscreen/betterlockscreen"
+        if $DRY_RUN; then
+            dry "curl -fsSL https://raw.githubusercontent.com/betterlockscreen/betterlockscreen/main/install.sh | bash"
+        else
+            curl -fsSL https://raw.githubusercontent.com/betterlockscreen/betterlockscreen/main/install.sh | bash
+        fi
+    else
+        info "Betterlockscreen already installed: $(which betterlockscreen)"
+    fi
     link_config "betterlockscreen/betterlockscreenrc" \
                 "$HOME/.config/betterlockscreen/betterlockscreenrc"
 }
@@ -130,18 +169,24 @@ setup_nvim() {
     echo -e "\n${YELLOW}--- Neovim ---${NC}"
 	local package_mgmt
 	package_mgmt="$(get_package_mgmt)"
-	if [ "$package_mgmt" == "ubuntu" ]; then
-		if $DRY_RUN; then
-			dry "curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz"
-			dry "sudo rm -rf /opt/nvim-linux-x86_64"
-			dry "sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz"
-			dry "ln -s /opt/nvim-linux-x86_64/bin/nvim /usr/local/bin/nvim"
-		else
-			curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
-			sudo rm -rf /opt/nvim-linux-x86_64
-			sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
-			ln -s /opt/nvim-linux-x86_64/bin/nvim /usr/local/bin/nvim
+	if ! which nvim &>/dev/null; then
+		if [ "$package_mgmt" == "ubuntu" ]; then
+			if $DRY_RUN; then
+				dry "curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz"
+				dry "sudo rm -rf /opt/nvim-linux-x86_64"
+				dry "sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz"
+				dry "ln -s /opt/nvim-linux-x86_64/bin/nvim /usr/local/bin/nvim"
+			else
+				curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
+				sudo rm -rf /opt/nvim-linux-x86_64
+				sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
+				ln -s /opt/nvim-linux-x86_64/bin/nvim /usr/local/bin/nvim
+			fi
+		elif [ "$package_mgmt" == "arch" ]; then
+			install_packages nvim:neovim
 		fi
+	else
+		info "Neovim already installed: $(which nvim)"
 	fi
     link_config "nvim/init.lua" "$HOME/.config/nvim/init.lua"
     # lua/ directory is loaded via package.path set in init.lua
@@ -157,7 +202,7 @@ setup_rofi() {
     echo -e "\n${YELLOW}--- Rofi ---${NC}"
     install_packages rofi
     link_config "rofi/config.rasi" "$HOME/.config/rofi/config.rasi"
-    # squared-theme.rasi is referenced by absolute path in config.rasi
+    link_config "rofi/squared-theme.rasi" "$HOME/.config/rofi/squared-theme.rasi"
 }
 
 setup_sxhkd() {
@@ -238,7 +283,7 @@ setup_zsh() {
 
 setup_opencode() {
     echo -e "\n${YELLOW}--- OpenCode ---${NC}"
-    if ! command -v opencode &>/dev/null; then
+    if ! which opencode &>/dev/null && [[ ! -x "$HOME/.opencode/bin/opencode" ]]; then
         info "Installing opencode..."
         if $DRY_RUN; then
             dry "curl -fsSL https://opencode.ai/install | bash"
@@ -246,17 +291,24 @@ setup_opencode() {
             curl -fsSL https://opencode.ai/install | bash
         fi
     else
-        info "OpenCode already installed"
+        local opencode_bin
+        opencode_bin="$(which opencode 2>/dev/null || echo "$HOME/.opencode/bin/opencode")"
+        info "OpenCode already installed: $opencode_bin"
     fi
     link_config "opencode/AGENTS.md" "$HOME/.config/opencode/AGENTS.md"
 }
 
 setup_starship() {
     echo -e "\n${YELLOW}--- Starship ---${NC}"
-    if ! command -v starship &>/dev/null; then
-        warn "Starship not found. Install with: curl -sS https://starship.rs/install.sh | sh"
+    if ! which starship &>/dev/null; then
+        info "Installing Starship..."
+        if $DRY_RUN; then
+            dry "curl -sS https://starship.rs/install.sh | sh -s -- --yes"
+        else
+            curl -sS https://starship.rs/install.sh | sh -s -- --yes
+        fi
     else
-        info "Starship already installed"
+        info "Starship already installed: $(which starship)"
     fi
     # Config loaded via STARSHIP_CONFIG env var in .zshrc
     info "Config loaded via STARSHIP_CONFIG in .zshrc"
@@ -264,18 +316,60 @@ setup_starship() {
 
 # --- Main ------------------------------------------------------
 
+# All available modules in default install order
+ALL_MODULES=(zsh bspwm sxhkd polybar picom ghostty nvim rofi tmux starship opencode betterlockscreen)
+
 usage() {
-    echo "Usage: $0 [--dry-run]"
-    echo "  --dry-run   Print what would be done without making changes"
+    echo "Usage: $0 [--dry-run] [--only <module>[,<module>...]]"
+    echo ""
+    echo "  --dry-run              Print what would be done without making changes"
+    echo "  --only <modules>       Comma-separated list of modules to install"
+    echo ""
+    echo "Available modules: ${ALL_MODULES[*]}"
+    echo ""
+    echo "Examples:"
+    echo "  $0 --only nvim"
+    echo "  $0 --only zsh,tmux,nvim"
+    echo "  $0 --only nvim --dry-run"
+}
+
+run_module() {
+    local mod="$1"
+    case "$mod" in
+        zsh)             setup_zsh ;;
+        bspwm)           setup_bspwm ;;
+        sxhkd)           setup_sxhkd ;;
+        polybar)         setup_polybar ;;
+        picom)           setup_picom ;;
+        ghostty)         setup_ghostty ;;
+        nvim)            setup_nvim ;;
+        rofi)            setup_rofi ;;
+        tmux)            setup_tmux ;;
+        starship)        setup_starship ;;
+        opencode)        setup_opencode ;;
+        betterlockscreen) setup_betterlockscreen ;;
+        *) error "Unknown module: $mod"; echo "Available: ${ALL_MODULES[*]}"; return 1 ;;
+    esac
 }
 
 main() {
-    for arg in "$@"; do
-        case "$arg" in
+    local selected_modules=()
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
             --dry-run) DRY_RUN=true ;;
+            --only)
+                if [[ -z "${2:-}" ]]; then
+                    error "--only requires a module name"
+                    usage; exit 1
+                fi
+                IFS=',' read -ra selected_modules <<< "$2"
+                shift
+                ;;
             -h|--help) usage; exit 0 ;;
-            *) error "Unknown option: $arg"; usage; exit 1 ;;
+            *) error "Unknown option: $1"; usage; exit 1 ;;
         esac
+        shift
     done
 
     echo -e "${GREEN}"
@@ -284,18 +378,15 @@ main() {
     $DRY_RUN && echo -e "  ${CYAN}** DRY-RUN MODE **${NC}"
     echo -e "${NC}"
 
-    setup_zsh
-    setup_bspwm
-    setup_sxhkd
-    setup_polybar
-    setup_picom
-    setup_ghostty
-    setup_nvim
-    setup_rofi
-    setup_tmux
-    setup_starship
-    setup_opencode
-    setup_betterlockscreen
+    if [[ ${#selected_modules[@]} -gt 0 ]]; then
+        for mod in "${selected_modules[@]}"; do
+            run_module "$mod"
+        done
+    else
+        for mod in "${ALL_MODULES[@]}"; do
+            run_module "$mod"
+        done
+    fi
 
     echo -e "\n${GREEN}[*] Done. Restart your session to apply changes.${NC}"
 }
