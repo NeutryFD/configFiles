@@ -230,9 +230,26 @@ setup_tmux() {
     link_config "tmux/.tmux.conf" "$HOME/.tmux.conf"
 }
 
+setup_fzf() {
+    echo -e "\n${YELLOW}--- fzf ---${NC}"
+    if ! which fzf &>/dev/null; then
+        info "Installing fzf from source..."
+        if $DRY_RUN; then
+            dry "git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf"
+            dry "~/.fzf/install --all"
+        else
+            git clone --depth 1 https://github.com/junegunn/fzf.git "$HOME/.fzf"
+            "$HOME/.fzf/install" --all
+        fi
+    else
+        info "fzf already installed: $(which fzf)"
+    fi
+}
+
 setup_zsh() {
     echo -e "\n${YELLOW}--- Zsh ---${NC}"
-    install_packages zsh fzf lsd lazygit xclip
+    install_packages zsh lsd lazygit xclip
+    setup_fzf
 
     # Oh-My-Zsh
     if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
@@ -248,6 +265,7 @@ setup_zsh() {
 
     # Plugins
     local plugins_dir="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins"
+	echo "Using plugins directory: $plugins_dir"
 
     if [[ ! -d "$plugins_dir/zsh-autosuggestions" ]]; then
         info "Installing zsh-autosuggestions..."
@@ -317,7 +335,7 @@ setup_starship() {
 # --- Main ------------------------------------------------------
 
 # All available modules in default install order
-ALL_MODULES=(zsh bspwm sxhkd polybar picom ghostty nvim rofi tmux starship opencode betterlockscreen)
+ALL_MODULES=(zsh fzf bspwm sxhkd polybar picom ghostty nvim rofi tmux starship opencode betterlockscreen)
 
 usage() {
     echo "Usage: $0 [--dry-run] [--only <module>[,<module>...]]"
@@ -337,6 +355,7 @@ run_module() {
     local mod="$1"
     case "$mod" in
         zsh)             setup_zsh ;;
+        fzf)             setup_fzf ;;
         bspwm)           setup_bspwm ;;
         sxhkd)           setup_sxhkd ;;
         polybar)         setup_polybar ;;
