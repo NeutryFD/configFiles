@@ -19,16 +19,16 @@ disabled = false
 
 [git_status]
 conflicted = ' '
-ahead = '󰜸 '
-behind = '󰜯 '
-diverged = '󰃻 '
-up_to_date = '󰄬 '
-untracked = ' '
-stashed = '󰏗 '
-modified = ' '
+ahead = ' 󰜸 '
+behind = ' 󰜯 '
+diverged = ' 󰃻 '
+up_to_date = ' 󰄬 '
+untracked = ' 󰋗  '
+stashed = ' 󰏗 '
+modified = ' 󰏫 '
 staged = '[󰐕 \($count\)](green)'
-renamed = '󰑕 '
-deleted = '󰍶 '
+renamed = ' 󰑕 '
+deleted = ' 󰍶 '
 
 
 [git_metrics]
