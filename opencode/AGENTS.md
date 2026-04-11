@@ -5,6 +5,7 @@
 3. **Branch names**: Use descriptive names (e.g., `feature/agent-improvements`, `bugfix/agent-error-handling`)
 4. **Commit messages**: Clear and concise, explain the "why" not just the "what"
 5. **Make small commits**: Split changes into multiple small commits when possible for easier review
+6. **commit by file**: If you have multiple files to change, consider committing changes file by file to keep commits focused and easier to understand
 
 
 ## README.md Updates
