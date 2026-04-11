@@ -5,30 +5,30 @@ add_newline = false
 format = '''
 [┌───────────────────>](bold green) 
 [│](bold green)  $username$hostname$sudo$time$battery $status 
-[│](bold green)  $directory
+[│](bold green)  $directory$git_branch$git_status$git_metrics
 [└─](bold green) $shell $python$character'''
 
 
 [battery]
-full_symbol = '🔋 '
-charging_symbol = '⚡️ '
-discharging_symbol = '💀 '
+full_symbol = '󰁹 '
+charging_symbol = '󰂄 '
+discharging_symbol = '󰂃 '
 disabled = false
 
 
 
 [git_status]
-conflicted = '🏳'
-ahead = '🏎💨'
-behind = '😰'
-diverged = '😵'
-up_to_date = '✓'
-untracked = '🤷'
-stashed = '📦'
-modified = '📝'
-staged = '[++\($count\)](green)'
-renamed = '👅'
-deleted = '🗑'
+conflicted = ' '
+ahead = '󰜸 '
+behind = '󰜯 '
+diverged = '󰃻 '
+up_to_date = '󰄬 '
+untracked = ' '
+stashed = '󰏗 '
+modified = ' '
+staged = '[󰐕 \($count\)](green)'
+renamed = '󰑕 '
+deleted = '󰍶 '
 
 
 [git_metrics]
@@ -36,7 +36,7 @@ added_style = 'bold blue'
 format = '[+$added]($added_style)/[-$deleted]($deleted_style) '
 
 [git_branch]
-symbol = '🌱 '
+symbol = ' '
 truncation_length = 4
 truncation_symbol = ''
 ignore_branches = ['master', 'main']
@@ -46,7 +46,7 @@ threshold = 40
 style = 'bold red'
 
 [python]
-symbol = "🐍 "
+symbol = " "
 style = "green"
 format = '[(${virtualenv})${symbol}]($style)'
 disabled = false
@@ -58,9 +58,9 @@ detect_folders = []
 detect_env_vars = ["VIRTUAL_ENV"]
 
 [status]
-symbol = "💥"
+symbol = " "
 style = 'fg:blue'
-success_symbol = "🚀"
+success_symbol = " "
 format = '$symbol$common_meaning$signal_name$maybe_int($style) '
 map_symbol = true
 disabled = false
@@ -87,4 +87,3 @@ ssh_only = false
 [shell]
 format = '$indicator($style)'
 disabled = false
-
