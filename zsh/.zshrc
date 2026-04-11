@@ -1,12 +1,32 @@
 # =============================================================================
-# Configuration
+# Zsh Core Options (replaces oh-my-zsh defaults)
 # =============================================================================
+setopt autocd              # cd by typing directory name
+setopt interactive_comments # allow comments in interactive shell
+setopt hist_ignore_all_dups # no duplicate entries in history
+setopt hist_reduce_blanks  # remove extra blanks from history
+setopt share_history       # share history between sessions
+setopt append_history      # append to history file
+setopt inc_append_history  # write to history immediately
 
-# Oh-My-Zsh
-export ZSH="$HOME/.oh-my-zsh"
-ZSH_THEME="robbyrussell"
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=10000
+SAVEHIST=10000
 
+# =============================================================================
+# Completion
+# =============================================================================
+autoload -Uz compinit
+# Only regenerate .zcompdump once a day
+if [[ -n "$HOME/.zcompdump-$ZSH_VERSION"(#qN.mh+24) ]]; then
+    compinit -d "$HOME/.zcompdump-$ZSH_VERSION"
+else
+    compinit -C -d "$HOME/.zcompdump-$ZSH_VERSION"
+fi
+
+# =============================================================================
 # Editor
+# =============================================================================
 export EDITOR="/usr/local/bin/nvim"
 
 # =============================================================================
@@ -18,7 +38,7 @@ export PATH="$PATH:/usr/local/go/bin"
 export PATH="$HOME/.opencode/bin:$PATH"
 export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
 
-# fnm (Copilot dependency)
+# fnm (Copilot dependency - needed at startup for nvim)
 FNM_PATH="$HOME/.local/share/fnm"
 if [ -d "$FNM_PATH" ]; then
   export PATH="$FNM_PATH:$PATH"
@@ -26,28 +46,23 @@ if [ -d "$FNM_PATH" ]; then
 fi
 
 # =============================================================================
-# Zsh Optimizations
+# Plugins (sourced directly, no oh-my-zsh framework)
 # =============================================================================
-DISABLE_AUTO_UPDATE="true"
-DISABLE_MAGIC_FUNCTIONS="true"
-DISABLE_COMPFIX="true"
-ZSH_COMPDUMP="$HOME/.zcompdump-$ZSH_VERSION"
 ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE="20"
 ZSH_AUTOSUGGEST_USE_ASYNC=1
 
-# =============================================================================
-# Plugins
-# =============================================================================
-plugins=(
-  zsh-autosuggestions
-  zsh-syntax-highlighting
-)
-source "$ZSH/oh-my-zsh.sh"
+# Try ~/.zsh/plugins first, fall back to oh-my-zsh custom dir
+_plugin_dir="${HOME}/.zsh/plugins"
+_omz_plugin_dir="${HOME}/.oh-my-zsh/custom/plugins"
 
-# =============================================================================
-# Kubernetes completion
-# ============================================================================
-source <(kubectl completion zsh)
+for _p in zsh-autosuggestions zsh-syntax-highlighting; do
+    if [[ -f "$_plugin_dir/$_p/$_p.zsh" ]]; then
+        source "$_plugin_dir/$_p/$_p.zsh"
+    elif [[ -f "$_omz_plugin_dir/$_p/$_p.zsh" ]]; then
+        source "$_omz_plugin_dir/$_p/$_p.zsh"
+    fi
+done
+unset _plugin_dir _omz_plugin_dir _p
 
 # =============================================================================
 # FZF
@@ -59,6 +74,25 @@ source <(kubectl completion zsh)
 # =============================================================================
 export STARSHIP_CONFIG="$HOME/configFiles/starship/starship.toml"
 eval "$(starship init zsh)"
+
+# =============================================================================
+# Lazy-loaded completions
+# =============================================================================
+
+# kubectl - loads completion on first use
+kubectl() {
+    unfunction kubectl
+    source <(command kubectl completion zsh)
+    kubectl "$@"
+}
+
+# terraform - loads bashcompinit on first use
+terraform() {
+    unfunction terraform
+    autoload -U +X bashcompinit && bashcompinit
+    complete -o nospace -C /usr/bin/terraform terraform
+    terraform "$@"
+}
 
 # =============================================================================
 # Aliases & Functions
@@ -101,9 +135,3 @@ push() { git add . && git commit -m "$*" && git push; }
 git-ssh-agent() {
   source "$HOME/configFiles/scripts/git-ssh-agent.sh"
 }
-
-# =============================================================================
-# Bash Completion for Terraform
-# =============================================================================
-autoload -U +X bashcompinit && bashcompinit
-complete -o nospace -C /usr/bin/terraform terraform

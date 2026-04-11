@@ -251,26 +251,15 @@ setup_zsh() {
     install_packages zsh lsd lazygit xclip
     setup_fzf
 
-    # Oh-My-Zsh
-    if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
-        info "Installing Oh-My-Zsh..."
-        if $DRY_RUN; then
-            dry "sh -c \"\$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)\" \"\" --unattended"
-        else
-            sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-        fi
-    else
-        info "Oh-My-Zsh already installed"
-    fi
-
-    # Plugins
-    local plugins_dir="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins"
+    # Zsh plugins (no oh-my-zsh framework)
+    local plugins_dir="$HOME/.zsh/plugins"
 
     if [[ ! -d "$plugins_dir/zsh-autosuggestions" ]]; then
         info "Installing zsh-autosuggestions..."
         if $DRY_RUN; then
             dry "git clone https://github.com/zsh-users/zsh-autosuggestions $plugins_dir/zsh-autosuggestions"
         else
+            mkdir -p "$plugins_dir"
             git clone https://github.com/zsh-users/zsh-autosuggestions "$plugins_dir/zsh-autosuggestions"
         fi
     else
@@ -282,6 +271,7 @@ setup_zsh() {
         if $DRY_RUN; then
             dry "git clone https://github.com/zsh-users/zsh-syntax-highlighting $plugins_dir/zsh-syntax-highlighting"
         else
+            mkdir -p "$plugins_dir"
             git clone https://github.com/zsh-users/zsh-syntax-highlighting "$plugins_dir/zsh-syntax-highlighting"
         fi
     else
