@@ -246,37 +246,68 @@ setup_fzf() {
     fi
 }
 
+# Install zsh plugins to ~/.zsh/plugins
+# Each entry is one of:
+#   "https://github.com/user/repo"               - clone full repo, plugin name = repo basename
+#   "https://github.com/user/repo::subdir/path"   - sparse-checkout a subdirectory, plugin name = path basename
+install_zsh_plugins() {
+    local plugins_dir="$HOME/.zsh/plugins"
+    mkdir -p "$plugins_dir"
+
+    for entry in "$@"; do
+        local repo subdir name
+        if [[ "$entry" == *"::"* ]]; then
+            repo="${entry%%::*}"
+            subdir="${entry##*::}"
+            name="$(basename "$subdir")"
+        else
+            repo="$entry"
+            subdir=""
+            name="$(basename "$repo")"
+        fi
+
+        if [[ -d "$plugins_dir/$name" ]]; then
+            info "$name already installed"
+            continue
+        fi
+
+        info "Installing $name..."
+        if $DRY_RUN; then
+            if [[ -n "$subdir" ]]; then
+                dry "git clone --depth 1 --filter=blob:none --sparse $repo (checkout $subdir) -> $plugins_dir/$name"
+            else
+                dry "git clone --depth 1 $repo $plugins_dir/$name"
+            fi
+            continue
+        fi
+
+        if [[ -n "$subdir" ]]; then
+            # Sparse checkout: clone only the subdirectory we need
+            local tmp_dir
+            tmp_dir="$(mktemp -d)"
+            git clone --depth 1 --filter=blob:none --sparse "$repo" "$tmp_dir" 2>/dev/null
+            git -C "$tmp_dir" sparse-checkout set "$subdir" 2>/dev/null
+            mv "$tmp_dir/$subdir" "$plugins_dir/$name"
+            rm -rf "$tmp_dir"
+        else
+            git clone --depth 1 "$repo" "$plugins_dir/$name"
+        fi
+    done
+}
+
 setup_zsh() {
     echo -e "\n${YELLOW}--- Zsh ---${NC}"
     install_packages zsh lsd lazygit xclip
     setup_fzf
 
     # Zsh plugins (no oh-my-zsh framework)
-    local plugins_dir="$HOME/.zsh/plugins"
-
-    if [[ ! -d "$plugins_dir/zsh-autosuggestions" ]]; then
-        info "Installing zsh-autosuggestions..."
-        if $DRY_RUN; then
-            dry "git clone https://github.com/zsh-users/zsh-autosuggestions $plugins_dir/zsh-autosuggestions"
-        else
-            mkdir -p "$plugins_dir"
-            git clone https://github.com/zsh-users/zsh-autosuggestions "$plugins_dir/zsh-autosuggestions"
-        fi
-    else
-        info "zsh-autosuggestions already installed"
-    fi
-
-    if [[ ! -d "$plugins_dir/zsh-syntax-highlighting" ]]; then
-        info "Installing zsh-syntax-highlighting..."
-        if $DRY_RUN; then
-            dry "git clone https://github.com/zsh-users/zsh-syntax-highlighting $plugins_dir/zsh-syntax-highlighting"
-        else
-            mkdir -p "$plugins_dir"
-            git clone https://github.com/zsh-users/zsh-syntax-highlighting "$plugins_dir/zsh-syntax-highlighting"
-        fi
-    else
-        info "zsh-syntax-highlighting already installed"
-    fi
+    # Add new plugins here - the name is extracted from the URL automatically
+    local zsh_plugins=(
+        "https://github.com/zsh-users/zsh-autosuggestions"
+        "https://github.com/zsh-users/zsh-syntax-highlighting"
+        "https://github.com/ohmyzsh/ohmyzsh::plugins/zsh-interactive-cd"
+    )
+    install_zsh_plugins "${zsh_plugins[@]}"
 
     link_config "zsh/.zshrc" "$HOME/.zshrc"
     # scripts/ directory is added to PATH in .zshrc
