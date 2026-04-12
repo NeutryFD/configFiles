@@ -51,18 +51,18 @@ fi
 ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE="20"
 ZSH_AUTOSUGGEST_USE_ASYNC=1
 
-# Try ~/.zsh/plugins first, fall back to oh-my-zsh custom dir
+# Auto-load all plugins from ~/.zsh/plugins
 _plugin_dir="${HOME}/.zsh/plugins"
-_omz_plugin_dir="${HOME}/.oh-my-zsh/custom/plugins"
 
-for _p in zsh-autosuggestions zsh-syntax-highlighting; do
-    if [[ -f "$_plugin_dir/$_p/$_p.zsh" ]]; then
-        source "$_plugin_dir/$_p/$_p.zsh"
-    elif [[ -f "$_omz_plugin_dir/$_p/$_p.zsh" ]]; then
-        source "$_omz_plugin_dir/$_p/$_p.zsh"
+for _p in "$_plugin_dir"/*(N/); do
+    _name="${_p:t}"
+    if [[ -f "$_p/$_name.zsh" ]]; then
+        source "$_p/$_name.zsh"
+    elif [[ -f "$_p/$_name.plugin.zsh" ]]; then
+        source "$_p/$_name.plugin.zsh"
     fi
 done
-unset _plugin_dir _omz_plugin_dir _p
+unset _plugin_dir _p _name
 
 # =============================================================================
 # FZF
