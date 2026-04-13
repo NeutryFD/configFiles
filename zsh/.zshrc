@@ -121,9 +121,7 @@ alias config="cd ~/configFiles"
 
 # Kubernetes
 alias k="kubectl"
-alias k8s-syd='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-sydney"'
-alias k8s-dev-tek='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-dev-tekniker"'
-alias k8s-pro-tek='export KUBECONFIG="${KUBECONFIG}:${HOME}/.kube/config-pro-tekniker"'
+alias kconfig="source kube_config_select.sh"
 alias lazygit='git-ssh-agent && lazygit'
 alias public='copy-ssh-pubkey.sh'
 
