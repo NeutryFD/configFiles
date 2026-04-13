@@ -306,6 +306,7 @@ setup_zsh() {
         "https://github.com/zsh-users/zsh-autosuggestions"
         "https://github.com/zsh-users/zsh-syntax-highlighting"
         "https://github.com/ohmyzsh/ohmyzsh::plugins/zsh-interactive-cd"
+		"https://github.com/Aloxaf/fzf-tab"
     )
     install_zsh_plugins "${zsh_plugins[@]}"
 
