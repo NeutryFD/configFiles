@@ -1,3 +1,9 @@
+## Session Behavior
+
+1. **Read AGENTS.md at session start**: Always read this file at the beginning of every session
+2. **Follow all rules below** for the duration of the session
+
+
 ## Commits
 
 1. **Not commit**: avoid do commits unless explicitly asked
