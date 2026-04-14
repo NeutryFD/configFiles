@@ -14,7 +14,7 @@ for f in "$HOME/.ssh/"*.pub; do
 done
 
 if [[ ${#public_keys[@]} -gt 0 ]]; then
-  selected_key=$(printf "%s\n" "${public_keys[@]}" | fzf --layout=reverse --header="Select public key to copy")
+  selected_key=$(printf "%s\n" "${public_keys[@]}" | fzf --cycle --multi --layout=reverse --header="Select public key to copy")
   
   if [[ -n "$selected_key" ]]; then
     xclip -sel clip < "$selected_key"

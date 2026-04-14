@@ -37,7 +37,7 @@ done
 
 # Select keys with fzf and add them
 if [[ ${#private_keys[@]} -gt 0 ]]; then
-  selected_keys=$(printf "%s\n" "${private_keys[@]}" | fzf --multi --layout=reverse --header="Select SSH keys to add")
+  selected_keys=$(printf "%s\n" "${private_keys[@]}" | fzf --cycle --multi --layout=reverse --header="Select SSH keys to add")
   if [[ -n "$selected_keys" ]]; then
     while IFS= read -r key; do
       ssh-add "$key" 2>/dev/null && echo "Added key: $key"

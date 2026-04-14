@@ -13,7 +13,7 @@ for f in "$HOME/.kube/"*; do
 done
 
 if [[ ${#config_files[@]} -gt 0 ]]; then
-  selected_config_files=$(printf "%s\n" "${config_files[@]}" | fzf --layout=reverse --header="Select config_files")
+  selected_config_files=$(printf "%s\n" "${config_files[@]}" | fzf --cycle --multi --layout=reverse --header="Select config_files")
   
   if [[ -n "$selected_config_files" ]]; then
 export KUBECONFIG="$selected_config_files"
