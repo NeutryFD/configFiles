@@ -13,3 +13,13 @@
 For agent documentation, follow these rules:
 1. Do NOT add project structure unless explicitly asked
 2. Do NOT add examples unless explicitly aske
+
+
+## Manual Changes Detection
+
+When files have been manually deleted or modified by the user after the model made changes:
+1. Check for missing files or unexpected changes before making new edits
+2. If files are missing that the model previously created, ask the user:
+   - "Do you want to add this info back?"
+   - "Do you want to update over your manual changes?"
+3. Never automatically restore or recreate files without explicit permission
