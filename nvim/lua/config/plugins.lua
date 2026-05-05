@@ -30,7 +30,7 @@ vim.pack.add({
 	'https://github.com/lukas-reineke/indent-blankline.nvim.git',
 	
 	----copilot
-	'https://github.com/github/copilot.vim.git',
+	--- 'https://github.com/github/copilot.vim.git',
 	
 	----Markdown renderer
 	'https://github.com/MeanderingProgrammer/render-markdown.nvim.git',
