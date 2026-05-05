@@ -37,7 +37,6 @@ vim.pack.add({
 	
 	----Terraform syntax highlighting
 	'https://github.com/hashivim/vim-terraform.git',
-	
 	----Notify
 	'https://github.com/rcarriga/nvim-notify.git',
 	
