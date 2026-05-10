@@ -16,9 +16,21 @@ background-opacity = 0.95
 background = #1a1b26
 
 ##  --- windows settings
-window-padding-x = 20
-window-padding-y = 5
-window-decoration = server
+window-padding-x = 8
+window-padding-y = 10
+window-padding-balance = false
+window-decoration = none
+
+window-padding-balance = true
+window-padding-color = background
+window-vsync = true
+window-decoration = none
+window-theme = ghostty
+window-width = 80
+window-height = 28
+
+adjust-cell-height = 0
+adjust-cell-width = 0
 
 ##  --- Cursor
 shell-integration-features = no-cursor
