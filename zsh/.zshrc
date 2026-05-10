@@ -105,6 +105,7 @@ terraform() {
 # General
 alias lc="lsd -la"
 alias ll="lsd -la"
+alias ls="lsd"
 alias icat="kitty +kitten icat"
 alias copy="xclip -sel clip"
 alias vim="nvim"
