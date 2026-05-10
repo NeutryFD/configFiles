@@ -6,7 +6,7 @@ preexec() {
 precmd() {
 if [ $UID -eq 0 ]; then
     _user_icon="  "
-  elif sudo -n true 2>/dev/null; then lg
+  elif sudo -n true 2>/dev/null; then
     _user_icon="  "
   else
     _user_icon="  "
