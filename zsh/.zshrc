@@ -8,6 +8,11 @@ setopt hist_reduce_blanks  # remove extra blanks from history
 setopt share_history       # share history between sessions
 setopt append_history      # append to history file
 setopt inc_append_history  # write to history immediately
+setopt no_beep             # no terminal beeps
+
+# Faster completions
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=10000
@@ -38,6 +43,9 @@ export PATH="$PATH:/usr/local/go/bin"
 export PATH="$HOME/.opencode/bin:$PATH"
 export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
 
+export ZSH="$HOME/.oh-my-zsh"
+ZSH_THEME="neutry"
+
 # fnm (Copilot dependency - needed at startup for nvim)
 FNM_PATH="$HOME/.local/share/fnm"
 if [ -d "$FNM_PATH" ]; then
@@ -46,23 +54,19 @@ if [ -d "$FNM_PATH" ]; then
 fi
 
 # =============================================================================
-# Plugins (sourced directly, no oh-my-zsh framework)
+# Plugins (oh-my-zsh framework)
 # =============================================================================
 ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE="20"
 ZSH_AUTOSUGGEST_USE_ASYNC=1
 
-# Auto-load all plugins from ~/.zsh/plugins
-_plugin_dir="${HOME}/.zsh/plugins"
-
-for _p in "$_plugin_dir"/*(N/); do
-    _name="${_p:t}"
-    if [[ -f "$_p/$_name.zsh" ]]; then
-        source "$_p/$_name.zsh"
-    elif [[ -f "$_p/$_name.plugin.zsh" ]]; then
-        source "$_p/$_name.plugin.zsh"
-    fi
-done
-unset _plugin_dir _p _name
+plugins=(
+	git
+	fzf-tab
+	zsh-autosuggestions
+	zsh-interactive-cd
+	zsh-syntax-highlighting
+)
+source $ZSH/oh-my-zsh.sh
 
 # =============================================================================
 # FZF
@@ -72,8 +76,8 @@ unset _plugin_dir _p _name
 # =============================================================================
 # Starship
 # =============================================================================
-export STARSHIP_CONFIG="$HOME/configFiles/starship/starship.toml"
-eval "$(starship init zsh)"
+#export STARSHIP_CONFIG="$HOME/configFiles/starship/starship.toml"
+#eval "$(starship init zsh)"
 
 # =============================================================================
 # Lazy-loaded completions
