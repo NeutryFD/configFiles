@@ -20,9 +20,8 @@ if [ $UID -eq 0 ]; then
 }
 
 # Main prompt (based on robbyrussell + user) - single line
-PROMPT="%(?:%{$fg_bold[green]%}❯ :%{$fg_bold[red]%}➜ )%{$fg_bold[cyan]%}\${_user_icon}%{$reset_color%} %{$fg_bold[magenta]%}%n%{$reset_color%} %{$fg_bold[cyan]%}%c%{$reset_color%}"
+PROMPT="%(?:%{$fg_bold[green]%}❯ :%{$fg_bold[red]%}❯ :)%{$fg_bold[green]%}\${_user_icon}%{$reset_color%} %{$fg_bold[magenta]%}%n%{$reset_color%} %{$fg_bold[cyan]%}%c%{$reset_color%} "
 PROMPT+='$(git_prompt_info)'
-PROMPT+='%F{default}%f❯ '
 
 # Git prompt (original robbyrussell style)
 ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg_bold[blue]%}git:(%{$fg[red]%}"
