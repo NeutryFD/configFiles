@@ -251,8 +251,7 @@ setup_fzf() {
 #   "https://github.com/user/repo"               - clone full repo, plugin name = repo basename
 #   "https://github.com/user/repo::subdir/path"   - sparse-checkout a subdirectory, plugin name = path basename
 install_zsh_plugins() {
-    local plugins_dir="$HOME/.zsh/plugins"
-    mkdir -p "$plugins_dir"
+    local plugins_dir="$HOME/.oh-my-zsh/custom/plugins/"
 
     for entry in "$@"; do
         local repo subdir name
