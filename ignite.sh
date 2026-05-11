@@ -311,6 +311,8 @@ setup_zsh() {
 
     link_config "zsh/.zshrc" "$HOME/.zshrc"
     # scripts/ directory is added to PATH in .zshrc
+	link_config  "zsh/themes/neutry.zsh-theme" "$HOME/.oh-my-zsh/custom/themes/neutry.zsh-theme"
+
     if $DRY_RUN; then
         dry "chmod +x ${REPO_DIR}/scripts/*.sh"
     else
