@@ -138,3 +138,4 @@ push() { git add . && git commit -m "$*" && git push; }
 git-ssh-agent() {
   source "$HOME/configFiles/scripts/git-ssh-agent.sh"
 }
+export PATH=$HOME/.local/bin:$PATH
