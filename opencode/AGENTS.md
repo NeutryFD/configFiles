@@ -10,8 +10,10 @@
 2. **Use present tense**: Write commit messages in the present tense (e.g., "Add new agent features" instead of "Added new agent features")
 3. **Branch names**: Use descriptive names (e.g., `feature/agent-improvements`, `bugfix/agent-error-handling`)
 4. **Commit messages**: Clear and concise, explain the "why" not just the "what"
-5. **Make small commits**: Split changes into multiple small commits when possible for easier review
-6. **commit by file**: If you have multiple files to change, consider committing changes file by file to keep commits focused and easier to understand
+5. **Single-line messages**: Use only a one-line commit message with no body/description
+6. **Make small commits**: Split changes into multiple small commits when possible for easier review
+7. **commit by file**: If you have multiple files to change, consider committing changes file by file to keep commits focused and easier to understand
+8. **Never push to remote**: Do NOT push commits to remote unless the user explicitly asks you to. Commits stay local only.
 
 
 ## README.md Updates
