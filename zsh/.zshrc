@@ -129,6 +129,7 @@ alias k="kubectl"
 alias kconfig="source kube_config_select.sh"
 alias lazygit='git-ssh-agent && lazygit'
 alias public='copy-ssh-pubkey.sh'
+alias k9s='kconfig && k9s'
 
 # Simple functions
 sky() { ~/astroterm-linux-x86_64 --color --constellations --speed 100 --fps 20 --city Barcelona; }
