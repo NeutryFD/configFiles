@@ -1,0 +1,3 @@
+[submodule "scripts/wheather"]
+	path = scripts/wheather
+	url = https://github.com/NeutryFD/wheather
