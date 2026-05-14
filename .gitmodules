@@ -1,3 +1,3 @@
-[submodule "scripts/wheather"]
-	path = scripts/wheather
-	url = https://github.com/NeutryFD/wheather
+[submodule "scripts/weather"]
+	path = scripts/weather
+	url = git@github.com:NeutryFD/weather.git
