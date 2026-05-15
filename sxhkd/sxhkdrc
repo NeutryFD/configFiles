@@ -106,8 +106,8 @@ super + ctrl + {m,x,y,z}
 
 super + alt + {1-9,0}
 
-  current=$(bspc query -D --names -d focused) && bspc desktop $current -s '^{1-9,10}' && bspc desktop -f last
-  #bspc desktop focused -s '^{1-9,10}' && bspc desktop -f ^$( bspc query -D --names -d last)
+  current=$(bspc query -D --names -d focused) && bspc desktop $current -s '{1-9,10}' && bspc desktop -f last
+  #bspc desktop focused -s '{1-9,10}' && bspc desktop -f $( bspc query -D --names -d last)
 
 # focus the node in the given direction
 super + {_,shift + }{h,j,k,l}
@@ -137,20 +137,20 @@ super + {o,i}
 
 # focus or send to the given desktop
 super + {_,shift + }{1-9,0}
-	bspc {desktop -f,node -d} '^{1-9,10}'
+	bspc {desktop -f,node -d} '{1-9,10}'
 
 super + alt + {1-9,0}
-	bspc desktop focused -s ^'{1-9,10}' --follow
+	bspc desktop focused -s '{1-9,10}' --follow
 
 # Expand focus keybindings for 3 monitors
 super + Home
-	bspc desktop -f ^4 
+	bspc desktop -f 4
 
 super + Page_Up
-	bspc desktop -f ^5
+	bspc desktop -f 5
 
 super + Page_Down
-	bspc desktop -f ^6
+	bspc desktop -f 6
 #
 # preselect
 #
