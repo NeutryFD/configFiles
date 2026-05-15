@@ -108,9 +108,9 @@ if [ "$(hostnamectl chassis)" == "laptop" ]; then
         xrandr --output "$DISPLAY_HDMI"    --rate 60 --left-of "$DISPLAY_DP"
 
         # Assign workspaces to monitors
-        bspc monitor "$DISPLAY_HDMI"    -d I II III
-        bspc monitor "$DISPLAY_DP"      -d IV V VI
-        bspc monitor "$LAPTOP_DISPLAY"  -d VII VIII IX
+        bspc monitor "$DISPLAY_HDMI"    -d 1 2 3
+        bspc monitor "$DISPLAY_DP"      -d 4 5 6
+        bspc monitor "$LAPTOP_DISPLAY"  -d 7 8 9
 
         # Set monitor order (left to right)
         bspc wm --reorder-monitors "$DISPLAY_HDMI" "$DISPLAY_DP" "$LAPTOP_DISPLAY"
@@ -132,35 +132,36 @@ if [ "$(hostnamectl chassis)" == "laptop" ]; then
         bspc config -m "$DISPLAY_HDMI" bottom_padding 8
 
 
-    elif [ $(connected_monitors) -eq 2 ]; then
+	elif [ $(connected_monitors) -eq 2 ]; then
         # Two monitors: External + Internal
+
+        EXTERNAL_DISPLAY=""
 
         # Detect which port is in use
         if is_connected "$HDMI_PORT"; then
-            DISPLAY_HDMI=$HDMI_PORT
+            EXTERNAL_DISPLAY=$HDMI_PORT
         elif is_connected "$DP_PORT"; then
-            DISPLAY_DP=$DP_PORT
+            EXTERNAL_DISPLAY=$DP_PORT
         fi
 
         # Configure displays
-        xrandr --auto
-        xrandr --output "$LAPTOP_DISPLAY" --rate 60
-        xrandr --output "$LAPTOP_DISPLAY" --rate 60 --left-of "${DISPLAY_HDMI:-$DISPLAY_DP}"
+        xrandr --output "$LAPTOP_DISPLAY"   --rate 60 --auto \
+               --output "$EXTERNAL_DISPLAY" --rate 60 --auto --right-of "$LAPTOP_DISPLAY"
 
         # Assign workspaces to monitors
-        bspc monitor "${DISPLAY_HDMI:-$DISPLAY_DP}" -d I II III IV V
-        bspc monitor "$LAPTOP_DISPLAY"              -d VI VII VIII IX X
+        bspc monitor "$EXTERNAL_DISPLAY" -d 1 2 3 4 5
+        bspc monitor "$LAPTOP_DISPLAY"   -d 6 7 8 9 10
         bspc wm --reorder-monitors "$LAPTOP_DISPLAY" "${DISPLAY_HDMI:-$DISPLAY_DP}"
 
         # Launch polybar
         launch_polybar "$HOME/configFiles/polybar/thinkpad.conf" "$LAPTOP_DISPLAY" \
-            thinkpad-left thinkpad-banner thinkpad-vpn thinkpad-bspwm thinkpad-music thinkpad-wifi thinkpad-ethernet thinkpad-right thinkpad-tray
-
-        launch_polybar "$HOME/configFiles/polybar/thinkpad.conf" "${DISPLAY_HDMI:-$DISPLAY_DP}" \
             thinkpad-ext-banner thinkpad-ext-vpn thinkpad-ext-bspwm thinkpad-ext-music thinkpad-ext-right
 
-        bspc config -m "${DISPLAY_HDMI:-$DISPLAY_DP}" top_padding    30
-        bspc config -m "${DISPLAY_HDMI:-$DISPLAY_DP}" bottom_padding 8
+        launch_polybar "$HOME/configFiles/polybar/thinkpad.conf" "$EXTERNAL_DISPLAY" \
+            thinkpad-left thinkpad-banner thinkpad-vpn thinkpad-bspwm thinkpad-music thinkpad-wifi thinkpad-ethernet thinkpad-right thinkpad-tray
+
+        bspc config -m "$EXTERNAL_DISPLAY" top_padding    38
+        bspc config -m "$EXTERNAL_DISPLAY" bottom_padding 38
 
     else
         # Single monitor: Internal only
@@ -170,7 +171,7 @@ if [ "$(hostnamectl chassis)" == "laptop" ]; then
         bspc wm --reorder-monitors "$LAPTOP_DISPLAY"
 
         # All workspaces on internal monitor
-        bspc monitor "$LAPTOP_DISPLAY" -d I II III IV V VI VII VIII IX X
+        bspc monitor "$LAPTOP_DISPLAY" -d 1 2 3 4 5 6 7 8 9 10
 
         # Migrate windows from disconnected external monitors
         for wid in $(bspc query -N -n .window); do
@@ -188,7 +189,7 @@ else
     # ---- Desktop mode (non-laptop) ----
 
     xrandr --output "$DESKTOP_DISPLAY" --rate 60
-    bspc monitor "$DESKTOP_DISPLAY" -d I II III IV V VI VII VIII IX X
+    bspc monitor "$DESKTOP_DISPLAY" -d 1 2 3 4 5 6 7 8 9 10
 
     # Launch polybar
     launch_polybar "$HOME/configFiles/polybar/arch.conf" "" \
