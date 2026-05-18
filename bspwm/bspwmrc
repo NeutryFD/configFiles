@@ -24,7 +24,7 @@ DISPLAY_HDMI=$HDMI_PORT
 DESKTOP_DISPLAY="HDMI-0"
 
 # Wallpaper path
-WALLPAPER="$HOME/Pictures/Wallpapers/wallpaper-ballon.jpg"
+WALLPAPER="$HOME/Pictures/Wallpapers/wallpaper.jpg"
 
 # ============================================================================
 # FUNCTIONS
