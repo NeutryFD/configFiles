@@ -115,6 +115,9 @@ alias vimdiff="nvim -d"
 alias master="sudo /usr/local/bin/reconnect-mm712.sh"
 alias mountvault="sudo mount -t nfs 192.168.1.130:/vault-media /NFS-Vault"
 
+#git
+alias gita="source git-ssh-agent.sh"
+
 # Tmux
 alias tn="tmux new -s"
 alias tl="tmux ls"
