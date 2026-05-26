@@ -14,6 +14,7 @@
 6. **Make small commits**: Split changes into multiple small commits when possible for easier review
 7. **commit by file**: If you have multiple files to change, consider committing changes file by file to keep commits focused and easier to understand
 8. **Never push to remote**: Do NOT push commits to remote unless the user explicitly asks you to. Commits stay local only.
+9. **Use super-commit**: When committing, use the `super-commit` command to ensure all commit rules are followed and to maintain consistency across commits
 
 
 ## README.md Updates
