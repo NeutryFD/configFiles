@@ -14,7 +14,9 @@
 6. **Make small commits**: Split changes into multiple small commits when possible for easier review
 7. **commit by file**: If you have multiple files to change, consider committing changes file by file to keep commits focused and easier to understand
 8. **Never push to remote**: Do NOT push commits to remote unless the user explicitly asks you to. Commits stay local only.
-
+9. **Use super-commit**: When committing, use the `super-commit` command to ensure all commit rules are followed and to maintain consistency across commits
+10. **Create TODOs for commits**: If you have changes that are not ready to be committed, create TODO comments in the code to track what needs to be done before committing
+11. **name of commits**: Always start the commits with name of the app or directory that is being changed (e.g., "zsh: Update agent configuration" or "agent: Fix error handling in agent manager")
 
 ## README.md Updates
 
