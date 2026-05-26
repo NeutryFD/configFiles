@@ -134,6 +134,9 @@ alias lazygit='git-ssh-agent && lazygit'
 alias public='copy-ssh-pubkey.sh'
 alias k9s='kconfig && k9s'
 
+# opencode
+alias super-commit='opencode --agent build run "/super-commit"'
+
 # Simple functions
 sky() { ~/astroterm-linux-x86_64 --color --constellations --speed 100 --fps 20 --city Barcelona; }
 push() { git add . && git commit -m "$*" && git push; }
