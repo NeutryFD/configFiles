@@ -44,5 +44,7 @@ vim.pack.add({
 	'https://github.com/folke/noice.nvim.git',
 	
 	--UI components (floating windows, input, select)
-	'https://github.com/MunifTanjim/nui.nvim.git'
+	'https://github.com/MunifTanjim/nui.nvim.git',
+	---Smear cursor
+	"https://github.com/sphamba/smear-cursor.nvim"
 })
