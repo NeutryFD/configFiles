@@ -102,7 +102,7 @@ require('render-markdown').setup({
     },
     latex = {
         -- Turn on / off latex rendering.
-        enabled = true,
+        enabled = false,
         -- Additional modes to render latex.
         render_modes = false,
         -- Executable used to convert latex formula to rendered unicode.
@@ -700,7 +700,7 @@ require('render-markdown').setup({
     },
     html = {
         -- Turn on / off all HTML rendering.
-        enabled = true,
+        enabled = false,
         -- Additional modes to render HTML.
         render_modes = false,
         comment = {
@@ -768,7 +768,7 @@ require('render-markdown').setup({
     },
     yaml = {
         -- Turn on / off all yaml rendering.
-        enabled = true,
+        enabled = false,
         -- Additional modes to render yaml.
         render_modes = false,
     },
