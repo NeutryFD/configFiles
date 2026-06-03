@@ -146,3 +146,4 @@ git-ssh-agent() {
   source "$HOME/configFiles/scripts/git-ssh-agent.sh"
 }
 export PATH=$HOME/.local/bin:$PATH
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
