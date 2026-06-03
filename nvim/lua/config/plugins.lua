@@ -46,5 +46,8 @@ vim.pack.add({
 	--UI components (floating windows, input, select)
 	'https://github.com/MunifTanjim/nui.nvim.git',
 	---Smear cursor
-	"https://github.com/sphamba/smear-cursor.nvim"
+	"https://github.com/sphamba/smear-cursor.nvim",
+
+	----Treesitter
+	'https://github.com/nvim-treesitter/nvim-treesitter.git',
 })
