@@ -29,6 +29,12 @@ vim.g.loaded_netrwPlugin = 1
 -- optionally enable 24-bit colour
 vim.opt.termguicolors = true
 
+-- Disable language providers not in use
+vim.g.loaded_node_provider = 0
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_python3_provider = 0
+vim.g.loaded_ruby_provider = 0
+
 -- #############################################################
 -- Keymaps
 
@@ -64,6 +70,7 @@ vim.api.nvim_exec([[
 -- Download plugins
 require ('config.plugins')
 -- Load plugins and configurations
+require('config.treesitter')
 require('config.tokyonight')
 require('config.markdown-renderer')
 require('config.lazygit-setup')
@@ -77,3 +84,4 @@ require('config.notify')
 require('config.noice')
 require('config.nvim-web-devicons')
 require('config.smear-cursor')
+require('config.treesitter')
