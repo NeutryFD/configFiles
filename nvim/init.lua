@@ -70,7 +70,6 @@ vim.api.nvim_exec([[
 -- Download plugins
 require ('config.plugins')
 -- Load plugins and configurations
-require('config.treesitter')
 require('config.tokyonight')
 require('config.markdown-renderer')
 require('config.lazygit-setup')
