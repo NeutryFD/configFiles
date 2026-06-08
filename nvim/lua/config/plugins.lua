@@ -37,6 +37,8 @@ vim.pack.add({
 	
 	----Terraform syntax highlighting
 	'https://github.com/hashivim/vim-terraform.git',
+	----Tabularize for terraform alignment
+	'https://github.com/godlygeek/tabular',
 	----Notify
 	'https://github.com/rcarriga/nvim-notify.git',
 	
