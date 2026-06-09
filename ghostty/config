@@ -5,7 +5,7 @@ clipboard-paste-protection = false
 
 ##  --- Style --------------------------
 ##  --- Font
-font-family = HackNerdFont
+font-family = IoskeleyMonoNerdFont
 bold-is-bright = true
 
 ##  --- Theme
