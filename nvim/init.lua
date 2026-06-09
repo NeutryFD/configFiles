@@ -50,6 +50,10 @@ vim.api.nvim_set_keymap('t', '<Esc>\\', [[<C-\><C-n><C-w>p]], { noremap = true, 
 vim.keymap.set("n", "yy", '"+yy', { noremap = true })
 vim.keymap.set("v", "y", '"+y', { noremap = true })
 
+-- Terraform Keymaps
+vim.keymap.set("n", "<leader>ts", ":TerraformState<cr>", { desc = "Terraform State" })
+vim.keymap.set("n", "<leader>tv", ":TerraformValidate<cr>", { desc = "Terraform Validate" })
+
 -- #############################################################
 -- statusline
 -- Load the custom statusline from lua/config/statusline.lua
