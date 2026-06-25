@@ -1,5 +1,5 @@
 ---
-description: Commit changes and push
+description: Commit changes
 ---
 Follow these rules:
 
