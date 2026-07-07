@@ -40,6 +40,7 @@ psgrep() {
 # Get current IP address
 myip() {
     curl -s ifconfig.me
+	echo
 }
 
 # Quick HTTP server
