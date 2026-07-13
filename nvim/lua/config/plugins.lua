@@ -56,4 +56,8 @@ vim.pack.add({
 
 	----Treesitter
 	'https://github.com/nvim-treesitter/nvim-treesitter.git',
+    
+	--pastify
+	'https://github.com/TobinPalmer/pastify.nvim.git'
+
 })

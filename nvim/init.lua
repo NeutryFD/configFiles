@@ -32,7 +32,8 @@ vim.opt.termguicolors = true
 -- Disable language providers not in use
 vim.g.loaded_node_provider = 0
 vim.g.loaded_perl_provider = 0
-vim.g.loaded_python3_provider = 0
+-- Required by pastify.nvim.
+-- vim.g.loaded_python3_provider = 0
 vim.g.loaded_ruby_provider = 0
 
 -- #############################################################
@@ -88,3 +89,4 @@ require('config.noice')
 require('config.nvim-web-devicons')
 require('config.smear-cursor')
 require('config.treesitter')
+require('config.pastify')
