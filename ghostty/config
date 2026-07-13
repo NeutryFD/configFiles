@@ -7,7 +7,7 @@ clipboard-paste-protection = false
 ##  --- Font
 font-family = IoskeleyMonoNerdFont
 bold-is-bright = true
-
+font-size = 10
 ##  --- Theme
 theme = Calamity
 
