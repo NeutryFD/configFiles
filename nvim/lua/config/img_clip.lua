@@ -25,7 +25,7 @@ img_clip.setup({
   },
 })
 
-vim.api.nvim_create_user_command('pastemd', function()
+vim.api.nvim_create_user_command('Pastemd', function()
   img_clip.paste_image({ insert_template_after_cursor = false })
 end, {})
 
