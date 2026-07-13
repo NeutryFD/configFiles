@@ -7,7 +7,7 @@ super + n
 
 # program launcher
 super + @space
-	export PATH=/snap/bin:$PATH && rofi -show run
+	export PATH=/snap/bin:/opt/ZenNotes:$PATH && rofi -show run
 
 super + shift + n
 	bspc rule -a \* -o state=floating sticky=on layer=above rectangle=720x500+600+340 && ghostty --font-size=15 -e python3 ~/slots/terminal-slotmachine/app.py
