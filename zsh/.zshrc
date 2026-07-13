@@ -153,6 +153,8 @@ git-ssh-agent() {
 export PATH=$HOME/.local/bin:$PATH
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
+export PATH="/opt/ZenNotes/:$PATH"
+
 # pnpm
 export PNPM_HOME="$HOME/.local/share/pnpm"
 case ":$PATH:" in
