@@ -154,6 +154,7 @@ export PATH=$HOME/.local/bin:$PATH
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
 export PATH="/opt/ZenNotes/:$PATH"
+export PATH="$HOME/go/bin/:$PATH"
 
 # pnpm
 export PNPM_HOME="$HOME/.local/share/pnpm"
