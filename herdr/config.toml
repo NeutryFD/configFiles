@@ -1,3 +1,4 @@
+#prefix
 [keys]
 prefix = "ctrl+space"
 goto = "prefix+g"
