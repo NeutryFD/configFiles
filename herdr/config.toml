@@ -1,0 +1,22 @@
+[keys]
+prefix = "ctrl+space"
+goto = "prefix+g"
+
+# tabs
+new_tab = "prefix+c"
+next_tab = "prefix+n"
+previous_tab = "prefix+p"
+
+# Panels
+split_horizontal = "prefix+h"
+split_vertical = "prefix+v"
+
+# workspace
+switch_workspace = "prefix+shift+1..9"
+
+# agents
+focus_agent = "prefix+alt+1..9"
+
+[theme]
+name = "dracula"
+auto_switch = false
