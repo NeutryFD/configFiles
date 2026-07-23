@@ -3,11 +3,54 @@
   "mcp": {
     "engram": {
       "command": [
-        "/home/neutry/go/bin/engram",
+        "{env:HOME}/go/bin/engram",
         "mcp",
         "--tools=agent"
       ],
       "enabled": true,
+      "type": "local"
+    },
+    "prometheus": {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "-i",
+        "--network",
+        "host",
+        "-e",
+        "PROMETHEUS_MCP_SERVER_PROMETHEUS_URL",
+        "ghcr.io/tjhop/prometheus-mcp-server:v0.18.0"
+      ],
+      "enabled": true,
+      "environment": {
+        "PROMETHEUS_MCP_SERVER_PROMETHEUS_URL": "http://127.0.0.1:9090"
+      },
+      "timeout": 30000,
+      "type": "local"
+    },
+    "grafana": {
+      "command": [
+        "docker",
+        "run",
+        "--rm",
+        "-i",
+        "--network",
+        "host",
+        "-e",
+        "GRAFANA_URL",
+        "-e",
+        "GRAFANA_SERVICE_ACCOUNT_TOKEN",
+        "grafana/mcp-grafana",
+        "-t",
+        "stdio",
+        "--disable-write"
+      ],
+      "enabled": true,
+      "environment": {
+        "GRAFANA_URL": "http://127.0.0.1:3001"
+      },
+      "timeout": 30000,
       "type": "local"
     }
   },
