@@ -11,3 +11,4 @@ Follow these rules:
 4. Make small commits, split by file when possible
 5. Commit on the current branch — only create a new branch if explicitly asked
 6. Never push to remote unless explicitly asked
+7. This is not an command of the system
