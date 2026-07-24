@@ -52,6 +52,21 @@
       },
       "timeout": 30000,
       "type": "local"
+    },
+    "kubeflow": {
+      "command": [
+        "{env:HOME}/.local/bin/kubeflow-mcp",
+        "serve",
+        "--transport",
+        "stdio",
+        "--persona",
+        "platform-admin"
+      ],
+      "enabled": true,
+      "environment": {
+        "KUBECONFIG": "{env:HOME}/.kube/config-pro-tekniker"
+      },
+      "type": "local"
     }
   },
   "permission": {

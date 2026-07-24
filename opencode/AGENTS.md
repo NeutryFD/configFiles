@@ -33,3 +33,6 @@ When files have been manually deleted or modified by the user after the model ma
    - "Do you want to add this info back?"
    - "Do you want to update over your manual changes?"
 3. Never automatically restore or recreate files without explicit permission
+
+## Memory
+1. Always use engram to get context of project 
