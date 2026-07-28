@@ -1,3 +1,4 @@
+onboarding = false
 #prefix
 [keys]
 prefix = "ctrl+space"
@@ -21,3 +22,6 @@ focus_agent = "prefix+alt+1..9"
 [theme]
 name = "dracula"
 auto_switch = false
+
+[ui]
+show_agent_labels_on_pane_borders = false
