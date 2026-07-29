@@ -71,7 +71,8 @@
   },
   "permission": {
     "external_directory": {
-      "~/.config/opencode/**": "allow"
+      "~/.config/opencode/**": "allow",
+	  "~/workspace/sync/**": "allow"
     }
   }
 }

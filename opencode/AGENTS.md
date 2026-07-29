@@ -35,12 +35,13 @@ When files have been manually deleted or modified by the user after the model ma
 3. Never automatically restore or recreate files without explicit permission
 
 ## Memory
-1. Always use engram to get context of project 
+1. Always use engram to get context of project
 
 ## Project TODOs
-1. At the start of project work, locate and read the project's `TODOs.json` file. If it does not exist, ask the user whether to create it.
+1. At the start of project work, locate and read the project's `TODOs.json` file. this will be in $HOME/workspace/sync/ If it does not exist, ask the user whether to create it.
 2. Treat `TODOs.json` as the machine-readable source of truth for project tasks. Use JSON because it is easy for LLMs and automation to process.
-3. After implementing, fixing, or materially changing a task, update the relevant TODO entry immediately with its status, a concise summary, affected files, and verification result.
-4. When creating or updating TODOs, keep the user-facing summary brief: state what was created or changed and its current status.
-5. Use Markdown files for project overview, decisions, and general documentation. Link to `TODOs.json` when both files are present.
-6. Order TODO entries by execution dependency. Every task must include a `dependencies` array listing prerequisite task IDs; use an empty array only when the task has no project-task prerequisite.
+3. **Before editing any file**, read the project's `TODOs.json` and create a new TODO entry for the planned work with status `"pending"`.
+4. After implementing, fixing, or materially changing a task, update the relevant TODO entry immediately with its status (`"completed"`, `"partial"`, `"blocked"` or `"rejected"`), a concise summary of what changed, affected files, and verification result.
+5. When creating or updating TODOs, keep the user-facing summary brief: state what was created or changed and its current status.
+6. Use Markdown files for project overview, decisions, and general documentation. Link to `TODOs.json` when both files are present.
+7. Order TODO entries by execution dependency. Every task must include a `dependencies` array listing prerequisite task IDs; use an empty array only when the task has no project-task prerequisite.
