@@ -43,12 +43,12 @@
         "GRAFANA_SERVICE_ACCOUNT_TOKEN",
         "grafana/mcp-grafana",
         "-t",
-        "stdio",
-        "--disable-write"
+        "stdio"
       ],
       "enabled": true,
       "environment": {
-        "GRAFANA_URL": "http://127.0.0.1:3001"
+        "GRAFANA_URL": "http://127.0.0.1:3001/grafana",
+        "GRAFANA_SERVICE_ACCOUNT_TOKEN": "{env:GRAFANA_SERVICE_ACCOUNT_TOKEN}"
       },
       "timeout": 30000,
       "type": "local"
