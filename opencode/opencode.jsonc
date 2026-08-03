@@ -72,7 +72,7 @@
   "permission": {
     "external_directory": {
       "~/.config/opencode/**": "allow",
-	  "~/workspace/sync/**": "allow"
+	  "~/workspace/sync/inbox/**": "allow"
     }
   }
 }

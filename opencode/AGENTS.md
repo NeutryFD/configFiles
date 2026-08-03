@@ -37,13 +37,22 @@ When files have been manually deleted or modified by the user after the model ma
 ## Memory
 1. Always use engram to get context of project
 
+## Project documentation split
+
+Two distinct kinds of documentation, never mix them:
+
+1. **Usage docs** — the repo's `README.md` documents how a *user* uses the tool.
+2. **Build docs** — how the project is built and worked on, for LLMs/agents. This
+   lives in the sync project folder at `$HOME/workspace/sync/inbox/neutry/projects/<project>/wiki.md`,
+   next to the project's `<project>.todos.json`. Call it `wiki.md`, not README, to avoid confusion.
+
 ## Project TODOs
-1. At the start of project work, locate and read the project's `TODOs.json` file. this will be in $HOME/workspace/sync/ If it does not exist, ask the user whether to create it.
-2. Treat `TODOs.json` as the machine-readable source of truth for project tasks. Use JSON because it is easy for LLMs and automation to process.
-3. **Before editing any file**, read the project's `TODOs.json` and create a new TODO entry for the planned work with status `"pending"`.
+1. Each project keeps its own TODO file named `<project>.todos.json` in the sync project folder at `$HOME/workspace/sync/inbox/neutry/projects/<project>/` (e.g. `pvdu.todos.json`). If it does not exist, create it.
+2. Treat each project's `<project>.todos.json` as the machine-readable source of truth for that project's tasks. Use JSON because it is easy for LLMs and automation to process.
+3. **Before editing any file**, read the project's `<project>.todos.json` and create a new TODO entry for the planned work with status `"pending"`.
 4. Group related work into one TODO entry per cohesive task, not one entry per file or small change. Summarize all related changes, affected files, and verification results in that entry.
 5. Use only these status names: `"pending"`, `"in-progress"`, `"completed"`, `"blocked"`, and `"rejected"`.
 6. Read the relevant TODO before work, verify the result after work, and immediately update its status, summary, affected files, and verification evidence.
 7. When creating or updating TODOs, keep the user-facing summary brief: state what was created or changed and its current status.
-8. Use Markdown files for project overview, decisions, and general documentation. Link to `TODOs.json` when both files are present.
+8. Use Markdown files for project overview, decisions, and general documentation. Link to `<project>.todos.json` when both files are present.
 9. Order TODO entries by execution dependency. Every task must include a `dependencies` array listing prerequisite task IDs; use an empty array only when the task has no project-task prerequisite.
