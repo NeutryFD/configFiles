@@ -48,7 +48,7 @@
       "enabled": true,
       "environment": {
         "GRAFANA_URL": "http://127.0.0.1:3001/grafana",
-        "GRAFANA_SERVICE_ACCOUNT_TOKEN": "{env:GRAFANA_SERVICE_ACCOUNT_TOKEN}"
+        "GRAFANA_SERVICE_ACCOUNT_TOKEN": "{file:~/.config/opencode/secrets/grafana-sa-token}"
       },
       "timeout": 30000,
       "type": "local"
