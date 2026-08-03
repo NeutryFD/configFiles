@@ -84,19 +84,11 @@ source $ZSH/oh-my-zsh.sh
 # =============================================================================
 
 # kubectl - loads completion on first use
-kubectl() {
-    unfunction kubectl
-    source <(command kubectl completion zsh)
-    kubectl "$@"
-}
+source <(command kubectl completion zsh)
 
 # terraform - loads bashcompinit on first use
-terraform() {
-    unfunction terraform
-    autoload -U +X bashcompinit && bashcompinit
-    complete -o nospace -C /usr/bin/terraform terraform
-    terraform "$@"
-}
+autoload -U +X bashcompinit && bashcompinit
+complete -o nospace -C /usr/bin/terraform terraform
 
 # =============================================================================
 # Custom helper functions
