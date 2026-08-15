@@ -24,6 +24,10 @@
 10. **Create TODOs for commits**: If you have changes that are not ready to be committed, create TODO comments in the code to track what needs to be done before committing
 11. **name of commits**: Always start the commits with name of the app or directory that is being changed (e.g., "zsh: Update agent configuration" or "agent: Fix error handling in agent manager")
 
+## Cluster Changes
+
+1. **GitOps only**: Never apply configuration directly to the Kubernetes cluster. Change the repository manifests and let the configured GitOps workflow synchronize them.
+
 ## README.md Updates
 
 For agent documentation, follow these rules:
@@ -55,12 +59,21 @@ package when necessary and export only the production symbols the tests need.
 Two distinct kinds of documentation, never mix them:
 
 1. **Usage docs** — the repo's `README.md` documents how a *user* uses the tool.
-2. **Build docs** — how the project is built and worked on, for LLMs/agents. This
-   lives in the sync project folder at `$HOME/workspace/sync/inbox/neutry/projects/<project>/wiki.md`,
-   next to the project's `<project>.todos.json`. Call it `wiki.md`, not README, to avoid confusion.
+2. **Build docs** — how the project is built and worked on, for LLMs/agents. For
+   personal projects, this lives at
+   `$HOME/workspace/sync/inbox/neutry/projects/<project>/wiki.md`. For work
+   projects, it lives at
+   `$HOME/workspace/sync/inbox/Projects/doitnow/<project>/wiki.md`, next to the
+   project's `<project>.todos.json`. Call it `wiki.md`, not README, to avoid
+   confusion.
 
 ## Project TODOs
-1. Each project keeps its own TODO file named `<project>.todos.json` in the sync project folder at `$HOME/workspace/sync/inbox/neutry/projects/<project>/` (e.g. `pvdu.todos.json`). If it does not exist, create it.
+Kanban-facing TODO IDs should use a concise project abbreviation and short slug, target 32 characters maximum, and never exceed 48 characters. When shortening an existing ID, update every dependency reference in the same change.
+1. Each personal project keeps its own TODO file named `<project>.todos.json` at
+   `$HOME/workspace/sync/inbox/neutry/projects/<project>/`. Each work project
+   keeps it at `$HOME/workspace/sync/inbox/Projects/doitnow/<project>/` (for
+   example, `Projects/doitnow/tekniker/TODOs.todos.json`). If it does not
+   exist, create it.
 2. Treat each project's `<project>.todos.json` as the machine-readable source of truth for that project's tasks. Use JSON because it is easy for LLMs and automation to process.
 3. **Before editing any file**, read the project's `<project>.todos.json` and create a new TODO entry for the planned work with status `"pending"`.
 4. Group related work into one TODO entry per cohesive task, not one entry per file or small change. Summarize all related changes, affected files, and verification results in that entry.
