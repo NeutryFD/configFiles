@@ -14,7 +14,7 @@
 
 1. **Not commit**: avoid do commits unless explicitly asked
 2. **Use present tense**: Write commit messages in the present tense (e.g., "Add new agent features" instead of "Added new agent features")
-3. **Branch names**: Use descriptive names (e.g., `feature/agent-improvements`, `bugfix/agent-error-handling`)
+3. **Branch names**: Use descriptive names following the [Conventional Branch spec](https://conventionalbranch.org/) — `<type>/<description>` with lowercase alphanumerics, hyphens, dots. Valid types: `feature`/`feat`, `bugfix`/`fix`, `hotfix`, `release`, `chore`; AI agents use `ai/` (or `claude/`, `codex/`, `copilot/`, `cursor/`). Trunk branches (`main`, `master`, `develop`) have no prefix. Examples: `feature/agent-improvements`, `bugfix/agent-error-handling`, `ai/refactor-auth-flow`
 4. **Commit messages**: Clear and concise, explain the "why" not just the "what"
 5. **Single-line messages**: Use only a one-line commit message with no body/description
 6. **Make small commits**: Split changes into multiple small commits when possible for easier review
