@@ -19,6 +19,22 @@ Whenever you need explicit info about the project (architecture, flow,
 conventions, gotchas), read it from there. The repo `README.md` is only the
 end-user usage docs.
 
+### SDD file locations
+
+When using SDD, files are split between two locations:
+
+| File type | Location | Examples |
+|---|---|---|
+| **Code / implementation** | Project repo | `docker-compose.yml`, `main.go`, `consumer.py`, `Dockerfile`, SQL files |
+| **SDD / agent artifacts** | Build docs: `$HOME/workspace/sync/inbox/neutry/projects/<project>/` | `project-spec.md`, `features/*.feature`, `wiki.md`, `<project>.todos.json` |
+
+**Rules:**
+- `spec_partner` creates `project-spec.md` → **build docs**
+- `gherkin_author` creates `features/*.feature` → **build docs**
+- `tdd_craftsman` creates code + tests → **repo** (tests in `testing/` directory)
+- `judge` and `mutation_tester` produce reports → **build docs**
+- The build docs directory is the single source of truth for SDD artifacts
+
 ## Opt-in only
 
 You only run inside an SDD session the human explicitly requested
