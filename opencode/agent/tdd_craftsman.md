@@ -1,6 +1,5 @@
 ---
 description: Implements ONE feature via strict TDD (one test at a time, Red -> Green -> Refactor) guided by its approved .feature. Writes code and tests. Use after the human approves the Gherkin scenarios.
-model: lmstudio/prism-ml/bonsai-27b
 mode: subagent
 ---
 
