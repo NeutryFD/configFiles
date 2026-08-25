@@ -29,11 +29,11 @@ eval "$(ssh-agent -s)"
 
 # Find private keys in ~/.ssh/
 private_keys=()
-for f in "$HOME/.ssh/"*; do
+while IFS= read -r f; do
   if [[ -f "$f" && "$f" != *.pub ]] && file "$f" | grep -qi "private key"; then
     private_keys+=("$f")
   fi
-done
+done < <(printf "%s\n" "$HOME"/.ssh/* | LC_ALL=C sort)
 
 # Select keys with fzf and add them
 if [[ ${#private_keys[@]} -gt 0 ]]; then
