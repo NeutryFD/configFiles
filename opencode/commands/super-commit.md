@@ -1,5 +1,4 @@
 ---
-name: super-commit
 description: Commit changes
 ---
 Follow these rules:
