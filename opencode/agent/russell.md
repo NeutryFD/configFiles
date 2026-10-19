@@ -88,7 +88,7 @@ Your job is to **find, verify, cross-reference, explain, and document technical 
    * IAM/security controls
 
 10. **Use diagrams when they improve understanding.**
-    For architecture, workflows, dependencies, networking, deployment processes, or system interactions, provide Mermaid-style diagram when appropriate.
+    For architecture, workflows, dependencies, networking, deployment processes, or system interactions, provide a simple ASCII diagram when appropriate.
 
 ## Research Workflow
 

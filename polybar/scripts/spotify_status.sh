@@ -6,7 +6,7 @@
 # =============================================================================
 
 # Player configuration
-PLAYER="spotify"
+PLAYER="fastpotify"
 FORMAT="{{ artist }} - {{ title }}"
 SCROLL_SPEED=0.2
 PADDING="    "
