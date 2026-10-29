@@ -1,72 +1,73 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "mcp": {
-    "engram": {
-      "command": [
-        "{env:HOME}/go/bin/engram",
-        "mcp",
-        "--tools=agent"
-      ],
-      "enabled": true,
-      "type": "local"
-    },
-    "prometheus": {
-      "command": [
-        "docker",
-        "run",
-        "--rm",
-        "-i",
-        "--network",
-        "host",
-        "-e",
-        "PROMETHEUS_MCP_SERVER_PROMETHEUS_URL",
-        "ghcr.io/tjhop/prometheus-mcp-server:v0.18.0"
-      ],
-      "enabled": true,
-      "environment": {
-        "PROMETHEUS_MCP_SERVER_PROMETHEUS_URL": "http://127.0.0.1:9090"
+    "servers": {
+      "engram": {
+        "type": "local",
+        "command": [
+          "/home/neutry/go/bin/engram",
+          "mcp",
+          "--tools=agent"
+        ]
       },
-      "timeout": 30000,
-      "type": "local"
-    },
-    "grafana": {
-      "command": [
-        "docker",
-        "run",
-        "--rm",
-        "-i",
-        "--network",
-        "host",
-        "-e",
-        "GRAFANA_URL",
-        "-e",
-        "GRAFANA_SERVICE_ACCOUNT_TOKEN",
-        "grafana/mcp-grafana",
-        "-t",
-        "stdio"
-      ],
-      "enabled": true,
-      "environment": {
-        "GRAFANA_URL": "http://172.20.26.2:3000",
-        "GRAFANA_SERVICE_ACCOUNT_TOKEN": "{file:~/.config/opencode/secrets/grafana-sa-token}"
+      "prometheus": {
+        "type": "local",
+        "command": [
+          "docker",
+          "run",
+          "--rm",
+          "-i",
+          "--network",
+          "host",
+          "-e",
+          "PROMETHEUS_MCP_SERVER_PROMETHEUS_URL",
+          "ghcr.io/tjhop/prometheus-mcp-server:v0.18.0"
+        ],
+        "environment": {
+          "PROMETHEUS_MCP_SERVER_PROMETHEUS_URL": "http://127.0.0.1:9090"
+        },
+        "timeout": 30000,
+        "disabled": true
       },
-      "timeout": 30000,
-      "type": "local"
-    },
-    "kubeflow": {
-      "command": [
-        "{env:HOME}/.local/bin/kubeflow-mcp",
-        "serve",
-        "--transport",
-        "stdio",
-        "--persona",
-        "platform-admin"
-      ],
-      "enabled": true,
-      "environment": {
-        "KUBECONFIG": "{env:HOME}/.kube/config-pro-tekniker"
+      "grafana": {
+        "type": "local",
+        "command": [
+          "docker",
+          "run",
+          "--rm",
+          "-i",
+          "--network",
+          "host",
+          "-e",
+          "GRAFANA_URL",
+          "-e",
+          "GRAFANA_SERVICE_ACCOUNT_TOKEN",
+          "grafana/mcp-grafana",
+          "-t",
+          "stdio"
+        ],
+        "environment": {
+          "GRAFANA_URL": "http://172.20.26.2:3000",
+          "GRAFANA_SERVICE_ACCOUNT_TOKEN": "{file:~/.config/opencode/secrets/grafana-sa-token}"
+        },
+        "timeout": 30000,
+        "disabled": true
       },
-      "type": "local"
+      "kubeflow": {
+        "type": "local",
+        "command": [
+          "{env:HOME}/.local/bin/kubeflow-mcp",
+          "serve",
+          "--transport",
+          "stdio",
+          "--persona",
+          "platform-admin"
+        ],
+        "environment": {
+          "KUBECONFIG": "{env:HOME}/.kube/config-pro-tekniker"
+        },
+        "disabled": true
+      }
     }
   },
   "permission": {
