@@ -18,6 +18,15 @@
 10. **Create TODOs for commits**: If you have changes that are not ready to be committed, create TODO comments in the code to track what needs to be done before committing
 11. **Scopes**: Use an optional Conventional Commit scope when it identifies the affected component or directory. Do not require an application or directory prefix outside the Conventional Commit format.
 
+## Pull Requests and Merges
+
+1. **Use GitHub CLI**: Create and merge pull requests with `gh` unless the user explicitly requests another method.
+2. **Pull request content**: Use a clear title and describe the changes.
+3. **Require authorization**: Do not merge a pull request unless the user explicitly asks or authorizes it. Existing rules requiring explicit authorization for commits and pushes still apply.
+4. **Merge method**: Use a merge commit unless the user explicitly requests another method.
+5. **Merge message**: Preserve GitHub's default merge commit message, including the pull request number and source branch. Do not replace it with a custom title such as `merge: <branch>`.
+6. **Verify**: After merging, verify that the resulting merge commit message includes the pull request number.
+
 ## Cluster Changes
 
 1. **GitOps only**: Never apply configuration directly to the Kubernetes cluster. Change the repository manifests and let the configured GitOps workflow synchronize them.
@@ -47,4 +56,3 @@ When files have been manually deleted or modified by the user after the model ma
 Never place `_test.go` or other test files beside production source under
 `internal/`, `cmd/`, or any other source directory. Use an external test
 package when necessary and export only the production symbols the tests need.
-
