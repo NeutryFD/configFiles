@@ -55,15 +55,15 @@ Before writing, refactoring, or generating code in any language or framework, Ma
      - Linter and static analysis configuration (e.g., recommended linters and flags).
      - Verification workflow aligned with Claude Code verification principles.
    - **Ask Before Installing**: Present the drafted skill and ask the user (via the `question` tool) if they would like to install this newly crafted skill.
-     - Clarify that installation will occur **locally** in `~/.config/opencode/skills/<skill-name>/SKILL.md` (never in the repository).
+     - Clarify that installation will occur **locally** in OpenCode's skills directory `~/.config/opencode/skills/<skill-name>/SKILL.md`, never in the repository.
    - **Install & Load**: Upon confirmation, write the skill to `~/.config/opencode/skills/<skill-name>/SKILL.md`, call `opencode reload` if needed, load the skill via the `skill` tool, and proceed to code under its guidance.
 
 4. **Strict Idiom Adherence**:
    - Never write generic, lowest-common-denominator code. Apply the idiomatic patterns, naming rules, error-handling conventions, and design guidelines provided by the language skill.
 
 5. **Local Skill Installation Only**:
-   - When requested to install, create, or add a skill, ALWAYS install it globally/locally in the user configuration directory (`~/.config/opencode/skills/` / `~/configFiles/opencode/skills/`).
-   - NEVER install skills inside the repository (`.opencode/skills/` or `./skills/`) unless explicitly requested.
+   - When requested to install, create, or add a skill, ALWAYS install it globally/locally in OpenCode's directory (`~/.config/opencode/skills/`).
+   - NEVER install skills inside any repository (`.opencode/skills/` or `./skills/`) unless explicitly requested.
 
 ---
 
