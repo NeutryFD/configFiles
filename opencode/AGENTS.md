@@ -62,3 +62,7 @@ package when necessary and export only the production symbols the tests need.
 1. **Always install skills locally**: When instructed to install, create, or add a skill, ALWAYS install it globally/locally in OpenCode's local skills directory (`~/.config/opencode/skills/`), NOT inside any project repository.
 2. **Never install in the repository**: NEVER install or create skills inside any repository (e.g. `.opencode/skills/` or `./skills/`) unless explicitly requested by the user.
 3. **Skill-first coding & generation**: Before coding, verify that a language skill exists. When no skill is detected for a language or framework, craft the best skill for it and ask the user if they want to install it locally before proceeding.
+
+## Subagent Delegation
+
+- When acting as the primary agent (such as `build`), always delegate non-trivial coding, implementation, refactoring, and bug-fixing tasks to the `manivela` subagent via `subagent(agent: "manivela", ...)` so that language skills and verification loops are enforced.
