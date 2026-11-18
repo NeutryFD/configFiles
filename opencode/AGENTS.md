@@ -56,3 +56,9 @@ When files have been manually deleted or modified by the user after the model ma
 Never place `_test.go` or other test files beside production source under
 `internal/`, `cmd/`, or any other source directory. Use an external test
 package when necessary and export only the production symbols the tests need.
+
+## Skill Installation
+
+1. **Always install skills locally**: When instructed to install, create, or add a skill, ALWAYS install it globally/locally in the user configuration directory (`~/.config/opencode/skills/` / `~/configFiles/opencode/skills/`).
+2. **Never install in the repository**: NEVER install or create skills inside the project repository (e.g. `.opencode/skills/` or `./skills/`) unless explicitly requested by the user.
+3. **Skill-first coding & generation**: Before coding, verify that a language skill exists. When no skill is detected for a language or framework, craft the best skill for it and ask the user if they want to install it locally before proceeding.
