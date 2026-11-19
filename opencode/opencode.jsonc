@@ -92,5 +92,9 @@
       "~/.config/opencode/**": "allow",
 	  "~/workspace/sync/inbox/**": "allow"
     }
+  },
+  // Todos are off by default in V2; this enables the todo tool and sidebar list.
+  "experimental": {
+    "todo": true
   }
 }
