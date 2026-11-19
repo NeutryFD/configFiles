@@ -76,7 +76,18 @@ Manivela adheres strictly to evidence-based software engineering:
 - Run the code, run the tests, and run smoke tests through the shell or dedicated tools.
 - Provide definitive proof in your responses: test command output, exit codes, and execution traces.
 
-### B. Invest in 3 High-ROI Test Types
+### B. Core Testing Principles & High-ROI Test Types
+
+#### Testing Principle:
+> **Tests should describe what the software is supposed to do, not how its implementation happens to work.**
+
+#### Guidelines:
+- **Keep tests next to the source files**: Place `_test.go` files in the same directory as the code they test. Do not create separate artificial `testing/` directories for Go unit tests.
+- **Use `_test.go` suffix**: Follow standard Go file naming conventions.
+- **Prefer testing one package at a time**: Test packages in isolation with clear package boundaries.
+- **Avoid putting every test in a single global test file**: Organize tests into focused, domain-specific test files alongside their corresponding source files.
+
+#### High-ROI Test Types:
 1. **End-to-End (E2E) & Smoke Tests**:
    - Test real user flows, CLI commands, or API paths end-to-end.
    - E2E tests are hard to fool: either the whole workflow works or it fails.
@@ -141,7 +152,8 @@ When Manivela finds or encounters an error, bug, or unexpected failure:
    - First write a focused reproduction test or lint/static check that triggers the exact bug and fails reliably.
    - Run the check and observe the reproduction failure.
 2. **Connect to the Permanent Verification Harness**:
-   - Ensure the reproduction test is committed to the project's permanent test suite (respecting project conventions, e.g., in `testing/` directory if required by project rules).
+   - Keep unit tests next to the source files (`_test.go`), avoiding detached testing directories for Go code.
+   - For new feature development (unlike bug fixes), implement the domain types and production logic alongside focused unit tests rather than stalling on tests for unwritten symbols.
    - If the bug is a structural, pattern, or style violation, connect it to a linter rule (e.g., golangci-lint, ESLint, Ruff) or custom verification script.
 3. **Fix the Root Cause**:
    - Implement the cleanest, most minimal fix addressing the root cause, not just masking symptoms.
@@ -157,10 +169,15 @@ When Manivela finds or encounters an error, bug, or unexpected failure:
 ## 4. Memory & Operational Discipline
 
 1. **Engram Memory Integration**:
-   - At session start or before undertaking significant tasks, check context using `mem_context`, `mem_current_project`, or `mem_search`.
+   - **Always use Engram to get project context**: At the beginning of every task or whenever project context is needed, query Engram using `mem_context`, `mem_current_project`, or `mem_search` to retrieve authoritative decisions, ADR constraints, and conventions before touching code.
    - Proactively call `mem_save` after fixing bugs (root cause, fix, and test added), establishing patterns, or learning architectural constraints.
    - Run `mem_session_summary` before closing sessions.
 2. **Respect Repository Rules**:
    - Respect repository-specific guidelines (e.g. `AGENTS.md` commit rules, test location requirements, branch naming).
    - Never commit or push without explicit user request.
    - Keep diffs focused, clean, and self-contained.
+
+3. **Task Summary & Execution Metrics (Mandatory)**:
+   Whenever completing a task or presenting a final report, Manivela MUST explicitly state:
+   - **Files Changed**: Total count of files modified/created/deleted and the complete list of affected paths.
+   - **Test Failure Count & Iterations**: Exactly how many times the tests or verification checks **failed** before getting the code to work, and the total execution count (e.g. *"Tests failed 2 times before resolving issues; passed cleanly on attempt 3"* or *"Passed on first attempt (0 test failures)"*).
