@@ -50,12 +50,15 @@ When files have been manually deleted or modified by the user after the model ma
 ## Memory
 1. Always use engram to get context of project
 
-## Test Location
+## Go Tests
 
-**MANDATORY: ALWAYS create tests inside the project's `testing/` directory.**
-Never place `_test.go` or other test files beside production source under
-`internal/`, `cmd/`, or any other source directory. Use an external test
-package when necessary and export only the production symbols the tests need.
+One important principle: Tests should describe what the software is supposed to do, not how its implementation happens to work.
+
+Guidelines:
+- Keep tests next to the source files.
+- Use `_test.go` suffix.
+- Prefer testing one package at a time.
+- Avoid putting every test in a single global test file.
 
 ## Skill Installation
 
