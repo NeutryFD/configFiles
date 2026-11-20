@@ -1,5 +1,13 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "providers": {
+    "google-vertex": {
+      "settings": {
+        "project": "antigravity-luis-santos",
+        "location": "eu"
+      }
+    }
+  },
   "mcp": {
     "servers": {
       "engram": {
@@ -67,6 +75,15 @@
           "KUBECONFIG": "{env:HOME}/.kube/config-pro-tekniker"
         },
         "disabled": true
+      },
+      "affine": {
+        "type": "remote",
+        "url": "http://192.168.20.201:3010/api/workspaces/7cfe1110-462a-4fbd-badf-1cafe192d4a0/mcp",
+        "oauth": false,
+        "headers": {
+          "Authorization": "Bearer {file:~/.config/opencode/secrets/affine-mcp-token}"
+        },
+        "disabled": true
       }
     }
   },
@@ -75,5 +92,9 @@
       "~/.config/opencode/**": "allow",
 	  "~/workspace/sync/inbox/**": "allow"
     }
+  },
+  // Todos are off by default in V2; this enables the todo tool and sidebar list.
+  "experimental": {
+    "todo": true
   }
 }

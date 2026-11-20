@@ -111,7 +111,7 @@ alias vimdiff="nvim -d"
 
 # System
 alias master="sudo /usr/local/bin/reconnect-mm712.sh"
-alias mountvault="sudo mount -t nfs 192.168.1.130:/vault-media /NFS-Vault"
+alias mountvault="sudo mount -t nfs 192.168.10.130:/vault-media /NFS-Vault"
 
 #git
 alias gita="source git-ssh-agent.sh"
@@ -156,3 +156,7 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
+
+# Added by Antigravity CLI installer
+export PATH="/home/neutry/.local/bin:$PATH"

@@ -18,6 +18,15 @@
 10. **Create TODOs for commits**: If you have changes that are not ready to be committed, create TODO comments in the code to track what needs to be done before committing
 11. **Scopes**: Use an optional Conventional Commit scope when it identifies the affected component or directory. Do not require an application or directory prefix outside the Conventional Commit format.
 
+## Pull Requests and Merges
+
+1. **Use GitHub CLI**: Create and merge pull requests with `gh` unless the user explicitly requests another method.
+2. **Pull request content**: Use a clear title and describe the changes.
+3. **Require authorization**: Do not merge a pull request unless the user explicitly asks or authorizes it. Existing rules requiring explicit authorization for commits and pushes still apply.
+4. **Merge method**: Use a merge commit unless the user explicitly requests another method.
+5. **Merge message**: Preserve GitHub's default merge commit message, including the pull request number and source branch. Do not replace it with a custom title such as `merge: <branch>`.
+6. **Verify**: After merging, verify that the resulting merge commit message includes the pull request number.
+
 ## Cluster Changes
 
 1. **GitOps only**: Never apply configuration directly to the Kubernetes cluster. Change the repository manifests and let the configured GitOps workflow synchronize them.
@@ -41,10 +50,22 @@ When files have been manually deleted or modified by the user after the model ma
 ## Memory
 1. Always use engram to get context of project
 
-## Test Location
+## Go Tests
 
-**MANDATORY: ALWAYS create tests inside the project's `testing/` directory.**
-Never place `_test.go` or other test files beside production source under
-`internal/`, `cmd/`, or any other source directory. Use an external test
-package when necessary and export only the production symbols the tests need.
+One important principle: Tests should describe what the software is supposed to do, not how its implementation happens to work.
 
+Guidelines:
+- Keep tests next to the source files.
+- Use `_test.go` suffix.
+- Prefer testing one package at a time.
+- Avoid putting every test in a single global test file.
+
+## Skill Installation
+
+1. **Always install skills locally**: When instructed to install, create, or add a skill, ALWAYS install it globally/locally in OpenCode's local skills directory (`~/.config/opencode/skills/`), NOT inside any project repository.
+2. **Never install in the repository**: NEVER install or create skills inside any repository (e.g. `.opencode/skills/` or `./skills/`) unless explicitly requested by the user.
+3. **Skill-first coding & generation**: Before coding, verify that a language skill exists. When no skill is detected for a language or framework, craft the best skill for it and ask the user if they want to install it locally before proceeding.
+
+## Subagent Delegation
+
+- When acting as the primary agent (such as `build`), always delegate non-trivial coding, implementation, refactoring, and bug-fixing tasks to the `manivela` subagent via `subagent(agent: "manivela", ...)` so that language skills and verification loops are enforced.
