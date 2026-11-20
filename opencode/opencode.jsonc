@@ -13,7 +13,7 @@
       "engram": {
         "type": "local",
         "command": [
-          "/home/neutry/go/bin/engram",
+          "{env:HOME}/go/bin/engram",
           "mcp",
           "--tools=agent"
         ]
