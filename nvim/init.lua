@@ -51,6 +51,12 @@ vim.api.nvim_set_keymap('t', '<Esc>\\', [[<C-\><C-n><C-w>p]], { noremap = true, 
 vim.keymap.set("n", "yy", '"+yy', { noremap = true })
 vim.keymap.set("v", "y", '"+y', { noremap = true })
 
+-- Move between panes using  <leader> +m and  h/j/k/l
+vim.keymap.set("n", "<leader>mh", "<C-w>h", { desc = "Move to left pane" })
+vim.keymap.set("n", "<leader>mj", "<C-w>j", { desc = "Move to below pane" })
+vim.keymap.set("n", "<leader>mk", "<C-w>k", { desc = "Move to above pane" })
+vim.keymap.set("n", "<leader>ml", "<C-w>l", { desc = "Move to right pane" })
+
 -- Terraform Keymaps
 vim.keymap.set("n", "<leader>ts", ":TerraformState<cr>", { desc = "Terraform State" })
 vim.keymap.set("n", "<leader>tv", ":TerraformValidate<cr>", { desc = "Terraform Validate" })
