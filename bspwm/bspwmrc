@@ -225,7 +225,7 @@ else
         # bottom edges
         "$HOME/configFiles/polybar/scripts/bspwm_desktops_daemon.sh" &
 
-        launch_left_bar "$HOME/configFiles/polybar/arch-vertical.conf" "$DESKTOP_DISPLAY" v-desk-
+        launch_left_bar "$HOME/configFiles/polybar/arch-vertical.conf" "$DESKTOP_DISPLAY" vbar-
 
         launch_polybar "$HOME/configFiles/polybar/arch-vertical.conf" "" \
             top-gearbox top-banner top-volume top-music bottom-resources bottom-vpn bottom-ethernet
