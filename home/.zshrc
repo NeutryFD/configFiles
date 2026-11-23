@@ -108,9 +108,6 @@ alias vimdiff="nvim -d"
 alias master="sudo /usr/local/bin/reconnect-mm712.sh"
 alias mountvault="sudo mount -t nfs 192.168.10.130:/vault-media /NFS-Vault"
 
-#git
-alias gita="source git-ssh-agent.sh"
-
 # Tmux
 alias tn="tmux new -s"
 alias tl="tmux ls"
@@ -123,7 +120,7 @@ alias config="cd $DOTFILES"
 # Kubernetes
 alias k="kubectl"
 alias kconfig="source kube_config_select.sh"
-alias lazygit='git-ssh-agent && lazygit'
+alias lazygit='gita && lazygit'
 alias public='copy-ssh-pubkey.sh'
 alias k9s='kconfig && k9s'
 
@@ -135,8 +132,8 @@ sky() { ~/astroterm-linux-x86_64 --color --constellations --speed 100 --fps 20 -
 push() { git add . && git commit -m "$*" && git push; }
 
 # SSH Agent - source to preserve environment variables
-git-ssh-agent() {
-  source "$DOTFILES/bin/git-ssh-agent.sh"
+gita() {
+  source "$DOTFILES/bin/gita.sh"
 }
 export PATH=$HOME/.local/bin:$PATH
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
