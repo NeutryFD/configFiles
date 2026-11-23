@@ -9,7 +9,6 @@
 #   - sxhkd     -> loaded via sxhkd -c in bspwmrc
 #   - polybar    -> loaded via polybar -c in bspwmrc
 #   - dunst      -> loaded via dunst -config in bspwmrc
-#   - starship   -> loaded via STARSHIP_CONFIG in .zshrc
 #   - nvim/lua/  -> loaded via package.path in init.lua
 #   - scripts/   -> added to PATH in .zshrc
 # ---------------------------------------------------------------
@@ -401,26 +400,10 @@ setup_opencode() {
     link_config "opencode/AGENTS.md" "$HOME/.config/opencode/AGENTS.md"
 }
 
-setup_starship() {
-    echo -e "\n${YELLOW}--- Starship ---${NC}"
-    if ! which starship &>/dev/null; then
-        info "Installing Starship..."
-        if $DRY_RUN; then
-            dry "curl -sS https://starship.rs/install.sh | sh -s -- --yes"
-        else
-            curl -sS https://starship.rs/install.sh | sh -s -- --yes
-        fi
-    else
-        info "Starship already installed: $(which starship)"
-    fi
-    # Config loaded via STARSHIP_CONFIG env var in .zshrc
-    info "Config loaded via STARSHIP_CONFIG in .zshrc"
-}
-
 # --- Main ------------------------------------------------------
 
 # All available modules in default install order
-ALL_MODULES=(zsh fzf bspwm sxhkd clipmenu dunst polybar gearbox picom ghostty nvim rofi tmux starship opencode betterlockscreen)
+ALL_MODULES=(zsh fzf bspwm sxhkd clipmenu dunst polybar gearbox picom ghostty nvim rofi tmux opencode betterlockscreen)
 
 usage() {
     echo "Usage: $0 [--dry-run] [--only <module>[,<module>...]]"
@@ -452,7 +435,6 @@ run_module() {
         nvim)            setup_nvim ;;
         rofi)            setup_rofi ;;
         tmux)            setup_tmux ;;
-        starship)        setup_starship ;;
         opencode)        setup_opencode ;;
         betterlockscreen) setup_betterlockscreen ;;
         *) error "Unknown module: $mod"; echo "Available: ${ALL_MODULES[*]}"; return 1 ;;
