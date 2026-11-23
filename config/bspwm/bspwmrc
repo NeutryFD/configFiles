@@ -15,21 +15,11 @@ killall -q polybar sxhkd clipmenud picom dunst bspwm_desktops_daemon.sh monitor-
 # CONFIGURATION
 # ============================================================================
 
-# Monitor definitions
-LAPTOP_DISPLAY="eDP"
-HDMI_PORT="HDMI-A-0"
-DP_PORT="DisplayPort-0"
-DISPLAY_DP=$DP_PORT
-DISPLAY_HDMI=$HDMI_PORT
-DESKTOP_DISPLAY="HDMI-0"
-
 # Wallpaper path
 WALLPAPER="$HOME/Pictures/Wallpapers/wallpaper.jpg"
-WALLPAPER_VERTICAL="$HOME/Pictures/Wallpapers/wallpaper-vertical.jpg"
 
-# Desktop polybar layout, set by polybar/scripts/toggle-layout.sh
-BAR_LAYOUT=$(cat "$HOME/.cache/bar-layout" 2>/dev/null)
-[ "$BAR_LAYOUT" == "vertical" ] || BAR_LAYOUT="horizontal"
+# Per-host layout, linked by install.sh
+HOST_LAYOUT="$HOME/.config/dotfiles-host/bspwm/layout.sh"
 
 # ============================================================================
 # FUNCTIONS
@@ -116,199 +106,21 @@ bspc config pointer_follows_monitor true
 # MONITOR CONFIGURATION
 # ============================================================================
 
-if [ "$(hostnamectl chassis)" == "laptop" ]; then
-
-    # ---- Laptop mode: check connected monitors ----
-
-    if [ $(connected_monitors) -eq 3 ]; then
-        # Three monitors: DisplayPort + HDMI + Internal
-
-        # Determine which ports are connected
-        if is_connected "$HDMI_PORT" && is_connected "$DP_PORT"; then
-            DISPLAY_DP=$DP_PORT
-            DISPLAY_HDMI=$HDMI_PORT
-        fi
-
-        # Configure displays
-        xrandr --auto
-        xrandr --output "$LAPTOP_DISPLAY"  --rate 60
-        xrandr --output "$DISPLAY_DP"      --rate 60 --left-of "$LAPTOP_DISPLAY"
-        xrandr --output "$DISPLAY_HDMI"    --rate 60 --left-of "$DISPLAY_DP"
-
-        # Assign workspaces to monitors
-        bspc monitor "$DISPLAY_HDMI"    -d 1 2 3
-        bspc monitor "$DISPLAY_DP"      -d 4 5 6
-        bspc monitor "$LAPTOP_DISPLAY"  -d 7 8 9
-
-        # Set monitor order (left to right)
-        bspc wm --reorder-monitors "$DISPLAY_HDMI" "$DISPLAY_DP" "$LAPTOP_DISPLAY"
-
-        # Launch polybar for each monitor
-        launch_polybar "$HOME/configFiles/polybar/thinkpad.conf" "$LAPTOP_DISPLAY" \
-            thinkpad-left thinkpad-banner thinkpad-vpn thinkpad-bspwm thinkpad-music thinkpad-wifi thinkpad-ethernet thinkpad-right thinkpad-tray thinkpad-gearbox
-
-        launch_polybar "$HOME/configFiles/polybar/thinkpad.conf" "$DISPLAY_DP" \
-            thinkpad-ext-banner thinkpad-ext-vpn thinkpad-ext-bspwm thinkpad-ext-music thinkpad-ext-right
-
-        launch_polybar "$HOME/configFiles/polybar/thinkpad.conf" "$DISPLAY_HDMI" \
-            thinkpad-ext-banner thinkpad-ext-vpn thinkpad-ext-bspwm thinkpad-ext-music thinkpad-ext-right
-
-        # Per-monitor padding: external bars are smaller (27px) than internal (35px)
-        bspc config -m "$DISPLAY_DP"   top_padding    30
-        bspc config -m "$DISPLAY_DP"   bottom_padding 8
-        bspc config -m "$DISPLAY_HDMI" top_padding    30
-        bspc config -m "$DISPLAY_HDMI" bottom_padding 8
-
-
-	elif [ $(connected_monitors) -eq 2 ]; then
-        # Two monitors: External + Internal
-
-        EXTERNAL_DISPLAY=""
-
-        # Detect which port is in use
-        if is_connected "$HDMI_PORT"; then
-            EXTERNAL_DISPLAY=$HDMI_PORT
-        elif is_connected "$DP_PORT"; then
-            EXTERNAL_DISPLAY=$DP_PORT
-        fi
-
-        # Configure displays
-        xrandr --output "$LAPTOP_DISPLAY"   --rate 60 --auto \
-               --output "$EXTERNAL_DISPLAY" --rate 60 --auto --right-of "$LAPTOP_DISPLAY"
-
-        # Assign workspaces to monitors
-        bspc monitor "$EXTERNAL_DISPLAY" -d 1 2 3 4 5
-        bspc monitor "$LAPTOP_DISPLAY"   -d 6 7 8 9 10
-        bspc wm --reorder-monitors "$LAPTOP_DISPLAY" "${DISPLAY_HDMI:-$DISPLAY_DP}"
-
-        # Launch polybar
-        launch_polybar "$HOME/configFiles/polybar/thinkpad.conf" "$LAPTOP_DISPLAY" \
-            thinkpad-ext-banner thinkpad-ext-vpn thinkpad-ext-bspwm thinkpad-ext-music thinkpad-ext-right
-
-        launch_polybar "$HOME/configFiles/polybar/thinkpad.conf" "$EXTERNAL_DISPLAY" \
-            thinkpad-left thinkpad-banner thinkpad-vpn thinkpad-bspwm thinkpad-music thinkpad-wifi thinkpad-ethernet thinkpad-right thinkpad-tray thinkpad-gearbox
-
-        bspc config -m "$EXTERNAL_DISPLAY" top_padding    38
-        bspc config -m "$EXTERNAL_DISPLAY" bottom_padding 38
-
-    else
-        # Single monitor: Internal only
-
-        xrandr --auto
-        xrandr --output "$LAPTOP_DISPLAY" --rate 60
-        bspc wm --reorder-monitors "$LAPTOP_DISPLAY"
-
-        # All workspaces on internal monitor
-        bspc monitor "$LAPTOP_DISPLAY" -d 1 2 3 4 5 6 7 8 9 10
-
-        # Migrate windows from disconnected external monitors
-        for wid in $(bspc query -N -n .window); do
-            CURRENT_DESKTOP=$(bspc query -D -n "$wid" --names)
-            bspc node "$wid" --to-monitor "$LAPTOP_DISPLAY" -d "$CURRENT_DESKTOP"
-        done
-
-        # Launch polybar
-        launch_polybar "$HOME/configFiles/polybar/thinkpad.conf" "" \
-            thinkpad-left thinkpad-banner thinkpad-vpn thinkpad-bspwm thinkpad-music thinkpad-wifi thinkpad-ethernet thinkpad-right thinkpad-tray thinkpad-gearbox
-
-    fi
-
-else
-    # ---- Desktop mode (non-laptop) ----
-
-    # Any other connected output is the portrait chat monitor
-    DESKTOP_SECOND_DISPLAY=$(xrandr | awk -v main="$DESKTOP_DISPLAY" '$2 == "connected" && $1 != main { print $1; exit }')
-
-    if [ -n "$DESKTOP_SECOND_DISPLAY" ]; then
-        # Portrait chat monitor on the left, without polybar
-        xrandr --output "$DESKTOP_DISPLAY"        --primary --rate 60 \
-               --output "$DESKTOP_SECOND_DISPLAY" --auto --rotate left --left-of "$DESKTOP_DISPLAY"
-
-        # Move desktops beyond 8 with their windows, then drop the default "Desktop"
-        while [ "$(bspc query -D -m "$DESKTOP_DISPLAY" | wc -l)" -gt 8 ]; do
-            bspc desktop "$DESKTOP_DISPLAY:^9" --to-monitor "$DESKTOP_SECOND_DISPLAY"
-        done
-        for desk in $(bspc query -D -m "$DESKTOP_SECOND_DISPLAY"); do
-            [ "$(bspc query -D -d "$desk" --names)" == "Desktop" ] && bspc desktop "$desk" -r
-        done
-
-        bspc monitor "$DESKTOP_DISPLAY"        -d 1 2 3 4 5 6 7 8
-        bspc monitor "$DESKTOP_SECOND_DISPLAY" -d 9 10
-        bspc wm --reorder-monitors "$DESKTOP_SECOND_DISPLAY" "$DESKTOP_DISPLAY"
-        DESKTOP_COUNT=8
-    else
-        xrandr --output "$DESKTOP_DISPLAY" --rate 60
-        bspc monitor "$DESKTOP_DISPLAY" -d 1 2 3 4 5 6 7 8 9 10
-        DESKTOP_COUNT=10
-
-        # Migrate windows from disconnected monitors, then remove them
-        for mon in $(bspc query -M --names); do
-            [ "$mon" == "$DESKTOP_DISPLAY" ] && continue
-            for wid in $(bspc query -N -m "$mon" -n .window); do
-                CURRENT_DESKTOP=$(bspc query -D -n "$wid" --names)
-                bspc node "$wid" -d "$DESKTOP_DISPLAY:^$CURRENT_DESKTOP" \
-                    || bspc node "$wid" -d "$DESKTOP_DISPLAY:focused"
-            done
-            [ -z "$(bspc query -N -m "$mon" -n .window)" ] && bspc monitor "$mon" -r
-        done
-    fi
-
-    # Launch polybar
-    if [ "$BAR_LAYOUT" == "vertical" ]; then
-        "$HOME/configFiles/polybar/scripts/bspwm_desktops_daemon.sh" &
-
-        launch_left_bar "$HOME/configFiles/polybar/arch-vertical.conf" "$DESKTOP_DISPLAY" vbar- "$DESKTOP_COUNT"
-
-        launch_polybar "$HOME/configFiles/polybar/arch-vertical.conf" "" \
-            top-gearbox top-banner top-volume top-music bottom-resources bottom-vpn bottom-ethernet
-
-        # visible bar edge 64 + 8 gap - window_gap
-        bspc config left_padding 66
-    else
-        launch_polybar "$HOME/configFiles/polybar/arch.conf" "" \
-            left banner ethernet bspwm right music tray vpn gearbox
-    fi
-
-    # Global paddings above also apply here: override them afterwards
-    if [ -n "$DESKTOP_SECOND_DISPLAY" ]; then
-        launch_polybar "$HOME/configFiles/polybar/arch.conf" "$DESKTOP_SECOND_DISPLAY" second-bspwm
-
-        bspc config -m "$DESKTOP_SECOND_DISPLAY" top_padding    8
-        bspc config -m "$DESKTOP_SECOND_DISPLAY" bottom_padding 42
-        bspc config -m "$DESKTOP_SECOND_DISPLAY" left_padding   8
-        bspc config -m "$DESKTOP_SECOND_DISPLAY" right_padding  8
-    fi
-
-    # Set wallpaper: feh takes one image per Xinerama screen, in --listactivemonitors order
-    if [ -n "$DESKTOP_SECOND_DISPLAY" ] && [ -f "$WALLPAPER_VERTICAL" ]; then
-        WALLPAPERS=()
-        for mon in $(xrandr --listactivemonitors | awk 'NR > 1 { print $NF }'); do
-            if [ "$mon" == "$DESKTOP_SECOND_DISPLAY" ]; then
-                WALLPAPERS+=("$WALLPAPER_VERTICAL")
-            else
-                WALLPAPERS+=("$WALLPAPER")
-            fi
-        done
-        feh --bg-fill "${WALLPAPERS[@]}"
-    else
-        feh --bg-fill "$WALLPAPER"
-    fi
-    WALLPAPER_SET=true
-
-fi
+# Sets up monitors, desktops, polybar and, optionally, the wallpaper (WALLPAPER_SET)
+[ -f "$HOST_LAYOUT" ] && . "$HOST_LAYOUT"
 
 # ============================================================================
 # START SERVICES
 # ============================================================================
 
 # Keyboard shortcuts daemon
-sxhkd -c "$HOME/configFiles/sxhkd/sxhkdrc" &
+sxhkd -c "$HOME/.config/sxhkd/sxhkdrc" &
 
 # Re-run this script when a monitor is plugged or unplugged
-"$HOME/configFiles/bspwm/monitor-hotplug.sh" &
+"$HOME/.config/bspwm/monitor-hotplug.sh" &
 
 # Compositor (if not already running)
-pgrep -x picom > /dev/null || picom --config "$HOME/configFiles/picom/picom.conf"
+pgrep -x picom > /dev/null || picom --config "$HOME/.config/picom/picom.conf"
 
 # Wallpaper (already set per monitor in desktop mode)
 [ -n "$WALLPAPER_SET" ] || feh --bg-fill "$WALLPAPER"
@@ -317,4 +129,4 @@ pgrep -x picom > /dev/null || picom --config "$HOME/configFiles/picom/picom.conf
 clipmenud &
 
 # Notification daemon
-dunst -config "$HOME/configFiles/dunst/dunstrc" &
+dunst -config "$HOME/.config/dunst/dunstrc" &

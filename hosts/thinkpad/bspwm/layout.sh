@@ -1,0 +1,107 @@
+#!/bin/bash
+
+# ============================================================================
+# ThinkPad (laptop) monitor and polybar layout, sourced by bspwmrc
+# ============================================================================
+
+# Monitor definitions
+LAPTOP_DISPLAY="eDP"
+HDMI_PORT="HDMI-A-0"
+DP_PORT="DisplayPort-0"
+DISPLAY_DP=$DP_PORT
+DISPLAY_HDMI=$HDMI_PORT
+
+POLYBAR_CONFIG="$HOME/.config/dotfiles-host/polybar/thinkpad.conf"
+
+if [ $(connected_monitors) -eq 3 ]; then
+    # Three monitors: DisplayPort + HDMI + Internal
+
+    # Determine which ports are connected
+    if is_connected "$HDMI_PORT" && is_connected "$DP_PORT"; then
+        DISPLAY_DP=$DP_PORT
+        DISPLAY_HDMI=$HDMI_PORT
+    fi
+
+    # Configure displays
+    xrandr --auto
+    xrandr --output "$LAPTOP_DISPLAY"  --rate 60
+    xrandr --output "$DISPLAY_DP"      --rate 60 --left-of "$LAPTOP_DISPLAY"
+    xrandr --output "$DISPLAY_HDMI"    --rate 60 --left-of "$DISPLAY_DP"
+
+    # Assign workspaces to monitors
+    bspc monitor "$DISPLAY_HDMI"    -d 1 2 3
+    bspc monitor "$DISPLAY_DP"      -d 4 5 6
+    bspc monitor "$LAPTOP_DISPLAY"  -d 7 8 9
+
+    # Set monitor order (left to right)
+    bspc wm --reorder-monitors "$DISPLAY_HDMI" "$DISPLAY_DP" "$LAPTOP_DISPLAY"
+
+    # Launch polybar for each monitor
+    launch_polybar "$POLYBAR_CONFIG" "$LAPTOP_DISPLAY" \
+        thinkpad-left thinkpad-banner thinkpad-vpn thinkpad-bspwm thinkpad-music thinkpad-wifi thinkpad-ethernet thinkpad-right thinkpad-tray thinkpad-gearbox
+
+    launch_polybar "$POLYBAR_CONFIG" "$DISPLAY_DP" \
+        thinkpad-ext-banner thinkpad-ext-vpn thinkpad-ext-bspwm thinkpad-ext-music thinkpad-ext-right
+
+    launch_polybar "$POLYBAR_CONFIG" "$DISPLAY_HDMI" \
+        thinkpad-ext-banner thinkpad-ext-vpn thinkpad-ext-bspwm thinkpad-ext-music thinkpad-ext-right
+
+    # Per-monitor padding: external bars are smaller (27px) than internal (35px)
+    bspc config -m "$DISPLAY_DP"   top_padding    30
+    bspc config -m "$DISPLAY_DP"   bottom_padding 8
+    bspc config -m "$DISPLAY_HDMI" top_padding    30
+    bspc config -m "$DISPLAY_HDMI" bottom_padding 8
+
+
+elif [ $(connected_monitors) -eq 2 ]; then
+    # Two monitors: External + Internal
+
+    EXTERNAL_DISPLAY=""
+
+    # Detect which port is in use
+    if is_connected "$HDMI_PORT"; then
+        EXTERNAL_DISPLAY=$HDMI_PORT
+    elif is_connected "$DP_PORT"; then
+        EXTERNAL_DISPLAY=$DP_PORT
+    fi
+
+    # Configure displays
+    xrandr --output "$LAPTOP_DISPLAY"   --rate 60 --auto \
+           --output "$EXTERNAL_DISPLAY" --rate 60 --auto --right-of "$LAPTOP_DISPLAY"
+
+    # Assign workspaces to monitors
+    bspc monitor "$EXTERNAL_DISPLAY" -d 1 2 3 4 5
+    bspc monitor "$LAPTOP_DISPLAY"   -d 6 7 8 9 10
+    bspc wm --reorder-monitors "$LAPTOP_DISPLAY" "${DISPLAY_HDMI:-$DISPLAY_DP}"
+
+    # Launch polybar
+    launch_polybar "$POLYBAR_CONFIG" "$LAPTOP_DISPLAY" \
+        thinkpad-ext-banner thinkpad-ext-vpn thinkpad-ext-bspwm thinkpad-ext-music thinkpad-ext-right
+
+    launch_polybar "$POLYBAR_CONFIG" "$EXTERNAL_DISPLAY" \
+        thinkpad-left thinkpad-banner thinkpad-vpn thinkpad-bspwm thinkpad-music thinkpad-wifi thinkpad-ethernet thinkpad-right thinkpad-tray thinkpad-gearbox
+
+    bspc config -m "$EXTERNAL_DISPLAY" top_padding    38
+    bspc config -m "$EXTERNAL_DISPLAY" bottom_padding 38
+
+else
+    # Single monitor: Internal only
+
+    xrandr --auto
+    xrandr --output "$LAPTOP_DISPLAY" --rate 60
+    bspc wm --reorder-monitors "$LAPTOP_DISPLAY"
+
+    # All workspaces on internal monitor
+    bspc monitor "$LAPTOP_DISPLAY" -d 1 2 3 4 5 6 7 8 9 10
+
+    # Migrate windows from disconnected external monitors
+    for wid in $(bspc query -N -n .window); do
+        CURRENT_DESKTOP=$(bspc query -D -n "$wid" --names)
+        bspc node "$wid" --to-monitor "$LAPTOP_DISPLAY" -d "$CURRENT_DESKTOP"
+    done
+
+    # Launch polybar
+    launch_polybar "$POLYBAR_CONFIG" "" \
+        thinkpad-left thinkpad-banner thinkpad-vpn thinkpad-bspwm thinkpad-music thinkpad-wifi thinkpad-ethernet thinkpad-right thinkpad-tray thinkpad-gearbox
+
+fi
