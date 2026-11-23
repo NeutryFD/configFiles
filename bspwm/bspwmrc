@@ -9,7 +9,7 @@
 sleep 1
 
 # Kill existing instances to avoid duplicates
-killall -q polybar sxhkd clipmenud picom dunst
+killall -q polybar sxhkd clipmenud picom dunst bspwm_desktops_daemon.sh
 
 # ============================================================================
 # CONFIGURATION
@@ -25,6 +25,10 @@ DESKTOP_DISPLAY="HDMI-0"
 
 # Wallpaper path
 WALLPAPER="$HOME/Pictures/Wallpapers/wallpaper.jpg"
+
+# Desktop polybar layout, set by polybar/scripts/toggle-layout.sh
+BAR_LAYOUT=$(cat "$HOME/.cache/bar-layout" 2>/dev/null)
+[ "$BAR_LAYOUT" == "vertical" ] || BAR_LAYOUT="horizontal"
 
 # ============================================================================
 # FUNCTIONS
@@ -49,6 +53,23 @@ launch_polybar() {
             polybar -c "$config" "$bar" &
         fi
     done
+}
+
+# Launch the contiguous segments of the vertical left bar
+# Usage: launch_left_bar <config> <monitor> <bar_prefix>
+launch_left_bar() {
+    local config=$1
+    local monitor=$2
+    local prefix=$3
+    local i
+
+    local bars=("${prefix}top" "${prefix}kbd" "${prefix}disk" "${prefix}upper")
+    for ((i = 1; i <= 10; i++)); do
+        bars+=("${prefix}${i}")
+    done
+    bars+=("${prefix}gap" "${prefix}hour" "${prefix}min" "${prefix}sep" "${prefix}day" "${prefix}month" "${prefix}bottom")
+
+    launch_polybar "$config" "$monitor" "${bars[@]}"
 }
 
 # Check if a monitor is connected
@@ -192,8 +213,20 @@ else
     bspc monitor "$DESKTOP_DISPLAY" -d 1 2 3 4 5 6 7 8 9 10
 
     # Launch polybar
-    launch_polybar "$HOME/configFiles/polybar/arch.conf" "" \
-        left banner ethernet bspwm right music tray vpn gearbox
+    if [ "$BAR_LAYOUT" == "vertical" ]; then
+        "$HOME/configFiles/polybar/scripts/bspwm_desktops_daemon.sh" &
+
+        launch_left_bar "$HOME/configFiles/polybar/arch-vertical.conf" "$DESKTOP_DISPLAY" vbar-
+
+        launch_polybar "$HOME/configFiles/polybar/arch-vertical.conf" "" \
+            top-gearbox top-banner top-volume top-music bottom-resources bottom-vpn bottom-ethernet
+
+        # 8 + 60px left bar + 8
+        bspc config left_padding 76
+    else
+        launch_polybar "$HOME/configFiles/polybar/arch.conf" "" \
+            left banner ethernet bspwm right music tray vpn gearbox
+    fi
 
     # Set wallpaper
     feh --bg-scale "$WALLPAPER"

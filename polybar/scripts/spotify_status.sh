@@ -10,9 +10,11 @@ PLAYER="fastpotify"
 FORMAT="{{ artist }} - {{ title }}"
 SCROLL_SPEED=0.2
 PADDING="    "
+# --static: no scrolling (polybar truncates the label)
+STATIC=false
+[[ "${1:-}" == "--static" ]] && STATIC=true
 
 # Track previous state to detect changes
-last_metadata=""
 last_status=""
 # Get polybar parent process for hook updates
 PARENT_BAR_PID=$(pgrep -f "polybar")
@@ -38,9 +40,10 @@ get_metadata() {
 }
 
 # Update polybar hooks when status changes
+# Hook actions are 0-based; timeout: a bar shutting down never answers
 update_hooks() {
     echo "$1" | while IFS= read -r id; do
-        polybar-msg -p "$id" hook spotify-play-pause "$2" 1>/dev/null 2>&1
+        timeout 1 polybar-msg -p "$id" action "#spotify-play-pause.hook.$2" 1>/dev/null 2>&1
     done
 }
 
@@ -55,12 +58,6 @@ while true; do
         metadata=$(get_metadata)
     fi
 
-    # Trigger polybar refresh on metadata change
-    if [[ "$metadata" != "$last_metadata" ]]; then
-        last_metadata="$metadata"
-        polybar-msg hook spotify 1 > /dev/null 2>&1
-    fi
-
     # Update play/pause icon on status change
     if [[ "$STATUS" != "$last_status" ]]; then
         last_status="$STATUS"
@@ -72,5 +69,10 @@ while true; do
     fi
 
     # Scroll and display the current text
-    scroll_text "$metadata"
+    if $STATIC; then
+        echo "$metadata"
+        sleep 1
+    else
+        scroll_text "$metadata"
+    fi
 done

@@ -43,11 +43,12 @@ get_vpn_info() {
 }
 
 # --icons: coloured Nerd Font icon (desktop bar); default: plain text (thinkpad bars)
+# %{O6}: the icon overhangs its advance
 if [[ "${1:-}" == "--icons" ]]; then
     if info=$(get_vpn_info); then
-        echo "%{F#9ece6a}󰖂%{F-} ${info%% *}"
+        echo "%{F#9ece6a}󰖂%{F-}%{O6} ${info%% *}"
     else
-        echo "%{F#555}󰖂 off%{F-}"
+        echo "%{F#555}󰖂%{O6} off%{F-}"
     fi
     exit 0
 fi
