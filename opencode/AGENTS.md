@@ -47,6 +47,13 @@ When files have been manually deleted or modified by the user after the model ma
    - "Do you want to update over your manual changes?"
 3. Never automatically restore or recreate files without explicit permission
 
+## Code Comments
+
+1. **Keep comments to a minimum**: Do not add explanatory or narrative comments; the code should speak for itself
+2. **Allowed comments**: Short section headers matching the file's existing style, and one-line notes that prevent a real mistake (non-obvious gotchas, workarounds)
+3. **One line each**: No multi-line comment paragraphs; script headers are a single short line
+4. **Do not touch existing comments** unless asked or they become wrong after your change
+
 ## Memory
 1. Always use engram to get context of project
 
