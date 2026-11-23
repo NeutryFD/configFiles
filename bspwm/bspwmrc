@@ -259,8 +259,8 @@ else
         launch_polybar "$HOME/configFiles/polybar/arch-vertical.conf" "" \
             top-gearbox top-banner top-volume top-music bottom-resources bottom-vpn bottom-ethernet
 
-        # 8 + 60px left bar + 8
-        bspc config left_padding 76
+        # visible bar edge 64 + 8 gap - window_gap
+        bspc config left_padding 66
     else
         launch_polybar "$HOME/configFiles/polybar/arch.conf" "" \
             left banner ethernet bspwm right music tray vpn gearbox
