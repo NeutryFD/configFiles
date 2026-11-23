@@ -151,6 +151,18 @@ setup_betterlockscreen() {
     fi
     link_config "betterlockscreen/betterlockscreenrc" \
                 "$HOME/.config/betterlockscreen/betterlockscreenrc"
+
+    # Lock the screen on suspend/sleep
+    local unit="betterlockscreen@.service"
+    if $DRY_RUN; then
+        dry "sudo install -Dm644 $REPO_DIR/betterlockscreen/$unit /etc/systemd/system/$unit"
+        dry "sudo systemctl enable betterlockscreen@$USER"
+    else
+        sudo install -Dm644 "$REPO_DIR/betterlockscreen/$unit" "/etc/systemd/system/$unit"
+        sudo systemctl daemon-reload
+        sudo systemctl enable "betterlockscreen@$USER"
+        info "Enabled betterlockscreen@$USER (locks on suspend)"
+    fi
 }
 
 setup_bspwm() {
