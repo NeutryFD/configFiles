@@ -9,7 +9,7 @@
 sleep 1
 
 # Kill existing instances to avoid duplicates
-killall -q polybar sxhkd clipmenud picom dunst
+killall -q polybar sxhkd clipmenud picom dunst bspwm_desktops_daemon.sh
 
 # ============================================================================
 # CONFIGURATION
@@ -25,6 +25,11 @@ DESKTOP_DISPLAY="HDMI-0"
 
 # Wallpaper path
 WALLPAPER="$HOME/Pictures/Wallpapers/wallpaper.jpg"
+
+# Polybar layout (desktop mode only): horizontal (default) or vertical
+# Toggled by polybar/scripts/toggle-layout.sh; laptop mode is always horizontal
+BAR_LAYOUT=$(cat "$HOME/.cache/bar-layout" 2>/dev/null)
+[ "$BAR_LAYOUT" == "vertical" ] || BAR_LAYOUT="horizontal"
 
 # ============================================================================
 # FUNCTIONS
@@ -49,6 +54,28 @@ launch_polybar() {
             polybar -c "$config" "$bar" &
         fi
     done
+}
+
+# Launch one vertical desktop slot bar per desktop of a monitor
+# Usage: launch_desk_slots <config> <monitor> <bar_prefix>
+#   bar_prefix - slot bars are <bar_prefix>1 .. <bar_prefix>N (config defines 10)
+#   The last slot gets DESK_RADIUS_BOTTOM=6 to round the bottom of the column
+launch_desk_slots() {
+    local config=$1
+    local monitor=$2
+    local prefix=$3
+    local count i
+    count=$(bspc query -D -m "$monitor" | wc -l)
+    [ "$count" -gt 10 ] && count=10
+    [ "$count" -gt 0 ] || return
+
+    local slots=()
+    for ((i = 1; i < count; i++)); do
+        slots+=("${prefix}${i}")
+    done
+
+    launch_polybar "$config" "$monitor" "${slots[@]}"
+    DESK_RADIUS_BOTTOM=6 launch_polybar "$config" "$monitor" "${prefix}${count}"
 }
 
 # Check if a monitor is connected
@@ -192,8 +219,23 @@ else
     bspc monitor "$DESKTOP_DISPLAY" -d 1 2 3 4 5 6 7 8 9 10
 
     # Launch polybar
-    launch_polybar "$HOME/configFiles/polybar/arch.conf" "" \
-        left banner ethernet bspwm right music tray vpn gearbox
+    if [ "$BAR_LAYOUT" == "vertical" ]; then
+        # Vertical: desktop column fed by a single bspc subscriber, then the pills
+        "$HOME/configFiles/polybar/scripts/bspwm_desktops_daemon.sh" &
+
+        launch_desk_slots "$HOME/configFiles/polybar/arch-vertical.conf" "$DESKTOP_DISPLAY" v-desk-
+
+        launch_polybar "$HOME/configFiles/polybar/arch-vertical.conf" "" \
+            vkeyboard vdate vmusic vvolume vcpu vmemory vtemperature vethernet vvpn vgearbox vtray
+
+        # Bars live on the left edge (8 + 48px pill + 8)
+        bspc config top_padding    8
+        bspc config bottom_padding 8
+        bspc config left_padding   64
+    else
+        launch_polybar "$HOME/configFiles/polybar/arch.conf" "" \
+            left banner ethernet bspwm right music tray vpn gearbox
+    fi
 
     # Set wallpaper
     feh --bg-scale "$WALLPAPER"
