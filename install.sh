@@ -1,16 +1,15 @@
 #!/bin/bash
 # ---------------------------------------------------------------
-# ignite.sh - Bootstrap script for configFiles
+# install.sh - Bootstrap script for dotfiles
 # ---------------------------------------------------------------
 # Creates symlinks and installs packages for the desktop setup.
-# Run from the repo root: ./ignite.sh [--dry-run] [--only <module>[,<module>...]]
+# Run from the repo root: ./install.sh [--dry-run] [--only <module>[,<module>...]]
 #
-# Configs that don't need symlinks (loaded by absolute path):
-#   - sxhkd     -> loaded via sxhkd -c in bspwmrc
-#   - polybar    -> loaded via polybar -c in bspwmrc
-#   - dunst      -> loaded via dunst -config in bspwmrc
-#   - nvim/lua/  -> loaded via package.path in init.lua
-#   - scripts/   -> added to PATH in .zshrc
+# Layout:
+#   - config/<app>  -> ~/.config/<app>
+#   - home/<file>   -> ~/<file>
+#   - bin/          -> added to PATH in .zshrc via $DOTFILES
+#   - hosts/<host>  -> ~/.config/dotfiles-host (host from $DOTFILES_HOST, else hostnamectl chassis)
 # ---------------------------------------------------------------
 
 set -euo pipefail
@@ -30,25 +29,48 @@ warn()  { echo -e "${YELLOW}[!]${NC} $1"; }
 error() { echo -e "${RED}[-]${NC} $1"; }
 dry()   { echo -e "${CYAN}[dry-run]${NC} $1"; }
 
-# Create parent directory and symlink (file -> target)
+# Create parent directory and symlink (file or directory -> target)
 #   link_config <repo_relative_path> <destination>
+# A real directory at <destination> is moved aside to <destination>.bak-<timestamp>
 link_config() {
     local src="${REPO_DIR}/$1"
     local dst="$2"
+    local backup
 
     if [[ ! -e "$src" ]]; then
         error "Source not found: $src"
         return 1
     fi
 
+    if [[ -d "$dst" && ! -L "$dst" ]]; then
+        backup="${dst}.bak-$(date +%Y%m%d%H%M%S)"
+        if $DRY_RUN; then
+            dry "mv $dst $backup"
+        else
+            mv "$dst" "$backup"
+            warn "Moved existing $dst to $backup"
+        fi
+    fi
+
     if $DRY_RUN; then
-        dry "ln -sf $src $dst"
+        dry "ln -sfn $src $dst"
         return
     fi
 
     mkdir -p "$(dirname "$dst")"
-    ln -sf "$src" "$dst"
+    ln -sfn "$src" "$dst"
     info "Linked $dst -> $src"
+}
+
+# Host whose hosts/<host> files are linked: $DOTFILES_HOST, else laptop -> thinkpad, otherwise arch
+detect_host() {
+    if [[ -n "${DOTFILES_HOST:-}" ]]; then
+        echo "$DOTFILES_HOST"
+    elif [[ "$(hostnamectl chassis 2>/dev/null)" == "laptop" ]]; then
+        echo "thinkpad"
+    else
+        echo "arch"
+    fi
 }
 
 # Determine package manager based on /etc/os-release
@@ -149,32 +171,44 @@ setup_betterlockscreen() {
     else
         info "Betterlockscreen already installed: $(which betterlockscreen)"
     fi
-    link_config "betterlockscreen/betterlockscreenrc" \
-                "$HOME/.config/betterlockscreen/betterlockscreenrc"
+    link_config "config/betterlockscreen" "$HOME/.config/betterlockscreen"
 
     # Lock the screen on suspend/sleep
     local unit="betterlockscreen@.service"
     if $DRY_RUN; then
-        dry "sudo install -Dm644 $REPO_DIR/betterlockscreen/$unit /etc/systemd/system/$unit"
+        dry "sudo install -Dm644 $REPO_DIR/config/betterlockscreen/$unit /etc/systemd/system/$unit"
         dry "sudo systemctl enable betterlockscreen@$USER"
     else
-        sudo install -Dm644 "$REPO_DIR/betterlockscreen/$unit" "/etc/systemd/system/$unit"
+        sudo install -Dm644 "$REPO_DIR/config/betterlockscreen/$unit" "/etc/systemd/system/$unit"
         sudo systemctl daemon-reload
         sudo systemctl enable "betterlockscreen@$USER"
         info "Enabled betterlockscreen@$USER (locks on suspend)"
     fi
 }
 
+setup_host() {
+    local host
+    host="$(detect_host)"
+    echo -e "\n${YELLOW}--- Host ($host) ---${NC}"
+    link_config "hosts/$host" "$HOME/.config/dotfiles-host"
+}
+
 setup_bspwm() {
     echo -e "\n${YELLOW}--- bspwm ---${NC}"
     install_packages bspwm
-    link_config "bspwm/bspwmrc" "$HOME/.config/bspwm/bspwmrc"
+    link_config "config/bspwm" "$HOME/.config/bspwm"
+    # Monitor and polybar layout comes from ~/.config/dotfiles-host (host module)
 }
 
 setup_ghostty() {
     echo -e "\n${YELLOW}--- Ghostty ---${NC}"
     install_packages ghostty
-    link_config "ghostty/config" "$HOME/.config/ghostty/config"
+    link_config "config/ghostty" "$HOME/.config/ghostty"
+}
+
+setup_kitty() {
+    echo -e "\n${YELLOW}--- Kitty ---${NC}"
+    link_config "config/kitty" "$HOME/.config/kitty"
 }
 
 setup_nvim() {
@@ -200,39 +234,39 @@ setup_nvim() {
 	else
 		info "Neovim already installed: $(which nvim)"
 	fi
-    link_config "nvim/init.lua" "$HOME/.config/nvim/init.lua"
-    # lua/ directory is loaded via package.path set in init.lua
+    # Per-item links keep the plugin lockfile out of the repo
+    link_config "config/nvim/init.lua" "$HOME/.config/nvim/init.lua"
+    link_config "config/nvim/lua" "$HOME/.config/nvim/lua"
 }
 
 setup_picom() {
     echo -e "\n${YELLOW}--- Picom ---${NC}"
     install_packages picom
-    link_config "picom/picom.conf" "$HOME/.config/picom/picom.conf"
+    link_config "config/picom" "$HOME/.config/picom"
 }
 
 setup_rofi() {
     echo -e "\n${YELLOW}--- Rofi ---${NC}"
     install_packages rofi
-    link_config "rofi/config.rasi" "$HOME/.config/rofi/config.rasi"
-    link_config "rofi/squared-theme.rasi" "$HOME/.config/rofi/squared-theme.rasi"
+    link_config "config/rofi/config.rasi" "$HOME/.config/rofi/config.rasi"
+    link_config "config/rofi/squared-theme.rasi" "$HOME/.config/rofi/squared-theme.rasi"
 }
 
 setup_sxhkd() {
     echo -e "\n${YELLOW}--- sxhkd ---${NC}"
     install_packages sxhkd
-    # No symlink needed - loaded via sxhkd -c in bspwmrc
-    info "Config loaded directly from repo by bspwmrc"
+    link_config "config/sxhkd" "$HOME/.config/sxhkd"
 }
 
 setup_polybar() {
     echo -e "\n${YELLOW}--- Polybar ---${NC}"
     install_packages polybar
-    # No symlink needed - loaded via polybar -c in bspwmrc
-    info "Config loaded directly from repo by bspwmrc"
+    link_config "config/polybar" "$HOME/.config/polybar"
+    # Bar configs live in ~/.config/dotfiles-host/polybar (host module)
     if $DRY_RUN; then
-        dry "chmod +x ${REPO_DIR}/polybar/scripts/*.sh"
+        dry "chmod +x ${REPO_DIR}/config/polybar/scripts/*.sh"
     else
-        chmod +x "${REPO_DIR}"/polybar/scripts/*.sh 2>/dev/null || true
+        chmod +x "${REPO_DIR}"/config/polybar/scripts/*.sh 2>/dev/null || true
     fi
 }
 
@@ -275,21 +309,20 @@ setup_clipmenu() {
     else
         info "clipmenu already supports touch_on_select: $(which clipmenu)"
     fi
-    link_config "clipmenu/clipmenu.conf" "$HOME/.config/clipmenu/clipmenu.conf"
+    link_config "config/clipmenu" "$HOME/.config/clipmenu"
     # clipmenud is started by bspwmrc
 }
 
 setup_dunst() {
     echo -e "\n${YELLOW}--- Dunst ---${NC}"
     install_packages dunst notify-send:libnotify
-    # No symlink needed - loaded via dunst -config in bspwmrc
-    info "Config loaded directly from repo by bspwmrc"
+    link_config "config/dunst" "$HOME/.config/dunst"
 }
 
 setup_tmux() {
     echo -e "\n${YELLOW}--- tmux ---${NC}"
     install_packages tmux
-    link_config "tmux/.tmux.conf" "$HOME/.tmux.conf"
+    link_config "home/.tmux.conf" "$HOME/.tmux.conf"
 }
 
 setup_fzf() {
@@ -371,16 +404,17 @@ setup_zsh() {
     )
     install_zsh_plugins "${zsh_plugins[@]}"
 
-    link_config "zsh/.zshrc" "$HOME/.zshrc"
-    # scripts/ directory is added to PATH in .zshrc
-	link_config  "zsh/themes/neutry.zsh-theme" "$HOME/.oh-my-zsh/custom/themes/neutry.zsh-theme"
+    link_config "home/.zshrc" "$HOME/.zshrc"
+    link_config "home/.zsh/functions/helpers.zsh" "$HOME/.zsh/functions/helpers.zsh"
+    link_config "home/.oh-my-zsh/custom/themes/neutry.zsh-theme" "$HOME/.oh-my-zsh/custom/themes/neutry.zsh-theme"
 
     if $DRY_RUN; then
-        dry "chmod +x ${REPO_DIR}/scripts/*.sh"
+        dry "chmod +x ${REPO_DIR}/bin/*.sh"
     else
-        chmod +x "${REPO_DIR}"/scripts/*.sh 2>/dev/null || true
+        chmod +x "${REPO_DIR}"/bin/*.sh 2>/dev/null || true
     fi
-    info "Scripts directory added to PATH via .zshrc"
+    info "bin/ added to PATH via \$DOTFILES in .zshrc (default \$HOME/dotfiles)"
+    [[ "$REPO_DIR" == "$HOME/dotfiles" ]] || warn "Repo is not at \$HOME/dotfiles: export DOTFILES=$REPO_DIR in ~/.zshenv"
 }
 
 setup_opencode() {
@@ -397,13 +431,24 @@ setup_opencode() {
         opencode_bin="$(which opencode 2>/dev/null || echo "$HOME/.opencode/bin/opencode")"
         info "OpenCode already installed: $opencode_bin"
     fi
-    link_config "opencode/AGENTS.md" "$HOME/.config/opencode/AGENTS.md"
+    # ~/.config/opencode also holds local state, so link per item
+    link_config "config/opencode/AGENTS.md" "$HOME/.config/opencode/AGENTS.md"
+    link_config "config/opencode/agent" "$HOME/.config/opencode/agent"
+    link_config "config/opencode/commands" "$HOME/.config/opencode/commands"
+    link_config "config/opencode/opencode.jsonc" "$HOME/.config/opencode/opencode.jsonc"
+}
+
+setup_herdr() {
+    echo -e "\n${YELLOW}--- herdr ---${NC}"
+    which herdr &>/dev/null || warn "herdr not found in PATH, linking config anyway"
+    # ~/.config/herdr also holds sessions and logs, so link only the config
+    link_config "config/herdr/config.toml" "$HOME/.config/herdr/config.toml"
 }
 
 # --- Main ------------------------------------------------------
 
 # All available modules in default install order
-ALL_MODULES=(zsh fzf bspwm sxhkd clipmenu dunst polybar gearbox picom ghostty nvim rofi tmux opencode betterlockscreen)
+ALL_MODULES=(host zsh fzf bspwm sxhkd clipmenu dunst polybar gearbox picom ghostty kitty nvim rofi tmux opencode herdr betterlockscreen)
 
 usage() {
     echo "Usage: $0 [--dry-run] [--only <module>[,<module>...]]"
@@ -422,6 +467,7 @@ usage() {
 run_module() {
     local mod="$1"
     case "$mod" in
+        host)            setup_host ;;
         zsh)             setup_zsh ;;
         fzf)             setup_fzf ;;
         bspwm)           setup_bspwm ;;
@@ -432,10 +478,12 @@ run_module() {
         gearbox)         setup_gearbox ;;
         picom)           setup_picom ;;
         ghostty)         setup_ghostty ;;
+        kitty)           setup_kitty ;;
         nvim)            setup_nvim ;;
         rofi)            setup_rofi ;;
         tmux)            setup_tmux ;;
         opencode)        setup_opencode ;;
+        herdr)           setup_herdr ;;
         betterlockscreen) setup_betterlockscreen ;;
         *) error "Unknown module: $mod"; echo "Available: ${ALL_MODULES[*]}"; return 1 ;;
     esac
@@ -462,7 +510,7 @@ main() {
     done
 
     echo -e "${GREEN}"
-    echo "  ignite.sh - configFiles bootstrap"
+    echo "  install.sh - dotfiles bootstrap"
     echo "  repo: ${REPO_DIR}"
     $DRY_RUN && echo -e "  ${CYAN}** DRY-RUN MODE **${NC}"
     echo -e "${NC}"
