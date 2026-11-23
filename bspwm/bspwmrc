@@ -25,6 +25,7 @@ DESKTOP_DISPLAY="HDMI-0"
 
 # Wallpaper path
 WALLPAPER="$HOME/Pictures/Wallpapers/wallpaper.jpg"
+WALLPAPER_VERTICAL="$HOME/Pictures/Wallpapers/wallpaper-vertical.jpg"
 
 # Desktop polybar layout, set by polybar/scripts/toggle-layout.sh
 BAR_LAYOUT=$(cat "$HOME/.cache/bar-layout" 2>/dev/null)
@@ -278,8 +279,21 @@ else
         bspc config -m "$DESKTOP_SECOND_DISPLAY" right_padding  8
     fi
 
-    # Set wallpaper
-    feh --bg-fill "$WALLPAPER"
+    # Set wallpaper: feh takes one image per Xinerama screen, in --listactivemonitors order
+    if [ -n "$DESKTOP_SECOND_DISPLAY" ] && [ -f "$WALLPAPER_VERTICAL" ]; then
+        WALLPAPERS=()
+        for mon in $(xrandr --listactivemonitors | awk 'NR > 1 { print $NF }'); do
+            if [ "$mon" == "$DESKTOP_SECOND_DISPLAY" ]; then
+                WALLPAPERS+=("$WALLPAPER_VERTICAL")
+            else
+                WALLPAPERS+=("$WALLPAPER")
+            fi
+        done
+        feh --bg-fill "${WALLPAPERS[@]}"
+    else
+        feh --bg-fill "$WALLPAPER"
+    fi
+    WALLPAPER_SET=true
 
 fi
 
@@ -296,8 +310,8 @@ sxhkd -c "$HOME/configFiles/sxhkd/sxhkdrc" &
 # Compositor (if not already running)
 pgrep -x picom > /dev/null || picom --config "$HOME/configFiles/picom/picom.conf"
 
-# Wallpaper (already set in desktop mode)
-feh --bg-fill "$WALLPAPER"
+# Wallpaper (already set per monitor in desktop mode)
+[ -n "$WALLPAPER_SET" ] || feh --bg-fill "$WALLPAPER"
 
 # Clipboard manager
 clipmenud &
