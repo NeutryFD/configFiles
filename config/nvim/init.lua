@@ -1,6 +1,3 @@
--- Modules PAHT
-package.path = package.path .. ';' .. os.getenv("HOME") .. '/configFiles/nvim/lua/?.lua'
-
 -- #############################################################
 -- Settings generals options fo Neovim
 -- set leader key
