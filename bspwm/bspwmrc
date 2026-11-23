@@ -26,8 +26,7 @@ DESKTOP_DISPLAY="HDMI-0"
 # Wallpaper path
 WALLPAPER="$HOME/Pictures/Wallpapers/wallpaper.jpg"
 
-# Polybar layout (desktop mode only): horizontal (default) or vertical
-# Toggled by polybar/scripts/toggle-layout.sh; laptop mode is always horizontal
+# Desktop polybar layout, set by polybar/scripts/toggle-layout.sh
 BAR_LAYOUT=$(cat "$HOME/.cache/bar-layout" 2>/dev/null)
 [ "$BAR_LAYOUT" == "vertical" ] || BAR_LAYOUT="horizontal"
 
@@ -56,13 +55,8 @@ launch_polybar() {
     done
 }
 
-# Launch the full-height vertical left bar of a monitor: contiguous segments
-# top, keyboard, disk, filler, 10 desktop slots, filler, hours, minutes,
-# separator, day, month, bottom
+# Launch the contiguous segments of the vertical left bar
 # Usage: launch_left_bar <config> <monitor> <bar_prefix>
-#   bar_prefix - segments are <bar_prefix><name> (see arch-vertical.conf)
-#   All 10 slots always run so the bar stays continuous; slots without a
-#   desktop are blank
 launch_left_bar() {
     local config=$1
     local monitor=$2
@@ -220,9 +214,6 @@ else
 
     # Launch polybar
     if [ "$BAR_LAYOUT" == "vertical" ]; then
-        # Vertical: full-height left bar (keyboard, disk, desktops fed by a
-        # single bspc subscriber, clock) and horizontal pills along the top and
-        # bottom edges
         "$HOME/configFiles/polybar/scripts/bspwm_desktops_daemon.sh" &
 
         launch_left_bar "$HOME/configFiles/polybar/arch-vertical.conf" "$DESKTOP_DISPLAY" vbar-
@@ -230,8 +221,7 @@ else
         launch_polybar "$HOME/configFiles/polybar/arch-vertical.conf" "" \
             top-gearbox top-banner top-volume top-music bottom-resources bottom-vpn bottom-ethernet
 
-        # Left bar on the left edge (8 + 60px bar + 8); top/bottom
-        # keep the horizontal paddings for the edge pills
+        # 8 + 60px left bar + 8
         bspc config left_padding 76
     else
         launch_polybar "$HOME/configFiles/polybar/arch.conf" "" \
