@@ -43,8 +43,7 @@ get_vpn_info() {
 }
 
 # --icons: coloured Nerd Font icon (desktop bar); default: plain text (thinkpad bars)
-# The icon is drawn wider than its advance and would cover the space after it,
-# so %{O6} adds a 6px gap before the text
+# %{O6}: the icon overhangs its advance
 if [[ "${1:-}" == "--icons" ]]; then
     if info=$(get_vpn_info); then
         echo "%{F#9ece6a}󰖂%{F-}%{O6} ${info%% *}"
