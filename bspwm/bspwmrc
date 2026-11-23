@@ -56,20 +56,24 @@ launch_polybar() {
 }
 
 # Launch the contiguous segments of the vertical left bar
-# Usage: launch_left_bar <config> <monitor> <bar_prefix>
+# Usage: launch_left_bar <config> <monitor> <bar_prefix> [desktops]
+#   desktops - number of 30px desktop slots (max 10), kept centred on y=540
 launch_left_bar() {
     local config=$1
     local monitor=$2
     local prefix=$3
+    local desktops=${4:-10}
+    local shift=$(( (10 - desktops) * 15 ))
     local i
 
-    local bars=("${prefix}top" "${prefix}kbd" "${prefix}disk" "${prefix}upper")
-    for ((i = 1; i <= 10; i++)); do
-        bars+=("${prefix}${i}")
+    launch_polybar "$config" "$monitor" "${prefix}top" "${prefix}kbd" "${prefix}disk"
+    VBAR_HEIGHT=$((332 + shift)) launch_polybar "$config" "$monitor" "${prefix}upper"
+    for ((i = 1; i <= desktops; i++)); do
+        VBAR_Y=$((390 + shift + (i - 1) * 30)) launch_polybar "$config" "$monitor" "${prefix}${i}"
     done
-    bars+=("${prefix}gap" "${prefix}hour" "${prefix}min" "${prefix}sep" "${prefix}day" "${prefix}month" "${prefix}bottom")
-
-    launch_polybar "$config" "$monitor" "${bars[@]}"
+    VBAR_Y=$((690 - shift)) VBAR_HEIGHT=$((252 + shift)) launch_polybar "$config" "$monitor" "${prefix}gap"
+    launch_polybar "$config" "$monitor" \
+        "${prefix}hour" "${prefix}min" "${prefix}sep" "${prefix}day" "${prefix}month" "${prefix}bottom"
 }
 
 # Check if a monitor is connected
@@ -104,6 +108,7 @@ bspc config left_padding         8
 bspc config split_ratio          0.49
 bspc config borderless_monocle   true
 bspc config gapless_monocle      true
+bspc config pointer_follows_monitor true
 
 # ============================================================================
 # MONITOR CONFIGURATION
@@ -209,27 +214,71 @@ if [ "$(hostnamectl chassis)" == "laptop" ]; then
 else
     # ---- Desktop mode (non-laptop) ----
 
-    xrandr --output "$DESKTOP_DISPLAY" --rate 60
-    bspc monitor "$DESKTOP_DISPLAY" -d 1 2 3 4 5 6 7 8 9 10
+    # Any other connected output is the portrait chat monitor
+    DESKTOP_SECOND_DISPLAY=$(xrandr | awk -v main="$DESKTOP_DISPLAY" '$2 == "connected" && $1 != main { print $1; exit }')
+
+    if [ -n "$DESKTOP_SECOND_DISPLAY" ]; then
+        # Portrait chat monitor on the left, without polybar
+        xrandr --output "$DESKTOP_DISPLAY"        --primary --rate 60 \
+               --output "$DESKTOP_SECOND_DISPLAY" --auto --rotate left --left-of "$DESKTOP_DISPLAY"
+
+        # Move desktops beyond 8 with their windows, then drop the default "Desktop"
+        while [ "$(bspc query -D -m "$DESKTOP_DISPLAY" | wc -l)" -gt 8 ]; do
+            bspc desktop "$DESKTOP_DISPLAY:^9" --to-monitor "$DESKTOP_SECOND_DISPLAY"
+        done
+        for desk in $(bspc query -D -m "$DESKTOP_SECOND_DISPLAY"); do
+            [ "$(bspc query -D -d "$desk" --names)" == "Desktop" ] && bspc desktop "$desk" -r
+        done
+
+        bspc monitor "$DESKTOP_DISPLAY"        -d 1 2 3 4 5 6 7 8
+        bspc monitor "$DESKTOP_SECOND_DISPLAY" -d 9 10
+        bspc wm --reorder-monitors "$DESKTOP_SECOND_DISPLAY" "$DESKTOP_DISPLAY"
+        DESKTOP_COUNT=8
+    else
+        xrandr --output "$DESKTOP_DISPLAY" --rate 60
+        bspc monitor "$DESKTOP_DISPLAY" -d 1 2 3 4 5 6 7 8 9 10
+        DESKTOP_COUNT=10
+
+        # Migrate windows from disconnected monitors, then remove them
+        for mon in $(bspc query -M --names); do
+            [ "$mon" == "$DESKTOP_DISPLAY" ] && continue
+            for wid in $(bspc query -N -m "$mon" -n .window); do
+                CURRENT_DESKTOP=$(bspc query -D -n "$wid" --names)
+                bspc node "$wid" -d "$DESKTOP_DISPLAY:^$CURRENT_DESKTOP" \
+                    || bspc node "$wid" -d "$DESKTOP_DISPLAY:focused"
+            done
+            [ -z "$(bspc query -N -m "$mon" -n .window)" ] && bspc monitor "$mon" -r
+        done
+    fi
 
     # Launch polybar
     if [ "$BAR_LAYOUT" == "vertical" ]; then
         "$HOME/configFiles/polybar/scripts/bspwm_desktops_daemon.sh" &
 
-        launch_left_bar "$HOME/configFiles/polybar/arch-vertical.conf" "$DESKTOP_DISPLAY" vbar-
+        launch_left_bar "$HOME/configFiles/polybar/arch-vertical.conf" "$DESKTOP_DISPLAY" vbar- "$DESKTOP_COUNT"
 
         launch_polybar "$HOME/configFiles/polybar/arch-vertical.conf" "" \
             top-gearbox top-banner top-volume top-music bottom-resources bottom-vpn bottom-ethernet
 
-        # 8 + 60px left bar + 8
-        bspc config left_padding 76
+        # visible bar edge 64 + 8 gap - window_gap
+        bspc config left_padding 66
     else
         launch_polybar "$HOME/configFiles/polybar/arch.conf" "" \
             left banner ethernet bspwm right music tray vpn gearbox
     fi
 
+    # Global paddings above also apply here: override them afterwards
+    if [ -n "$DESKTOP_SECOND_DISPLAY" ]; then
+        launch_polybar "$HOME/configFiles/polybar/arch.conf" "$DESKTOP_SECOND_DISPLAY" second-bspwm
+
+        bspc config -m "$DESKTOP_SECOND_DISPLAY" top_padding    8
+        bspc config -m "$DESKTOP_SECOND_DISPLAY" bottom_padding 42
+        bspc config -m "$DESKTOP_SECOND_DISPLAY" left_padding   8
+        bspc config -m "$DESKTOP_SECOND_DISPLAY" right_padding  8
+    fi
+
     # Set wallpaper
-    feh --bg-scale "$WALLPAPER"
+    feh --bg-fill "$WALLPAPER"
 
 fi
 
@@ -244,7 +293,7 @@ sxhkd -c "$HOME/configFiles/sxhkd/sxhkdrc" &
 pgrep -x picom > /dev/null || picom --config "$HOME/configFiles/picom/picom.conf"
 
 # Wallpaper (already set in desktop mode)
-feh --bg-scale "$WALLPAPER"
+feh --bg-fill "$WALLPAPER"
 
 # Clipboard manager
 clipmenud &
