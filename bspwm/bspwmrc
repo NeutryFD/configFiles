@@ -57,21 +57,22 @@ launch_polybar() {
 
 # Launch the contiguous segments of the vertical left bar
 # Usage: launch_left_bar <config> <monitor> <bar_prefix> [desktops]
-#   desktops - number of 30px desktop slots (max 10), kept centred on y=540
+#   desktops - number of 30px desktop slots (max 10), kept centred on the monitor
+# Fillers end at the slots (50%) and at the clock block (100%:-138), see arch-vertical.conf
 launch_left_bar() {
     local config=$1
     local monitor=$2
     local prefix=$3
     local desktops=${4:-10}
-    local shift=$(( (10 - desktops) * 15 ))
+    local half=$(( desktops * 15 ))
     local i
 
     launch_polybar "$config" "$monitor" "${prefix}top" "${prefix}kbd" "${prefix}disk"
-    VBAR_HEIGHT=$((332 + shift)) launch_polybar "$config" "$monitor" "${prefix}upper"
+    VBAR_HEIGHT="50%:-$((58 + half))" launch_polybar "$config" "$monitor" "${prefix}upper"
     for ((i = 1; i <= desktops; i++)); do
-        VBAR_Y=$((390 + shift + (i - 1) * 30)) launch_polybar "$config" "$monitor" "${prefix}${i}"
+        VBAR_Y="50%:$(printf '%+d' $(( (i - 1) * 30 - half )))" launch_polybar "$config" "$monitor" "${prefix}${i}"
     done
-    VBAR_Y=$((690 - shift)) VBAR_HEIGHT=$((252 + shift)) launch_polybar "$config" "$monitor" "${prefix}gap"
+    VBAR_Y="50%:+$half" VBAR_HEIGHT="50%:-$((138 + half))" launch_polybar "$config" "$monitor" "${prefix}gap"
     launch_polybar "$config" "$monitor" \
         "${prefix}hour" "${prefix}min" "${prefix}sep" "${prefix}day" "${prefix}month" "${prefix}bottom"
 }
