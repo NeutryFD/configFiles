@@ -268,8 +268,10 @@ else
 
     # Global paddings above also apply here: override them afterwards
     if [ -n "$DESKTOP_SECOND_DISPLAY" ]; then
+        launch_polybar "$HOME/configFiles/polybar/arch.conf" "$DESKTOP_SECOND_DISPLAY" second-bspwm
+
         bspc config -m "$DESKTOP_SECOND_DISPLAY" top_padding    8
-        bspc config -m "$DESKTOP_SECOND_DISPLAY" bottom_padding 8
+        bspc config -m "$DESKTOP_SECOND_DISPLAY" bottom_padding 38
         bspc config -m "$DESKTOP_SECOND_DISPLAY" left_padding   8
         bspc config -m "$DESKTOP_SECOND_DISPLAY" right_padding  8
     fi
