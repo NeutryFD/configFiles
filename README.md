@@ -3,17 +3,14 @@
 ---
 ## 📁 Directory Structure
 ```
-configFiles/
-├── bspwm/          # Window manager config
-├── polybar/        # Status bar scripts & configs
-├── zsh/            # Shell configuration
-├── scripts/        # Utility scripts
-├── sxhkd/          # Hotkey daemon
-├── nvim/           # Neovim config
-├── kitty/          # Terminal config
-├── picom/          # Compositor
-├── rofi/           # App launcher
-├── tmux/           # Terminal multiplexer
+dotfiles/
+├── install.sh      # Bootstrap installer (symlinks + packages)
+├── config/         # Linked into ~/.config (bspwm, polybar, sxhkd, nvim, kitty, ...)
+├── home/           # Linked into ~ (.zshrc, .tmux.conf, zsh helpers & theme)
+├── bin/            # Utility scripts (on PATH)
+├── hosts/
+│   ├── arch/       # Desktop: bspwm layout & polybar bars
+│   └── thinkpad/   # Laptop: bspwm layout & polybar bars
 └── README.md       # This file
 ```
 ---
@@ -39,5 +36,5 @@ configFiles/
 ---
 ## 📝 TODO
 
-- [x] Complete `ignite.sh` installer
+- [x] Complete `install.sh` installer
 - [ ] Document nvim plugins
