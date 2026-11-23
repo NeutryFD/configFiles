@@ -13,7 +13,6 @@ configFiles/
 ├── kitty/          # Terminal config
 ├── picom/          # Compositor
 ├── rofi/           # App launcher
-├── starship/       # Shell prompt
 ├── tmux/           # Terminal multiplexer
 └── README.md       # This file
 ```
@@ -32,7 +31,6 @@ configFiles/
 | [Kitty](https://sw.kovidgoyal.net/kitty/) | GPU terminal |
 | [Ghostty](https://ghostty.org/) | Modern terminal |
 | [Zsh](https://sourceforge.net/projects/zsh/) + Oh-My-Zsh | Shell |
-| [Starship](https://starship.rs/) | Prompt |
 | [Tmux](https://github.com/tmux/tmux) | Multiplexer |
 ## Editor
 | Tool | Description |
