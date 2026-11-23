@@ -236,6 +236,25 @@ setup_polybar() {
     fi
 }
 
+setup_gearbox() {
+    echo -e "\n${YELLOW}--- Gearbox (device tools) ---${NC}"
+    local gearbox_dir="$HOME/Documents/gearbox"
+    install_packages jq cargo:rust make
+    if [[ ! -d "$gearbox_dir/mm712" ]]; then
+        warn "Gearbox not found at $gearbox_dir, skipping"
+        return
+    fi
+    # Build as the user, install as root (make install never builds)
+    if $DRY_RUN; then
+        dry "make -C $gearbox_dir/mm712"
+        dry "sudo make -C $gearbox_dir/mm712 install"
+    else
+        make -C "$gearbox_dir/mm712"
+        sudo make -C "$gearbox_dir/mm712" install
+        info "Installed mm712 and its udev rule (polybar gearbox bar)"
+    fi
+}
+
 setup_tmux() {
     echo -e "\n${YELLOW}--- tmux ---${NC}"
     install_packages tmux
@@ -369,7 +388,7 @@ setup_starship() {
 # --- Main ------------------------------------------------------
 
 # All available modules in default install order
-ALL_MODULES=(zsh fzf bspwm sxhkd polybar picom ghostty nvim rofi tmux starship opencode betterlockscreen)
+ALL_MODULES=(zsh fzf bspwm sxhkd polybar gearbox picom ghostty nvim rofi tmux starship opencode betterlockscreen)
 
 usage() {
     echo "Usage: $0 [--dry-run] [--only <module>[,<module>...]]"
@@ -393,6 +412,7 @@ run_module() {
         bspwm)           setup_bspwm ;;
         sxhkd)           setup_sxhkd ;;
         polybar)         setup_polybar ;;
+        gearbox)         setup_gearbox ;;
         picom)           setup_picom ;;
         ghostty)         setup_ghostty ;;
         nvim)            setup_nvim ;;
