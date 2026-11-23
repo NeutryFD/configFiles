@@ -122,6 +122,7 @@ alias k="kubectl"
 alias kconfig="source kube_config_select.sh"
 alias lazygit='gita && lazygit'
 alias public='copy-ssh-pubkey.sh'
+alias sshs='sshs.sh'
 alias k9s='kconfig && k9s'
 
 # opencode
