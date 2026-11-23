@@ -3,6 +3,11 @@
 # =============================================================================
 # Spotify Status Script for Polybar
 # Displays current playing track and controls playback hooks
+#
+# Usage:
+#   spotify_status.sh            scroll the text (horizontal bars)
+#   spotify_status.sh --static   print the text as is; polybar truncates it with
+#                                label-maxlen + label-ellipsis (vertical layout)
 # =============================================================================
 
 # Player configuration
@@ -10,6 +15,9 @@ PLAYER="fastpotify"
 FORMAT="{{ artist }} - {{ title }}"
 SCROLL_SPEED=0.2
 PADDING="    "
+STATIC_INTERVAL=1
+STATIC=false
+[[ "${1:-}" == "--static" ]] && STATIC=true
 
 # Track previous state to detect changes
 last_status=""
@@ -70,5 +78,10 @@ while true; do
     fi
 
     # Scroll and display the current text
-    scroll_text "$metadata"
+    if $STATIC; then
+        echo "$metadata"
+        sleep $STATIC_INTERVAL
+    else
+        scroll_text "$metadata"
+    fi
 done
