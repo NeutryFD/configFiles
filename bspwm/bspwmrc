@@ -56,26 +56,26 @@ launch_polybar() {
     done
 }
 
-# Launch one vertical desktop slot bar per desktop of a monitor
-# Usage: launch_desk_slots <config> <monitor> <bar_prefix>
-#   bar_prefix - slot bars are <bar_prefix>1 .. <bar_prefix>N (config defines 10)
-#   The last slot gets DESK_RADIUS_BOTTOM=6 to round the bottom of the column
-launch_desk_slots() {
+# Launch the full-height vertical left bar of a monitor: contiguous segments
+# top, disk, disk %, keyboard, filler, 10 desktop slots, filler, clock
+# hours/minutes, bottom
+# Usage: launch_left_bar <config> <monitor> <bar_prefix>
+#   bar_prefix - segments are <bar_prefix><name> (see arch-vertical.conf)
+#   All 10 slots always run so the bar stays continuous; slots without a
+#   desktop are blank
+launch_left_bar() {
     local config=$1
     local monitor=$2
     local prefix=$3
-    local count i
-    count=$(bspc query -D -m "$monitor" | wc -l)
-    [ "$count" -gt 10 ] && count=10
-    [ "$count" -gt 0 ] || return
+    local i
 
-    local slots=()
-    for ((i = 1; i < count; i++)); do
-        slots+=("${prefix}${i}")
+    local bars=("${prefix}top" "${prefix}disk" "${prefix}diskpct" "${prefix}kbd" "${prefix}upper")
+    for ((i = 1; i <= 10; i++)); do
+        bars+=("${prefix}${i}")
     done
+    bars+=("${prefix}gap" "${prefix}hour" "${prefix}min" "${prefix}bottom")
 
-    launch_polybar "$config" "$monitor" "${slots[@]}"
-    DESK_RADIUS_BOTTOM=6 launch_polybar "$config" "$monitor" "${prefix}${count}"
+    launch_polybar "$config" "$monitor" "${bars[@]}"
 }
 
 # Check if a monitor is connected
@@ -220,16 +220,17 @@ else
 
     # Launch polybar
     if [ "$BAR_LAYOUT" == "vertical" ]; then
-        # Vertical: desktop column fed by a single bspc subscriber, and
-        # horizontal pills along the top and bottom edges
+        # Vertical: full-height left bar (disk, keyboard, desktops fed by a
+        # single bspc subscriber, clock) and horizontal pills along the top and
+        # bottom edges
         "$HOME/configFiles/polybar/scripts/bspwm_desktops_daemon.sh" &
 
-        launch_desk_slots "$HOME/configFiles/polybar/arch-vertical.conf" "$DESKTOP_DISPLAY" v-desk-
+        launch_left_bar "$HOME/configFiles/polybar/arch-vertical.conf" "$DESKTOP_DISPLAY" v-desk-
 
         launch_polybar "$HOME/configFiles/polybar/arch-vertical.conf" "" \
-            vdate top-left top-banner top-volume top-music bottom-resources bottom-gearbox bottom-vpn bottom-ethernet
+            top-banner top-volume top-music bottom-resources bottom-gearbox bottom-vpn bottom-ethernet
 
-        # Desktop column on the left edge (8 + 60px column + 8); top/bottom
+        # Left bar on the left edge (8 + 60px bar + 8); top/bottom
         # keep the horizontal paddings for the edge pills
         bspc config left_padding 76
     else
