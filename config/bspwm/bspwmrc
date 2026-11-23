@@ -9,7 +9,8 @@
 sleep 1
 
 # Kill existing instances to avoid duplicates
-killall -q polybar sxhkd clipmenud picom dunst bspwm_desktops_daemon.sh monitor-hotplug.sh
+# -w waits until they exit, so the restarts below do not race the old instances
+timeout 5 killall -q -w polybar sxhkd clipmenud picom dunst bspwm_desktops_daemon.sh monitor-hotplug.sh
 
 # ============================================================================
 # CONFIGURATION
@@ -120,7 +121,7 @@ sxhkd -c "$HOME/.config/sxhkd/sxhkdrc" &
 "$HOME/.config/bspwm/monitor-hotplug.sh" &
 
 # Compositor (if not already running)
-pgrep -x picom > /dev/null || picom --config "$HOME/.config/picom/picom.conf"
+pgrep -x picom > /dev/null || { picom --config "$HOME/.config/picom/picom.conf" & }
 
 # Wallpaper (already set per monitor in desktop mode)
 [ -n "$WALLPAPER_SET" ] || feh --bg-fill "$WALLPAPER"
