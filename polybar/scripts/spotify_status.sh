@@ -12,7 +12,6 @@ SCROLL_SPEED=0.2
 PADDING="    "
 
 # Track previous state to detect changes
-last_metadata=""
 last_status=""
 # Get polybar parent process for hook updates
 PARENT_BAR_PID=$(pgrep -f "polybar")
@@ -38,9 +37,14 @@ get_metadata() {
 }
 
 # Update polybar hooks when status changes
+# $2 is the 0-based hook: 0 = play icon (hook-0), 1 = pause icon (hook-1).
+# The deprecated `polybar-msg hook <module> <n>` form is 1-based, so it showed
+# the play icon while playing and nothing at all when stopped.
 update_hooks() {
     echo "$1" | while IFS= read -r id; do
-        polybar-msg -p "$id" hook spotify-play-pause "$2" 1>/dev/null 2>&1
+        # timeout: a bar that is shutting down never answers, which would block
+        # this script and so the bar's own exit (deadlock on bspc wm -r)
+        timeout 1 polybar-msg -p "$id" action "#spotify-play-pause.hook.$2" 1>/dev/null 2>&1
     done
 }
 
@@ -53,12 +57,6 @@ while true; do
         metadata="No music is playing"
     else
         metadata=$(get_metadata)
-    fi
-
-    # Trigger polybar refresh on metadata change
-    if [[ "$metadata" != "$last_metadata" ]]; then
-        last_metadata="$metadata"
-        polybar-msg hook spotify 1 > /dev/null 2>&1
     fi
 
     # Update play/pause icon on status change
