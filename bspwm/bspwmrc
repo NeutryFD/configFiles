@@ -228,7 +228,7 @@ else
         launch_left_bar "$HOME/configFiles/polybar/arch-vertical.conf" "$DESKTOP_DISPLAY" v-desk-
 
         launch_polybar "$HOME/configFiles/polybar/arch-vertical.conf" "" \
-            top-banner top-volume top-music bottom-resources bottom-gearbox bottom-vpn bottom-ethernet
+            top-gearbox top-banner top-volume top-music bottom-resources bottom-vpn bottom-ethernet
 
         # Left bar on the left edge (8 + 60px bar + 8); top/bottom
         # keep the horizontal paddings for the edge pills
