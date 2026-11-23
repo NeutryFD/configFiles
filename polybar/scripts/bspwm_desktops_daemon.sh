@@ -26,12 +26,13 @@ FOCUSED_COLOR="#FFD700"
 OCCUPIED_COLOR="#96CDFB"
 EMPTY_COLOR="#FFC0CB"
 
-# Labels include the module's padding = 1 (one space on each side)
+# Icons use T6, the large icon font of the slot bars (font-5 in
+# base-vertical-desk); the bar centers them, so no padding spaces.
 # Unlike [module/bspwm], the focused label has no background (every slot must
 # draw exactly the bar background) and no underline: only the icon
-FOCUSED_LABEL="%{F${FOCUSED_COLOR}}  󰮯  %{F-}"
-OCCUPIED_LABEL="%{F${OCCUPIED_COLOR}}  󰊠  %{F-}"
-EMPTY_LABEL="%{F${EMPTY_COLOR}}  󰧵  %{F-}"
+FOCUSED_LABEL="%{T6}%{F${FOCUSED_COLOR}}󰮯%{F-}%{T-}"
+OCCUPIED_LABEL="%{T6}%{F${OCCUPIED_COLOR}}󰊠%{F-}%{T-}"
+EMPTY_LABEL="%{T6}%{F${EMPTY_COLOR}}󰧵%{F-}%{T-}"
 
 # Last written label and line count per "<monitor>-<index>", desktops per monitor
 declare -A last_label
@@ -60,7 +61,7 @@ desktop_label() {
     local state=$1 index=$2
     case "$state" in
         [FOU]) echo "$FOCUSED_LABEL" ;;
-        u)     echo "%{B${ALERT}}  ${index}!  %{B-}" ;;
+        u)     echo "%{B${ALERT}} ${index}! %{B-}" ;;
         o)     echo "$OCCUPIED_LABEL" ;;
         *)     echo "$EMPTY_LABEL" ;;
     esac
