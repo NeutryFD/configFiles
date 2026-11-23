@@ -20,19 +20,24 @@ STATE_DIR="${XDG_RUNTIME_DIR:-/tmp}/polybar-desks"
 # Slot files are rewritten to their last line after this many appends
 MAX_LINES=200
 
-# Same colors as [module/bspwm] and [colors]
+# Minimal indicators: a tall accent capsule for the focused desktop, a short
+# muted capsule for occupied ones, a dim dot for empty ones, a red capsule for
+# urgent ones. Colors: alert and bg2 from [colors], accent from the gearbox
+# script's charge color, muted grey between the two.
 ALERT="#bd2c40"
-FOCUSED_COLOR="#FFD700"
-OCCUPIED_COLOR="#96CDFB"
-EMPTY_COLOR="#FFC0CB"
+FOCUSED_COLOR="#7aa2f7"
+OCCUPIED_COLOR="#6b6880"
+EMPTY_COLOR="#38354c"
 
-# Icons use T6, the large icon font of the slot bars (font-5 in
-# base-vertical-desk); the bar centers them, so no padding spaces.
-# Unlike [module/bspwm], the focused label has no background (every slot must
-# draw exactly the bar background) and no underline: only the icon
-FOCUSED_LABEL="%{T6}%{F${FOCUSED_COLOR}}󰮯%{F-}%{T-}"
-OCCUPIED_LABEL="%{T6}%{F${OCCUPIED_COLOR}}󰊠%{F-}%{T-}"
-EMPTY_LABEL="%{T6}%{F${EMPTY_COLOR}}󰧵%{F-}%{T-}"
+# The capsule is U+23FD (power on symbol) and the dot U+2022 in Hack Nerd Font
+# Propo; T6 (large capsule), T7 (small capsule) and T8 (dot) are font-5..7 of
+# base-vertical-desk. The bar centers them, so no padding spaces.
+# No background and no underline: every slot draws exactly the bar background.
+CAPSULE="⏽"
+FOCUSED_LABEL="%{T6}%{F${FOCUSED_COLOR}}${CAPSULE}%{F-}%{T-}"
+URGENT_LABEL="%{T6}%{F${ALERT}}${CAPSULE}%{F-}%{T-}"
+OCCUPIED_LABEL="%{T7}%{F${OCCUPIED_COLOR}}${CAPSULE}%{F-}%{T-}"
+EMPTY_LABEL="%{T8}%{F${EMPTY_COLOR}}•%{F-}%{T-}"
 
 # Last written label and line count per "<monitor>-<index>", desktops per monitor
 declare -A last_label
@@ -58,10 +63,10 @@ write_slot() {
 # Label for a report desktop item: same precedence as polybar,
 # focused (uppercase), urgent, occupied, empty
 desktop_label() {
-    local state=$1 index=$2
+    local state=$1
     case "$state" in
         [FOU]) echo "$FOCUSED_LABEL" ;;
-        u)     echo "%{B${ALERT}} ${index}! %{B-}" ;;
+        u)     echo "$URGENT_LABEL" ;;
         o)     echo "$OCCUPIED_LABEL" ;;
         *)     echo "$EMPTY_LABEL" ;;
     esac
@@ -89,7 +94,7 @@ handle_report() {
                 ;;
             [fFoOuU])
                 index=$((index + 1))
-                write_slot "$monitor-$index" "$(desktop_label "${item:0:1}" "$index")"
+                write_slot "$monitor-$index" "$(desktop_label "${item:0:1}")"
                 ;;
         esac
     done
