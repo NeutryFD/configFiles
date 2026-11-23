@@ -3,8 +3,8 @@
   "providers": {
     "google-vertex": {
       "settings": {
-        "project": "antigravity-luis-santos",
-        "location": "eu"
+        "project": "{file:~/.config/opencode/secrets/vertex-project}",
+        "location": "global"
       }
     }
   },
