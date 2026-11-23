@@ -8,6 +8,7 @@
 # Configs that don't need symlinks (loaded by absolute path):
 #   - sxhkd     -> loaded via sxhkd -c in bspwmrc
 #   - polybar    -> loaded via polybar -c in bspwmrc
+#   - dunst      -> loaded via dunst -config in bspwmrc
 #   - starship   -> loaded via STARSHIP_CONFIG in .zshrc
 #   - nvim/lua/  -> loaded via package.path in init.lua
 #   - scripts/   -> added to PATH in .zshrc
@@ -255,6 +256,37 @@ setup_gearbox() {
     fi
 }
 
+setup_clipmenu() {
+    echo -e "\n${YELLOW}--- clipmenu ---${NC}"
+    # The Arch package (6.x) lacks touch_on_select, so build upstream from source
+    if ! grep -aq touch_on_select "$(which clipmenu 2>/dev/null)" 2>/dev/null; then
+        install_packages git make gcc
+        info "Building clipmenu from https://github.com/cdown/clipmenu (develop)"
+        if $DRY_RUN; then
+            dry "git clone --depth 1 -b develop https://github.com/cdown/clipmenu.git <tmp>"
+            dry "make -C <tmp> && sudo make -C <tmp> install"
+        else
+            local tmp_dir
+            tmp_dir="$(mktemp -d)"
+            git clone --depth 1 -b develop https://github.com/cdown/clipmenu.git "$tmp_dir"
+            make -C "$tmp_dir"
+            sudo make -C "$tmp_dir" install
+            rm -rf "$tmp_dir"
+        fi
+    else
+        info "clipmenu already supports touch_on_select: $(which clipmenu)"
+    fi
+    link_config "clipmenu/clipmenu.conf" "$HOME/.config/clipmenu/clipmenu.conf"
+    # clipmenud is started by bspwmrc
+}
+
+setup_dunst() {
+    echo -e "\n${YELLOW}--- Dunst ---${NC}"
+    install_packages dunst notify-send:libnotify
+    # No symlink needed - loaded via dunst -config in bspwmrc
+    info "Config loaded directly from repo by bspwmrc"
+}
+
 setup_tmux() {
     echo -e "\n${YELLOW}--- tmux ---${NC}"
     install_packages tmux
@@ -388,7 +420,7 @@ setup_starship() {
 # --- Main ------------------------------------------------------
 
 # All available modules in default install order
-ALL_MODULES=(zsh fzf bspwm sxhkd polybar gearbox picom ghostty nvim rofi tmux starship opencode betterlockscreen)
+ALL_MODULES=(zsh fzf bspwm sxhkd clipmenu dunst polybar gearbox picom ghostty nvim rofi tmux starship opencode betterlockscreen)
 
 usage() {
     echo "Usage: $0 [--dry-run] [--only <module>[,<module>...]]"
@@ -411,6 +443,8 @@ run_module() {
         fzf)             setup_fzf ;;
         bspwm)           setup_bspwm ;;
         sxhkd)           setup_sxhkd ;;
+        clipmenu)        setup_clipmenu ;;
+        dunst)           setup_dunst ;;
         polybar)         setup_polybar ;;
         gearbox)         setup_gearbox ;;
         picom)           setup_picom ;;
