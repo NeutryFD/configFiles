@@ -9,7 +9,7 @@
 sleep 1
 
 # Kill existing instances to avoid duplicates
-killall -q polybar sxhkd clipmenud picom dunst bspwm_desktops_daemon.sh
+killall -q polybar sxhkd clipmenud picom dunst bspwm_desktops_daemon.sh monitor-hotplug.sh
 
 # ============================================================================
 # CONFIGURATION
@@ -289,6 +289,9 @@ fi
 
 # Keyboard shortcuts daemon
 sxhkd -c "$HOME/configFiles/sxhkd/sxhkdrc" &
+
+# Re-run this script when a monitor is plugged or unplugged
+"$HOME/configFiles/bspwm/monitor-hotplug.sh" &
 
 # Compositor (if not already running)
 pgrep -x picom > /dev/null || picom --config "$HOME/configFiles/picom/picom.conf"
