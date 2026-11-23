@@ -1,0 +1,60 @@
+# =============================================================================
+# Dunst notification daemon - see `man 5 dunst`
+# Colours and font follow polybar/arch.conf
+# =============================================================================
+
+[global]
+    # Top-right, below the polybar bars (bar height 30 + border 4 + margin)
+    origin = top-right
+    offset = (12, 44)
+    width = (250, 380)
+    height = (0, 200)
+    notification_limit = 5
+
+    font = Hack Nerd Font 10
+    format = "<b>%s</b>\n%b"
+    alignment = left
+    word_wrap = yes
+    ellipsize = end
+    markup = full
+
+    padding = 10
+    horizontal_padding = 12
+    text_icon_padding = 10
+    gap_size = 6
+    corner_radius = 6
+    frame_width = 2
+    separator_height = 2
+    separator_color = frame
+
+    icon_position = left
+    min_icon_size = 24
+    max_icon_size = 40
+
+    # Only on the focused monitor
+    follow = mouse
+    show_age_threshold = 60
+    sticky_history = yes
+    history_length = 20
+
+    mouse_left_click = close_current
+    mouse_middle_click = do_action, close_current
+    mouse_right_click = close_all
+
+[urgency_low]
+    background = "#1a1b26e6"
+    foreground = "#8a87a6"
+    frame_color = "#38354c"
+    timeout = 4
+
+[urgency_normal]
+    background = "#1a1b26e6"
+    foreground = "#dfdfdf"
+    frame_color = "#38354c"
+    timeout = 6
+
+[urgency_critical]
+    background = "#1a1b26e6"
+    foreground = "#dfdfdf"
+    frame_color = "#bd2c40"
+    timeout = 0
