@@ -1,11 +1,6 @@
 #!/bin/bash
 
-# =============================================================================
-# Polybar Layout Toggle
-# Flips the bar layout between horizontal and vertical and restarts bspwm,
-# whose bspwmrc reads ~/.cache/bar-layout and relaunches polybar.
-# Only desktop mode has a vertical layout; laptop mode stays horizontal.
-# =============================================================================
+# Toggle the desktop polybar layout (horizontal/vertical) and restart bspwm
 
 STATE_FILE="$HOME/.cache/bar-layout"
 
