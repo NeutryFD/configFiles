@@ -220,18 +220,18 @@ else
 
     # Launch polybar
     if [ "$BAR_LAYOUT" == "vertical" ]; then
-        # Vertical: desktop column fed by a single bspc subscriber, its pills,
-        # and horizontal corner pills along the top and bottom edges
+        # Vertical: desktop column fed by a single bspc subscriber, and
+        # horizontal pills along the top and bottom edges
         "$HOME/configFiles/polybar/scripts/bspwm_desktops_daemon.sh" &
 
         launch_desk_slots "$HOME/configFiles/polybar/arch-vertical.conf" "$DESKTOP_DISPLAY" v-desk-
 
         launch_polybar "$HOME/configFiles/polybar/arch-vertical.conf" "" \
-            vdate vvolume top-left top-banner top-music bottom-resources bottom-gearbox bottom-vpn bottom-ethernet
+            top-date top-left top-banner top-volume top-music bottom-resources bottom-gearbox bottom-vpn bottom-ethernet
 
-        # Column on the left edge (8 + 48px pill + 8); top/bottom keep the
-        # horizontal paddings for the corner pills
-        bspc config left_padding 64
+        # Desktop column on the left edge (8 + 60px column + 8); top/bottom
+        # keep the horizontal paddings for the edge pills
+        bspc config left_padding 76
     else
         launch_polybar "$HOME/configFiles/polybar/arch.conf" "" \
             left banner ethernet bspwm right music tray vpn gearbox
