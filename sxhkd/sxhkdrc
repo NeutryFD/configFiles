@@ -72,6 +72,10 @@ super + x
 super + alt + {q,r}
 	bspc {quit,wm -r}
 
+# toggle polybar layout (horizontal/vertical) and restart bspwm
+super + alt + b
+	~/configFiles/polybar/scripts/toggle-layout.sh
+
 # close and kill
 super + {_,shift + }w
 	bspc node -{c,k}
