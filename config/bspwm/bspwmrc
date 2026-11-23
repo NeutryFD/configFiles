@@ -1,0 +1,132 @@
+#!/bin/bash
+
+# ============================================================================
+# BSPWM Startup Script
+# Configures display, polybar, and essential services on login
+# ============================================================================
+
+# Prevent race conditions by waiting for processes to terminate
+sleep 1
+
+# Kill existing instances to avoid duplicates
+killall -q polybar sxhkd clipmenud picom dunst bspwm_desktops_daemon.sh monitor-hotplug.sh
+
+# ============================================================================
+# CONFIGURATION
+# ============================================================================
+
+# Wallpaper path
+WALLPAPER="$HOME/Pictures/Wallpapers/wallpaper.jpg"
+
+# Per-host layout, linked by install.sh
+HOST_LAYOUT="$HOME/.config/dotfiles-host/bspwm/layout.sh"
+
+# ============================================================================
+# FUNCTIONS
+# ============================================================================
+
+# Launch polybar instances
+# Usage: launch_polybar <config> <monitor> <bar_names...>
+#   config  - path to polybar config file
+#   monitor - monitor name (empty for primary/internal)
+#   bars    - space-separated list of bar names from config
+launch_polybar() {
+    local config=$1
+    shift
+    local monitor=$1
+    shift
+    local bars=("$@")
+
+    for bar in "${bars[@]}"; do
+        if [ -n "$monitor" ]; then
+            MONITOR="$monitor" polybar -c "$config" "$bar" &
+        else
+            polybar -c "$config" "$bar" &
+        fi
+    done
+}
+
+# Launch the contiguous segments of the vertical left bar
+# Usage: launch_left_bar <config> <monitor> <bar_prefix> [desktops]
+#   desktops - number of 30px desktop slots (max 10), kept centred on the monitor
+# Fillers end at the slots (50%) and at the clock block (100%:-138), see arch-vertical.conf
+launch_left_bar() {
+    local config=$1
+    local monitor=$2
+    local prefix=$3
+    local desktops=${4:-10}
+    local half=$(( desktops * 15 ))
+    local i
+
+    launch_polybar "$config" "$monitor" "${prefix}top" "${prefix}kbd" "${prefix}disk"
+    VBAR_HEIGHT="50%:-$((58 + half))" launch_polybar "$config" "$monitor" "${prefix}upper"
+    for ((i = 1; i <= desktops; i++)); do
+        VBAR_Y="50%:$(printf '%+d' $(( (i - 1) * 30 - half )))" launch_polybar "$config" "$monitor" "${prefix}${i}"
+    done
+    VBAR_Y="50%:+$half" VBAR_HEIGHT="50%:-$((138 + half))" launch_polybar "$config" "$monitor" "${prefix}gap"
+    launch_polybar "$config" "$monitor" \
+        "${prefix}hour" "${prefix}min" "${prefix}sep" "${prefix}day" "${prefix}month" "${prefix}bottom"
+}
+
+# Check if a monitor is connected
+# Usage: is_connected <port_name>
+is_connected() {
+    [ "$(xrandr | grep "$1" | awk '{print $2}')" == "connected" ]
+}
+
+# Count connected monitors
+connected_monitors() {
+    xrandr | grep -o '\bconnected' | wc -l
+}
+
+# ============================================================================
+# INITIALIZATION
+# ============================================================================
+
+# Keyboard: EU layout with caps as escape
+setxkbmap eu
+setxkbmap -option caps:escape
+
+# Mouse cursor
+xsetroot -cursor_name left_ptr
+
+# BSPWM appearance settings
+bspc config border_width         0
+bspc config window_gap           6
+bspc config top_padding          38
+bspc config bottom_padding       38
+bspc config right_padding        8
+bspc config left_padding         8
+bspc config split_ratio          0.49
+bspc config borderless_monocle   true
+bspc config gapless_monocle      true
+bspc config pointer_follows_monitor true
+
+# ============================================================================
+# MONITOR CONFIGURATION
+# ============================================================================
+
+# Sets up monitors, desktops, polybar and, optionally, the wallpaper (WALLPAPER_SET)
+[ -f "$HOST_LAYOUT" ] && . "$HOST_LAYOUT"
+
+# ============================================================================
+# START SERVICES
+# ============================================================================
+
+# Keyboard shortcuts daemon
+sxhkd -c "$HOME/.config/sxhkd/sxhkdrc" &
+
+# Re-run this script when a monitor is plugged or unplugged
+"$HOME/.config/bspwm/monitor-hotplug.sh" &
+
+# Compositor (if not already running)
+pgrep -x picom > /dev/null || picom --config "$HOME/.config/picom/picom.conf"
+
+# Wallpaper (already set per monitor in desktop mode)
+[ -n "$WALLPAPER_SET" ] || feh --bg-fill "$WALLPAPER"
+
+# Clipboard manager
+clipmenud &
+
+# Notification daemon
+dunst -config "$HOME/.config/dunst/dunstrc" &

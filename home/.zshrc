@@ -37,7 +37,8 @@ export EDITOR="/usr/local/bin/nvim"
 # =============================================================================
 # PATH Configuration
 # =============================================================================
-export PATH="$HOME/configFiles/scripts:$PATH"
+export DOTFILES="${DOTFILES:-$HOME/dotfiles}"
+export PATH="$DOTFILES/bin:$PATH"
 export PATH="$PATH:$HOME/.lmstudio/bin"
 export PATH="$PATH:/usr/local/go/bin"
 export PATH="$HOME/.opencode/bin:$PATH"
@@ -88,7 +89,7 @@ complete -o nospace -C /usr/bin/terraform terraform
 # =============================================================================
 # Custom helper functions
 # =============================================================================
-source $HOME/configFiles/zsh/functions/helpers.zsh
+source $HOME/.zsh/functions/helpers.zsh
 
 # =============================================================================
 # Aliases & Functions
@@ -117,7 +118,7 @@ alias ta="tmux a -t"
 
 # Navigation
 alias workspace="cd ~/workspace"
-alias config="cd ~/configFiles"
+alias config="cd $DOTFILES"
 
 # Kubernetes
 alias k="kubectl"
@@ -135,7 +136,7 @@ push() { git add . && git commit -m "$*" && git push; }
 
 # SSH Agent - source to preserve environment variables
 git-ssh-agent() {
-  source "$HOME/configFiles/scripts/git-ssh-agent.sh"
+  source "$DOTFILES/bin/git-ssh-agent.sh"
 }
 export PATH=$HOME/.local/bin:$PATH
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
