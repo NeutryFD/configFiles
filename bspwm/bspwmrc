@@ -57,8 +57,8 @@ launch_polybar() {
 }
 
 # Launch the full-height vertical left bar of a monitor: contiguous segments
-# top, disk, disk %, keyboard, filler, 10 desktop slots, filler, clock
-# hours/minutes, bottom
+# top, keyboard, disk, filler, 10 desktop slots, filler, hours, minutes,
+# separator, day, month, bottom
 # Usage: launch_left_bar <config> <monitor> <bar_prefix>
 #   bar_prefix - segments are <bar_prefix><name> (see arch-vertical.conf)
 #   All 10 slots always run so the bar stays continuous; slots without a
@@ -69,11 +69,11 @@ launch_left_bar() {
     local prefix=$3
     local i
 
-    local bars=("${prefix}top" "${prefix}disk" "${prefix}diskpct" "${prefix}kbd" "${prefix}upper")
+    local bars=("${prefix}top" "${prefix}kbd" "${prefix}disk" "${prefix}upper")
     for ((i = 1; i <= 10; i++)); do
         bars+=("${prefix}${i}")
     done
-    bars+=("${prefix}gap" "${prefix}hour" "${prefix}min" "${prefix}bottom")
+    bars+=("${prefix}gap" "${prefix}hour" "${prefix}min" "${prefix}sep" "${prefix}day" "${prefix}month" "${prefix}bottom")
 
     launch_polybar "$config" "$monitor" "${bars[@]}"
 }
@@ -220,7 +220,7 @@ else
 
     # Launch polybar
     if [ "$BAR_LAYOUT" == "vertical" ]; then
-        # Vertical: full-height left bar (disk, keyboard, desktops fed by a
+        # Vertical: full-height left bar (keyboard, disk, desktops fed by a
         # single bspc subscriber, clock) and horizontal pills along the top and
         # bottom edges
         "$HOME/configFiles/polybar/scripts/bspwm_desktops_daemon.sh" &
