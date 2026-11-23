@@ -4,14 +4,14 @@
 # SSH Agent Script
 # Start ssh-agent and add private keys interactively
 # Must be SOURCED to preserve SSH_AUTH_SOCK environment variable
-# Usage: source git-ssh-agent
+# Usage: gita (or: source gita.sh)
 # =============================================================================
 
 FZF_OPTS="--layout=reverse"
 
 is_sourced() {
     [[ -z "${ZSH_VERSION}" ]] && [[ "${BASH_SOURCE[0]}" != "${0}" ]] && return 0
-    [[ -n "${ZSH_VERSION}" ]] && [[ "$0" != *git-ssh-agent* ]] && return 0
+    [[ -n "${ZSH_VERSION}" ]] && [[ "${ZSH_EVAL_CONTEXT}" == *:file* ]] && return 0
     return 1
 }
 
