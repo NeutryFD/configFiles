@@ -227,7 +227,7 @@ else
         launch_desk_slots "$HOME/configFiles/polybar/arch-vertical.conf" "$DESKTOP_DISPLAY" v-desk-
 
         launch_polybar "$HOME/configFiles/polybar/arch-vertical.conf" "" \
-            top-date top-left top-banner top-volume top-music bottom-resources bottom-gearbox bottom-vpn bottom-ethernet
+            vdate top-left top-banner top-volume top-music bottom-resources bottom-gearbox bottom-vpn bottom-ethernet
 
         # Desktop column on the left edge (8 + 60px column + 8); top/bottom
         # keep the horizontal paddings for the edge pills
