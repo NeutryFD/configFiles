@@ -6,16 +6,13 @@ STATE_DIR="${XDG_RUNTIME_DIR:-/tmp}/polybar-desks"
 
 MAX_LINES=200
 
-ALERT="#bd2c40"
-FOCUSED_COLOR="#7aa2f7"
-OCCUPIED_COLOR="#6b6880"
-EMPTY_COLOR="#38354c"
+source "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/colors.sh"
 
 CAPSULE="⏽"
-FOCUSED_LABEL="%{T6}%{F${FOCUSED_COLOR}}${CAPSULE}%{F-}%{T-}"
-URGENT_LABEL="%{T6}%{F${ALERT}}${CAPSULE}%{F-}%{T-}"
-OCCUPIED_LABEL="%{T7}%{F${OCCUPIED_COLOR}}${CAPSULE}%{F-}%{T-}"
-EMPTY_LABEL="%{T8}%{F${EMPTY_COLOR}}•%{F-}%{T-}"
+FOCUSED_LABEL="%{T6}%{F${COLOR_ACCENT}}${CAPSULE}%{F-}%{T-}"
+URGENT_LABEL="%{T6}%{F${COLOR_ALERT}}${CAPSULE}%{F-}%{T-}"
+OCCUPIED_LABEL="%{T7}%{F${COLOR_MUTED}}${CAPSULE}%{F-}%{T-}"
+EMPTY_LABEL="%{T8}%{F${COLOR_SUBTLE}}•%{F-}%{T-}"
 
 declare -A last_label
 declare -A line_count
