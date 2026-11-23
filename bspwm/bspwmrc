@@ -9,7 +9,7 @@
 sleep 1
 
 # Kill existing instances to avoid duplicates
-killall -q polybar sxhkd clipmenud picom
+killall -q polybar sxhkd clipmenud picom dunst
 
 # ============================================================================
 # CONFIGURATION
@@ -215,3 +215,6 @@ feh --bg-scale "$WALLPAPER"
 
 # Clipboard manager
 clipmenud &
+
+# Notification daemon
+dunst -config "$HOME/configFiles/dunst/dunstrc" &
