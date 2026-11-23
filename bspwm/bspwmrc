@@ -271,7 +271,7 @@ else
         launch_polybar "$HOME/configFiles/polybar/arch.conf" "$DESKTOP_SECOND_DISPLAY" second-bspwm
 
         bspc config -m "$DESKTOP_SECOND_DISPLAY" top_padding    8
-        bspc config -m "$DESKTOP_SECOND_DISPLAY" bottom_padding 38
+        bspc config -m "$DESKTOP_SECOND_DISPLAY" bottom_padding 42
         bspc config -m "$DESKTOP_SECOND_DISPLAY" left_padding   8
         bspc config -m "$DESKTOP_SECOND_DISPLAY" right_padding  8
     fi
