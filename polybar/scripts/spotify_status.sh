@@ -16,8 +16,6 @@ STATIC=false
 
 # Track previous state to detect changes
 last_status=""
-# Get polybar parent process for hook updates
-PARENT_BAR_PID=$(pgrep -f "polybar")
 
 # Scroll text horizontally for long titles
 scroll_text() {
@@ -39,11 +37,15 @@ get_metadata() {
     playerctl --player="$PLAYER" metadata --format "$FORMAT" 2>/dev/null
 }
 
-# Update polybar hooks when status changes
+# Update the play/pause hook only on bars that have that module
 # Hook actions are 0-based; timeout: a bar shutting down never answers
 update_hooks() {
-    echo "$1" | while IFS= read -r id; do
-        timeout 1 polybar-msg -p "$id" action "#spotify-play-pause.hook.$2" 1>/dev/null 2>&1
+    local pid conf bar
+    for pid in $(pgrep -x polybar); do
+        read -r conf bar < <(tr '\0' ' ' < "/proc/$pid/cmdline" | sed -n 's/.*-c \([^ ]*\) \([^ ]*\).*/\1 \2/p')
+        [[ -f "$conf" ]] || conf="/proc/$pid/cwd/$conf"
+        awk -v s="[bar/$bar]" '$0 == s { f = 1; next } /^\[/ { f = 0 } f && /^modules-/ && /spotify-play-pause/ { ok = 1 } END { exit !ok }' "$conf" 2>/dev/null \
+            && timeout 1 polybar-msg -p "$pid" action "#spotify-play-pause.hook.$1" 1>/dev/null 2>&1
     done
 }
 
@@ -62,9 +64,9 @@ while true; do
     if [[ "$STATUS" != "$last_status" ]]; then
         last_status="$STATUS"
         if [[ "$STATUS" == "Playing" ]]; then
-            update_hooks "$PARENT_BAR_PID" 1
+            update_hooks 1
         else
-            update_hooks "$PARENT_BAR_PID" 0
+            update_hooks 0
         fi
     fi
 
