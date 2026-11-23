@@ -21,15 +21,15 @@ STATE_DIR="${XDG_RUNTIME_DIR:-/tmp}/polybar-desks"
 MAX_LINES=200
 
 # Same colors as [module/bspwm] and [colors]
-BACKGROUND="#E61a1b26"
-PRIMARY="#dfdfdf"
 ALERT="#bd2c40"
 FOCUSED_COLOR="#FFD700"
 OCCUPIED_COLOR="#96CDFB"
 EMPTY_COLOR="#FFC0CB"
 
 # Labels include the module's padding = 1 (one space on each side)
-FOCUSED_LABEL="%{B${BACKGROUND}}%{F${FOCUSED_COLOR}}%{u${PRIMARY}}%{+u}  󰮯  %{-u}%{F-}%{B-}"
+# Unlike [module/bspwm], the focused label has no background (every slot must
+# draw exactly the bar background) and no underline: only the icon
+FOCUSED_LABEL="%{F${FOCUSED_COLOR}}  󰮯  %{F-}"
 OCCUPIED_LABEL="%{F${OCCUPIED_COLOR}}  󰊠  %{F-}"
 EMPTY_LABEL="%{F${EMPTY_COLOR}}  󰧵  %{F-}"
 
