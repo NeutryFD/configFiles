@@ -65,7 +65,7 @@ if [ "$BAR_LAYOUT" == "vertical" ]; then
     bspc config left_padding 66
 else
     launch_polybar "$POLYBAR_CONFIG" "" \
-        left banner ethernet bspwm right music tray vpn gearbox privacy
+        bspwm gearbox privacy banner volume music left status clock vpn ethernet
 fi
 
 # Global paddings above also apply here: override them afterwards
