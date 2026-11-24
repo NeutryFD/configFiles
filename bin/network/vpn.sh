@@ -765,14 +765,120 @@ cmd_up() {
 }
 
 cmd_pick() {
-  local sel
+  local sel self
   need fzf
-  sel="$(cmd_list | fzf --cycle --layout=reverse --header="Select VPN or tunnel" --bind "tab:down,btab:up")"
+  self="$(realpath "$0")"
+  sel="$(cmd_list | fzf --cycle --layout=reverse --header="Select VPN or tunnel" --bind "tab:down,btab:up" \
+    --preview "'$self' __preview {1}" --preview-window=down,55%,wrap)"
   if [[ -z "$sel" ]]; then
     echo "Nothing selected."
     exit 0
   fi
   cmd_up "${sel%% *}"
+}
+
+# --- Preview ---------------------------------------------------
+
+field() { [[ -n "$2" ]] && printf '  %-11s %s\n' "$1" "$2"; return 0; }
+
+tilde() { echo "${1//"$HOME"/\~}"; }
+
+# Gateway host:port from the VPN config, never its credentials
+vpn_gateway() {
+  case "$V_TYPE" in
+    openfortivpn)
+      awk -F'[[:space:]]*=[[:space:]]*' '{ sub(/^[[:space:]]+/, "") }
+        $1 == "host" { h = $2 } $1 == "port" { p = $2 } END { if (h != "") print h (p != "" ? ":" p : "") }' "$V_CONFIG"
+      ;;
+    openvpn) awk '$1 == "remote" { printf "%s%s%s", (n++ ? ", " : ""), $2, ($3 != "" ? ":" $3 : "") } END { if (n) print "" }' "$V_CONFIG" ;;
+  esac
+}
+
+vpn_state_line() {
+  local addr=""
+  [[ -n "$VS_IFACE" ]] && addr="${IFACES[$VS_IFACE]:-}" && addr="${addr#* }"
+  echo "$VS_STATE${VS_IFACE:+ on $VS_IFACE}${addr:+ ($addr)}$(fmt_since "$VS_SINCE")${VS_PID:+, pid $VS_PID}"
+}
+
+show_client() {
+  local t
+  local -a tnames
+  echo "$C_LABEL ($C_NAME)"
+  if [[ -z "$V_TYPE" ]]; then
+    field vpn "none, sshuttle tunnels only"
+  else
+    vpn_status
+    build_vpn_cmd
+    field vpn "$V_TYPE"
+    field gateway "$(vpn_gateway)"
+    field state "$(vpn_state_line)"
+    field config "$(tilde "$V_CONFIG")"
+    field command "$(tilde "sudo ${VPN_CMD[*]}")"
+  fi
+  mapfile -t tnames < <(list_tunnels)
+  (( ${#tnames[@]} )) || return 0
+  echo
+  echo "Tunnels"
+  for t in "${tnames[@]}"; do
+    if load_tunnel "$t"; then
+      tunnel_status
+      printf '  %-11s %-5s %s\n' "$t" "$TS_STATE" "sshuttle $T_REMOTE ${T_SUBNETS[*]:-(auto)}"
+    else
+      printf '  %-11s error: %s\n' "$t" "$LOAD_ERR"
+    fi
+  done
+}
+
+show_tunnel() {
+  local host route needs
+  tunnel_status
+  build_sshuttle_cmd
+  echo "$C_LABEL › $T_NAME"
+  field state "$TS_STATE$(fmt_since "$TS_SINCE")${TS_PID:+, pid $TS_PID}$([[ "$TS_STATE" == up && "$TS_MANAGED" == false ]] && echo ', started outside vpn')"
+  field remote "$T_REMOTE"
+  host="$T_REMOTE"
+  [[ "$host" =~ :[0-9]+$ ]] && host="${host%:*}"
+  while read -r key value; do
+    field "  $key" "$(tilde "$value")"
+  done < <(ssh -G "$host" 2>/dev/null | awk '$1 ~ /^(hostname|user|port|proxyjump)$/ { print }
+    $1 == "identityfile" && !id++ { print "key", $2 }')
+  if [[ -z "$TS_IP" ]]; then
+    route="unresolved"
+  elif [[ "$TS_VIA" == true ]]; then
+    route="$TS_IP via $TS_DEV (VPN)"
+  else
+    route="$TS_IP direct${TS_DEV:+ via $TS_DEV}"
+  fi
+  field route "$route"
+  field subnets "${T_SUBNETS[*]:-}$([[ "$T_AUTO_NETS" == yes ]] && echo "${T_SUBNETS[*]:+ + }auto (-N)")"
+  field exclude "${T_EXCLUDE[*]:-}"
+  field dns "$([[ "$T_DNS" == on ]] && echo 'through the tunnel (--dns)' || echo 'local')"
+  if [[ "$T_NEEDS_VPN" == yes ]]; then
+    vpn_status
+    needs="yes, $V_TYPE $(vpn_state_line)"
+  else
+    needs="no"
+  fi
+  field needs_vpn "$needs"
+  field command "${SSHUTTLE_CMD[*]}"
+  if [[ -n "$TS_LOG" && -s "$TS_LOG" ]]; then
+    field log "$(tilde "$TS_LOG")"
+    echo
+    tail -n 5 "$TS_LOG" | sed 's/^/  /'
+  fi
+}
+
+# fzf preview of the picker, not a user command
+cmd_preview() {
+  split_target "$1"
+  load_client "$TGT_CLIENT" || die "$LOAD_ERR"
+  scan_all
+  if [[ -n "$TGT_TUNNEL" ]]; then
+    load_tunnel "$TGT_TUNNEL" || die "$LOAD_ERR"
+    show_tunnel
+  else
+    show_client
+  fi
 }
 
 # --- Down ------------------------------------------------------
@@ -924,6 +1030,7 @@ main() {
     down) (( $# <= 1 )) || usage_die "usage: vpn down [<client>[/<tunnel>]]"; cmd_down "${1:-}" ;;
     status) need jq; (( $# <= 1 )) || usage_die "usage: vpn status [--json]"; cmd_status "${1:-}" ;;
     list|ls) (( $# == 0 )) || usage_die "usage: vpn list"; cmd_list ;;
+    __preview) (( $# == 1 )) || exit 2; cmd_preview "$1" ;;
     edit) (( $# == 1 )) || usage_die "usage: vpn edit <client>[/<tunnel>]"; cmd_edit "$1" ;;
     *) usage_die "unknown command '$cmd'" ;;
   esac
