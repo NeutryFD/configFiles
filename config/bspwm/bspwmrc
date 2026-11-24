@@ -50,7 +50,7 @@ launch_polybar() {
 # Launch the contiguous segments of the vertical left bar
 # Usage: launch_left_bar <config> <monitor> <bar_prefix> [desktops]
 #   desktops - number of 30px desktop slots (max 10), kept centred on the monitor
-# Fillers end at the slots (50%) and at the clock block (100%:-138), see arch-vertical.conf
+# Fillers end at the slots (50%) and at the clock block (100%:-138), see config/polybar/vertical.conf
 launch_left_bar() {
     local config=$1
     local monitor=$2
