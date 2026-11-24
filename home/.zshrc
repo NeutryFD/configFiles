@@ -136,7 +136,7 @@ push() { git add . && git commit -m "$*" && git push; }
 
 # SSH Agent - source to preserve environment variables
 gita() {
-  source "$DOTFILES/bin/gita.sh"
+  source "$DOTFILES/bin/ssh/gita.sh"
 }
 export PATH=$HOME/.local/bin:$PATH
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
