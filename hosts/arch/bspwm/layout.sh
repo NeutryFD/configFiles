@@ -59,13 +59,13 @@ if [ "$BAR_LAYOUT" == "vertical" ]; then
     launch_left_bar "$POLYBAR_VERTICAL_CONFIG" "$DESKTOP_DISPLAY" vbar- "$DESKTOP_COUNT"
 
     launch_polybar "$POLYBAR_VERTICAL_CONFIG" "" \
-        top-gearbox top-privacy top-banner top-volume top-music bottom-resources bottom-vpn bottom-ethernet
+        top-gearbox top-privacy top-banner top-volume top-music bottom-resources bottom-vpn bottom-tunnels bottom-ethernet
 
     # visible bar edge 64 + 8 gap - window_gap
     bspc config left_padding 66
 else
     launch_polybar "$POLYBAR_CONFIG" "" \
-        bspwm gearbox privacy banner volume music left status clock vpn ethernet
+        bspwm gearbox privacy banner volume music left status clock vpn tunnels ethernet
 fi
 
 # Global paddings above also apply here: override them afterwards
