@@ -451,10 +451,25 @@ setup_lazygit() {
     link_config "config/lazygit/config.yml" "$HOME/.config/lazygit/config.yml"
 }
 
+setup_vpn() {
+    echo -e "\n${YELLOW}--- VPN ---${NC}"
+    # ~/.config/vpn holds per-client secrets, so it is created private and never linked
+    local dir="$HOME/.config/vpn"
+    if [[ -d "$dir" ]]; then
+        info "VPN client dir already exists: $dir"
+    elif $DRY_RUN; then
+        dry "mkdir -m 700 $dir"
+    else
+        mkdir -p "$HOME/.config"
+        mkdir -m 700 "$dir"
+        info "Created $dir (format: config/vpn/example)"
+    fi
+}
+
 # --- Main ------------------------------------------------------
 
 # All available modules in default install order
-ALL_MODULES=(host zsh fzf bspwm sxhkd clipmenu dunst polybar gearbox picom ghostty kitty nvim rofi tmux lazygit opencode herdr betterlockscreen)
+ALL_MODULES=(host zsh fzf bspwm sxhkd clipmenu dunst polybar gearbox picom ghostty kitty nvim rofi tmux lazygit vpn opencode herdr betterlockscreen)
 
 usage() {
     echo "Usage: $0 [--dry-run] [--only <module>[,<module>...]]"
@@ -489,6 +504,7 @@ run_module() {
         rofi)            setup_rofi ;;
         tmux)            setup_tmux ;;
         lazygit)         setup_lazygit ;;
+        vpn)             setup_vpn ;;
         opencode)        setup_opencode ;;
         herdr)           setup_herdr ;;
         betterlockscreen) setup_betterlockscreen ;;

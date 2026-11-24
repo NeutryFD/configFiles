@@ -33,14 +33,14 @@ launch_main_bars() {
         launch_left_bar "$POLYBAR_VERTICAL_CONFIG" "$monitor" vbar- "$desktops"
         launch_polybar "$POLYBAR_VERTICAL_CONFIG" "$monitor" \
             top-battery top-gearbox top-privacy top-banner top-volume top-music \
-            bottom-resources bottom-vpn bottom-wifi bottom-ethernet
+            bottom-resources bottom-vpn bottom-tunnels bottom-wifi bottom-ethernet
 
         # visible bar edge 64 + 8 gap - window_gap
         bspc config -m "$monitor" left_padding 66
     else
         launch_polybar "$POLYBAR_CONFIG" "$monitor" \
             thinkpad-bspwm thinkpad-gearbox thinkpad-privacy thinkpad-banner thinkpad-volume thinkpad-music thinkpad-clock \
-            thinkpad-left thinkpad-status thinkpad-vpn thinkpad-wifi thinkpad-ethernet
+            thinkpad-left thinkpad-status thinkpad-vpn thinkpad-tunnels thinkpad-wifi thinkpad-ethernet
     fi
 }
 
@@ -71,10 +71,10 @@ if [ $(connected_monitors) -eq 3 ]; then
     launch_main_bars "$LAPTOP_DISPLAY" 3
 
     launch_polybar "$POLYBAR_CONFIG" "$DISPLAY_DP" \
-        thinkpad-ext-banner thinkpad-ext-vpn thinkpad-ext-bspwm thinkpad-ext-music thinkpad-ext-right
+        thinkpad-ext-banner thinkpad-ext-vpn thinkpad-ext-tunnels thinkpad-ext-bspwm thinkpad-ext-music thinkpad-ext-right
 
     launch_polybar "$POLYBAR_CONFIG" "$DISPLAY_HDMI" \
-        thinkpad-ext-banner thinkpad-ext-vpn thinkpad-ext-bspwm thinkpad-ext-music thinkpad-ext-right
+        thinkpad-ext-banner thinkpad-ext-vpn thinkpad-ext-tunnels thinkpad-ext-bspwm thinkpad-ext-music thinkpad-ext-right
 
     # Per-monitor padding: external bars are smaller (27px) than internal (35px)
     bspc config -m "$DISPLAY_DP"   top_padding    30
@@ -106,7 +106,7 @@ elif [ $(connected_monitors) -eq 2 ]; then
 
     # Launch polybar
     launch_polybar "$POLYBAR_CONFIG" "$LAPTOP_DISPLAY" \
-        thinkpad-ext-banner thinkpad-ext-vpn thinkpad-ext-bspwm thinkpad-ext-music thinkpad-ext-right
+        thinkpad-ext-banner thinkpad-ext-vpn thinkpad-ext-tunnels thinkpad-ext-bspwm thinkpad-ext-music thinkpad-ext-right
 
     launch_main_bars "$EXTERNAL_DISPLAY" 5
 
