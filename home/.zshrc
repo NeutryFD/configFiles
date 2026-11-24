@@ -39,6 +39,7 @@ export EDITOR="/usr/local/bin/nvim"
 # =============================================================================
 export DOTFILES="${DOTFILES:-$HOME/dotfiles}"
 export PATH="$DOTFILES/bin:$PATH"
+for bin_dir in "$DOTFILES"/bin/*(N/); do path=("$bin_dir" $path); done; unset bin_dir
 export PATH="$PATH:$HOME/.lmstudio/bin"
 export PATH="$PATH:/usr/local/go/bin"
 export PATH="$HOME/.opencode/bin:$PATH"
