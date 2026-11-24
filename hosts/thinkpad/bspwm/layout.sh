@@ -38,7 +38,7 @@ if [ $(connected_monitors) -eq 3 ]; then
 
     # Launch polybar for each monitor
     launch_polybar "$POLYBAR_CONFIG" "$LAPTOP_DISPLAY" \
-        thinkpad-left thinkpad-banner thinkpad-vpn thinkpad-bspwm thinkpad-music thinkpad-wifi thinkpad-ethernet thinkpad-right thinkpad-tray thinkpad-gearbox
+        thinkpad-left thinkpad-banner thinkpad-vpn thinkpad-bspwm thinkpad-music thinkpad-wifi thinkpad-ethernet thinkpad-right thinkpad-gearbox
 
     launch_polybar "$POLYBAR_CONFIG" "$DISPLAY_DP" \
         thinkpad-ext-banner thinkpad-ext-vpn thinkpad-ext-bspwm thinkpad-ext-music thinkpad-ext-right
@@ -79,7 +79,7 @@ elif [ $(connected_monitors) -eq 2 ]; then
         thinkpad-ext-banner thinkpad-ext-vpn thinkpad-ext-bspwm thinkpad-ext-music thinkpad-ext-right
 
     launch_polybar "$POLYBAR_CONFIG" "$EXTERNAL_DISPLAY" \
-        thinkpad-left thinkpad-banner thinkpad-vpn thinkpad-bspwm thinkpad-music thinkpad-wifi thinkpad-ethernet thinkpad-right thinkpad-tray thinkpad-gearbox
+        thinkpad-left thinkpad-banner thinkpad-vpn thinkpad-bspwm thinkpad-music thinkpad-wifi thinkpad-ethernet thinkpad-right thinkpad-gearbox
 
     bspc config -m "$EXTERNAL_DISPLAY" top_padding    38
     bspc config -m "$EXTERNAL_DISPLAY" bottom_padding 38
@@ -102,6 +102,6 @@ else
 
     # Launch polybar
     launch_polybar "$POLYBAR_CONFIG" "" \
-        thinkpad-left thinkpad-banner thinkpad-vpn thinkpad-bspwm thinkpad-music thinkpad-wifi thinkpad-ethernet thinkpad-right thinkpad-tray thinkpad-gearbox
+        thinkpad-left thinkpad-banner thinkpad-vpn thinkpad-bspwm thinkpad-music thinkpad-wifi thinkpad-ethernet thinkpad-right thinkpad-gearbox
 
 fi
