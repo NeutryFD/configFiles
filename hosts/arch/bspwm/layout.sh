@@ -21,7 +21,7 @@ DESKTOP_SECOND_DISPLAY=$(xrandr | awk -v main="$DESKTOP_DISPLAY" '$2 == "connect
 if [ -n "$DESKTOP_SECOND_DISPLAY" ]; then
     # Portrait chat monitor on the left, without polybar
     xrandr --output "$DESKTOP_DISPLAY"        --primary --rate 60 \
-           --output "$DESKTOP_SECOND_DISPLAY" --auto --rotate left --left-of "$DESKTOP_DISPLAY"
+           --output "$DESKTOP_SECOND_DISPLAY" --auto --rotate right --left-of "$DESKTOP_DISPLAY"
 
     # Move desktops beyond 8 with their windows, then drop the default "Desktop"
     while [ "$(bspc query -D -m "$DESKTOP_DISPLAY" | wc -l)" -gt 8 ]; do
