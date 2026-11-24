@@ -10,18 +10,29 @@ PLAYER="fastpotify"
 FORMAT="{{ artist }} - {{ title }}"
 SCROLL_SPEED=0.2
 PADDING="    "
-# --static: no scrolling (polybar truncates the label)
+# --static:  no scrolling (polybar truncates the label)
+# --fit <n>: show titles up to <n> characters as they are, scroll longer ones in a <n> wide window
 STATIC=false
-[[ "${1:-}" == "--static" ]] && STATIC=true
+FIT=0
+case "${1:-}" in
+    --static) STATIC=true ;;
+    --fit)    FIT=${2:?--fit requires a width} ;;
+esac
 
 # Track previous state to detect changes
 last_status=""
 
 # Scroll text horizontally for long titles
+# Usage: scroll_text <text> [width] - width > 0 prints only that many characters
 scroll_text() {
     local text="$1$PADDING"
+    local width=${2:-0}
     for ((i = 0; i < ${#text}; i++)); do
-        echo "$text"
+        if (( width > 0 )); then
+            echo "${text:0:width}"
+        else
+            echo "$text"
+        fi
         text="${text:1}${text:0:1}"
         sleep $SCROLL_SPEED
     done
@@ -71,9 +82,11 @@ while true; do
     fi
 
     # Scroll and display the current text
-    if $STATIC; then
+    if $STATIC || (( FIT > 0 && ${#metadata} <= FIT )); then
         echo "$metadata"
         sleep 1
+    elif (( FIT > 0 )); then
+        scroll_text "$metadata" "$FIT"
     else
         scroll_text "$metadata"
     fi
