@@ -4,11 +4,16 @@
 # =============================================================================
 
 [global]
-    # Top-right, below the polybar bars (bar height 30 + border 4 + margin)
+    # Top row, stacking down in the gap between the centre banner and the volume pill
+    # The volume pill starts 482px from the right edge: 490 leaves an 8px gap
+    # 248px fits the 1920px gap (banner ends at 50%+214)
     origin = top-right
-    offset = (12, 44)
-    width = (250, 380)
+    offset = (490, 4)
+    width = 248
     height = (0, 200)
+    # dunst < 1.7 (Ubuntu 22.04) ignores the four keys above: same place and width
+    # Newer versions ignore this one with a warning
+    geometry = "248x5-490+4"
     notification_limit = 5
 
     font = Hack Nerd Font 10
