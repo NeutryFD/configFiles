@@ -20,8 +20,9 @@ DESKTOP_SECOND_DISPLAY=$(xrandr | awk -v main="$DESKTOP_DISPLAY" '$2 == "connect
 
 if [ -n "$DESKTOP_SECOND_DISPLAY" ]; then
     # Portrait chat monitor on the left, without polybar
-    xrandr --output "$DESKTOP_DISPLAY"        --primary --rate 60 \
-           --output "$DESKTOP_SECOND_DISPLAY" --auto --rotate right --left-of "$DESKTOP_DISPLAY"
+    # Main kept at 1080p like the chat monitor so text matches (both 27"); 119.88 is its fastest 1080p rate
+    xrandr --output "$DESKTOP_DISPLAY"        --primary --mode 1920x1080 --rate 119.88 \
+           --output "$DESKTOP_SECOND_DISPLAY" --auto --rotate right --scale 1x1 --left-of "$DESKTOP_DISPLAY"
 
     # Move desktops beyond 8 with their windows, then drop the default "Desktop"
     while [ "$(bspc query -D -m "$DESKTOP_DISPLAY" | wc -l)" -gt 8 ]; do
@@ -36,7 +37,7 @@ if [ -n "$DESKTOP_SECOND_DISPLAY" ]; then
     bspc wm --reorder-monitors "$DESKTOP_SECOND_DISPLAY" "$DESKTOP_DISPLAY"
     DESKTOP_COUNT=8
 else
-    xrandr --output "$DESKTOP_DISPLAY" --rate 60
+    xrandr --output "$DESKTOP_DISPLAY" --mode 1920x1080 --rate 119.88 --pos 0x0
     bspc monitor "$DESKTOP_DISPLAY" -d 1 2 3 4 5 6 7 8 9 10
     DESKTOP_COUNT=10
 
