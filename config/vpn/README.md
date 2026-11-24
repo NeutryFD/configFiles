@@ -1,6 +1,6 @@
 # vpn
 
-`bin/vpn.sh` (alias `vpn`) runs one VPN per client and sshuttle tunnels over it.
+`bin/network/vpn.sh` (alias `vpn`) runs one VPN per client and sshuttle tunnels over it.
 Client configs live in `~/.config/vpn/` (mode 700). That directory holds secrets, so it is never linked from this repo. `install.sh --only vpn` creates it. `example/` documents the file format.
 
 ```
