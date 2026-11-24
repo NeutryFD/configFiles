@@ -445,10 +445,16 @@ setup_herdr() {
     link_config "config/herdr/config.toml" "$HOME/.config/herdr/config.toml"
 }
 
+setup_lazygit() {
+    echo -e "\n${YELLOW}--- lazygit ---${NC}"
+    install_packages lazygit
+    link_config "config/lazygit/config.yml" "$HOME/.config/lazygit/config.yml"
+}
+
 # --- Main ------------------------------------------------------
 
 # All available modules in default install order
-ALL_MODULES=(host zsh fzf bspwm sxhkd clipmenu dunst polybar gearbox picom ghostty kitty nvim rofi tmux opencode herdr betterlockscreen)
+ALL_MODULES=(host zsh fzf bspwm sxhkd clipmenu dunst polybar gearbox picom ghostty kitty nvim rofi tmux lazygit opencode herdr betterlockscreen)
 
 usage() {
     echo "Usage: $0 [--dry-run] [--only <module>[,<module>...]]"
@@ -482,6 +488,7 @@ run_module() {
         nvim)            setup_nvim ;;
         rofi)            setup_rofi ;;
         tmux)            setup_tmux ;;
+        lazygit)         setup_lazygit ;;
         opencode)        setup_opencode ;;
         herdr)           setup_herdr ;;
         betterlockscreen) setup_betterlockscreen ;;
