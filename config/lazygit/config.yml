@@ -1,0 +1,3 @@
+git:
+  # Pushing a branch that is behind its remote offers a force push that drops the remote commits
+  disableForcePushing: true
