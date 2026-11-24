@@ -1,13 +1,17 @@
 #!/bin/bash
 
 # =============================================================================
-# Spotify Status Script for Polybar
-# Displays current playing track and controls playback hooks
+# Media Status Script for Polybar
+# Displays the current track of the last active MPRIS player (Spotify, Chrome...)
+# and controls playback hooks
 # =============================================================================
 
 # Player configuration
-PLAYER="fastpotify"
-FORMAT="{{ artist }} - {{ title }}"
+# playerctld (D-Bus activated) follows the most recently active player
+PLAYER="playerctld"
+# Unit separator, not whitespace: read keeps the empty artist of browser videos
+SEP=$'\x1f'
+FORMAT="{{ artist }}${SEP}{{ title }}"
 SCROLL_SPEED=0.2
 PADDING="    "
 # --static:  no scrolling (polybar truncates the label)
@@ -43,9 +47,15 @@ get_status() {
     playerctl --player="$PLAYER" status 2>/dev/null || echo "No player is running"
 }
 
-# Get current track metadata (artist - title)
+# Get current track metadata: "artist - title", or just "title" without artist
 get_metadata() {
-    playerctl --player="$PLAYER" metadata --format "$FORMAT" 2>/dev/null
+    local artist title
+    IFS="$SEP" read -r artist title < <(playerctl --player="$PLAYER" metadata --format "$FORMAT" 2>/dev/null)
+    if [[ -n "$artist" ]]; then
+        echo "$artist - $title"
+    else
+        echo "$title"
+    fi
 }
 
 # Update the play/pause hook only on bars that have that module
