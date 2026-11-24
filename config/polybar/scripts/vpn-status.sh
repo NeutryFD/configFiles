@@ -12,7 +12,7 @@
 # =============================================================================
 
 SCRIPT_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
-VPN="${DOTFILES:-$HOME/dotfiles}/bin/vpn.sh"
+VPN="${DOTFILES:-$HOME/dotfiles}/bin/network/vpn.sh"
 
 source "$SCRIPT_DIR/colors.sh"
 

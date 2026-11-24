@@ -7,7 +7,7 @@ dotfiles/
 ├── install.sh      # Bootstrap installer (symlinks + packages)
 ├── config/         # Linked into ~/.config (bspwm, polybar, sxhkd, nvim, kitty, ...)
 ├── home/           # Linked into ~ (.zshrc, .tmux.conf, zsh helpers & theme)
-├── bin/            # Utility scripts (on PATH)
+├── bin/            # Utility scripts by category (each subfolder on PATH)
 ├── hosts/
 │   ├── arch/       # Desktop: bspwm layout & polybar bars
 │   └── thinkpad/   # Laptop: bspwm layout & polybar bars
