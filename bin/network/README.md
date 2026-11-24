@@ -13,7 +13,7 @@ Client configs live in `~/.config/vpn/` (format: [`config/vpn/`](../../config/vp
 
 | Command | Effect |
 |---|---|
-| `vpn` | fzf picker over clients and `client/tunnel` entries, then `up` |
+| `vpn` | fzf picker over clients and `client/tunnel` entries, then `up`. The preview shows the gateway, state, SSH target, route, subnets and the exact command |
 | `vpn up <client>` | `sudo openfortivpn -c …` / `sudo openvpn --cd … --config …` in the foreground, Ctrl-C stops it |
 | `vpn up <client>/<tunnel>` | If the remote already routes through a VPN: sshuttle in the foreground. Otherwise: the VPN in the foreground, then sshuttle in the background once the remote routes through `ppp*`/`tun*`/`wg*` (log in `$XDG_RUNTIME_DIR/vpn/<client>-<tunnel>.log`). The tunnel stops when the VPN exits |
 | `vpn down [<client>[/<tunnel>]]` | Stop a tunnel, a client (tunnels first) or everything |
