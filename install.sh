@@ -8,7 +8,7 @@
 # Layout:
 #   - config/<app>  -> ~/.config/<app>
 #   - home/<file>   -> ~/<file>
-#   - bin/          -> added to PATH in .zshrc via $DOTFILES
+#   - bin/<category> -> added to PATH in .zshrc via $DOTFILES
 #   - hosts/<host>  -> ~/.config/dotfiles-host (host from $DOTFILES_HOST, else hostnamectl chassis)
 # ---------------------------------------------------------------
 
