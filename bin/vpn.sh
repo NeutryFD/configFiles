@@ -679,6 +679,12 @@ up_cleanup() {
     [[ -f "$f" ]] && read_state "$f" && [[ "${CONF[owner]:-}" == "$$" ]] || continue
     stop_state_file "$f" && warn "stopped tunnel '${CONF[client]:-?}/${CONF[tunnel]:-?}'"
   done
+  # sudo runs the VPN in its own session, so a closed terminal only reaches this script
+  if [[ -n "${UP_SUDO:-}" ]] && kill -0 "$UP_SUDO" 2>/dev/null; then
+    kill -TERM "$UP_SUDO" 2>/dev/null
+    wait "$UP_SUDO" 2>/dev/null
+    warn "stopped VPN '$C_NAME'"
+  fi
   if [[ -f "$UP_STATE" ]] && read_state "$UP_STATE" && [[ "${CONF[wrapper]:-}" == "$$" ]]; then
     rm -f "$UP_STATE"
   fi
@@ -691,7 +697,7 @@ run_vpn() {
   need "${VPN_CMD[0]}"
   [[ -z "$tunnel" ]] || need sshuttle
   check_secret_perms
-  UP_STATE="$STATE_DIR/$C_NAME.vpn" UP_WSTART="$(proc_start $$)" UP_WATCH=""
+  UP_STATE="$STATE_DIR/$C_NAME.vpn" UP_WSTART="$(proc_start $$)" UP_WATCH="" UP_SUDO=""
   printf -v UP_START '%(%s)T' -1
   save_vpn_state "" || die "cannot write $UP_STATE"
   trap up_cleanup EXIT
@@ -700,8 +706,12 @@ run_vpn() {
   vpn_watch "$tunnel" &
   UP_WATCH=$!
   warn "starting $V_TYPE for '$C_LABEL'${tunnel:+, tunnel '$tunnel' starts once it is up} (Ctrl-C to stop)"
-  sudo "${VPN_CMD[@]}"
+  # Background + wait so traps fire; <&0 keeps the prompts on the terminal, env undoes the SIGINT ignore of jobs
+  env --default-signal=INT,QUIT sudo "${VPN_CMD[@]}" <&0 &
+  UP_SUDO=$!
+  wait "$UP_SUDO"
   rc=$?
+  UP_SUDO=""
   exit "$rc"
 }
 
