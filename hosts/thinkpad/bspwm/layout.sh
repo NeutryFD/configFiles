@@ -32,14 +32,14 @@ launch_main_bars() {
     if [ "$BAR_LAYOUT" == "vertical" ]; then
         launch_left_bar "$POLYBAR_VERTICAL_CONFIG" "$monitor" vbar- "$desktops"
         launch_polybar "$POLYBAR_VERTICAL_CONFIG" "$monitor" \
-            top-battery top-gearbox top-banner top-volume top-music \
+            top-battery top-gearbox top-privacy top-banner top-volume top-music \
             bottom-resources bottom-vpn bottom-wifi bottom-ethernet
 
         # visible bar edge 64 + 8 gap - window_gap
         bspc config -m "$monitor" left_padding 66
     else
         launch_polybar "$POLYBAR_CONFIG" "$monitor" \
-            thinkpad-left thinkpad-banner thinkpad-vpn thinkpad-bspwm thinkpad-music thinkpad-wifi thinkpad-ethernet thinkpad-right thinkpad-gearbox
+            thinkpad-left thinkpad-banner thinkpad-vpn thinkpad-bspwm thinkpad-music thinkpad-wifi thinkpad-ethernet thinkpad-right thinkpad-gearbox thinkpad-privacy
     fi
 }
 

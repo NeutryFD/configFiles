@@ -1,27 +1,42 @@
 #!/bin/bash
 
 # =============================================================================
-# Spotify Status Script for Polybar
-# Displays current playing track and controls playback hooks
+# Media Status Script for Polybar
+# Displays the current track of the last active MPRIS player (Spotify, Chrome...)
+# and controls playback hooks
 # =============================================================================
 
 # Player configuration
-PLAYER="fastpotify"
-FORMAT="{{ artist }} - {{ title }}"
+# playerctld (D-Bus activated) follows the most recently active player
+PLAYER="playerctld"
+# Unit separator, not whitespace: read keeps the empty artist of browser videos
+SEP=$'\x1f'
+FORMAT="{{ artist }}${SEP}{{ title }}"
 SCROLL_SPEED=0.2
 PADDING="    "
-# --static: no scrolling (polybar truncates the label)
+# --static:  no scrolling (polybar truncates the label)
+# --fit <n>: show titles up to <n> characters as they are, scroll longer ones in a <n> wide window
 STATIC=false
-[[ "${1:-}" == "--static" ]] && STATIC=true
+FIT=0
+case "${1:-}" in
+    --static) STATIC=true ;;
+    --fit)    FIT=${2:?--fit requires a width} ;;
+esac
 
 # Track previous state to detect changes
 last_status=""
 
 # Scroll text horizontally for long titles
+# Usage: scroll_text <text> [width] - width > 0 prints only that many characters
 scroll_text() {
     local text="$1$PADDING"
+    local width=${2:-0}
     for ((i = 0; i < ${#text}; i++)); do
-        echo "$text"
+        if (( width > 0 )); then
+            echo "${text:0:width}"
+        else
+            echo "$text"
+        fi
         text="${text:1}${text:0:1}"
         sleep $SCROLL_SPEED
     done
@@ -32,9 +47,15 @@ get_status() {
     playerctl --player="$PLAYER" status 2>/dev/null || echo "No player is running"
 }
 
-# Get current track metadata (artist - title)
+# Get current track metadata: "artist - title", or just "title" without artist
 get_metadata() {
-    playerctl --player="$PLAYER" metadata --format "$FORMAT" 2>/dev/null
+    local artist title
+    IFS="$SEP" read -r artist title < <(playerctl --player="$PLAYER" metadata --format "$FORMAT" 2>/dev/null)
+    if [[ -n "$artist" ]]; then
+        echo "$artist - $title"
+    else
+        echo "$title"
+    fi
 }
 
 # Update the play/pause hook only on bars that have that module
@@ -71,9 +92,11 @@ while true; do
     fi
 
     # Scroll and display the current text
-    if $STATIC; then
+    if $STATIC || (( FIT > 0 && ${#metadata} <= FIT )); then
         echo "$metadata"
         sleep 1
+    elif (( FIT > 0 )); then
+        scroll_text "$metadata" "$FIT"
     else
         scroll_text "$metadata"
     fi
