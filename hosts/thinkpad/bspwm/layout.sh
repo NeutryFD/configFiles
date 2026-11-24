@@ -39,7 +39,8 @@ launch_main_bars() {
         bspc config -m "$monitor" left_padding 66
     else
         launch_polybar "$POLYBAR_CONFIG" "$monitor" \
-            thinkpad-left thinkpad-banner thinkpad-vpn thinkpad-bspwm thinkpad-music thinkpad-wifi thinkpad-ethernet thinkpad-right thinkpad-gearbox thinkpad-privacy
+            thinkpad-bspwm thinkpad-gearbox thinkpad-privacy thinkpad-banner thinkpad-volume thinkpad-music thinkpad-clock \
+            thinkpad-left thinkpad-status thinkpad-vpn thinkpad-wifi thinkpad-ethernet
     fi
 }
 
