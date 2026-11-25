@@ -53,6 +53,12 @@ else
     done
 fi
 
+# Pills sit 8px from the screen edges and 30px tall: windows (padding + window_gap 6) start 8px past them
+bspc config top_padding    40
+bspc config bottom_padding 40
+bspc config left_padding   2
+bspc config right_padding  2
+
 # Launch polybar
 if [ "$BAR_LAYOUT" == "vertical" ]; then
     "$HOME/.config/polybar/scripts/bspwm_desktops_daemon.sh" &
@@ -65,18 +71,26 @@ if [ "$BAR_LAYOUT" == "vertical" ]; then
     # visible bar edge 64 + 8 gap - window_gap
     bspc config left_padding 66
 else
+    # The Pac-Man pill fits its desktops (about 24px each); gearbox and privacy follow it 8px apart
+    export BSPWM_PILL_WIDTH=$(( DESKTOP_COUNT * 24 + 44 ))
+    export GEARBOX_X=$(( 4 + BSPWM_PILL_WIDTH ))
+    export PRIVACY_X=$(( GEARBOX_X + 80 ))
     launch_polybar "$POLYBAR_CONFIG" "" \
         bspwm gearbox privacy banner volume music left status clock vpn tunnels ethernet
 fi
 
 # Global paddings above also apply here: override them afterwards
 if [ -n "$DESKTOP_SECOND_DISPLAY" ]; then
-    launch_polybar "$POLYBAR_CONFIG" "$DESKTOP_SECOND_DISPLAY" second-bspwm
+    # Pac-Man pill in the horizontal layout, the blue desktop lines in the vertical one
+    SECOND_BAR=second-bspwm
+    [ "$BAR_LAYOUT" == "vertical" ] && SECOND_BAR=second-bspwm-lines
+    launch_polybar "$POLYBAR_CONFIG" "$DESKTOP_SECOND_DISPLAY" "$SECOND_BAR"
 
-    bspc config -m "$DESKTOP_SECOND_DISPLAY" top_padding    8
-    bspc config -m "$DESKTOP_SECOND_DISPLAY" bottom_padding 42
-    bspc config -m "$DESKTOP_SECOND_DISPLAY" left_padding   8
-    bspc config -m "$DESKTOP_SECOND_DISPLAY" right_padding  8
+    # 38px bar 8px from the bottom
+    bspc config -m "$DESKTOP_SECOND_DISPLAY" top_padding    2
+    bspc config -m "$DESKTOP_SECOND_DISPLAY" bottom_padding 48
+    bspc config -m "$DESKTOP_SECOND_DISPLAY" left_padding   2
+    bspc config -m "$DESKTOP_SECOND_DISPLAY" right_padding  2
 fi
 
 # Set wallpaper: feh takes one image per Xinerama screen, in --listactivemonitors order
