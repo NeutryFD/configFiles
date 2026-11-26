@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 
 # =============================================================================
-# MM712 Battery Script for Polybar
-# Displays the Cooler Master MM712 battery level read through its 2.4 GHz dongle
-# Requires the mm712 CLI from ~/Documents/gearbox/mm712 (make && sudo make install)
+# Mouse Battery Script for Polybar
+# Displays the battery level of the first mouse that answers through its 2.4 GHz dongle:
+# Cooler Master MM712 (mm712 CLI), then Attack Shark X8 SE (x8se CLI)
+# Requires the CLIs from the gearbox repo (make && sudo make install in each tool)
 # Fonts T6 (small icon) and T7 (bold percentage) are defined in the gearbox bars
 #
 # Usage:
 #   mm712_battery.sh           print once
 #   mm712_battery.sh --tail    print every REFRESH_SECONDS; SIGUSR1 refreshes now
-#   mm712_battery.sh --status  show the full mm712 status in a rofi message box
+#   mm712_battery.sh --status  show the full mouse status in a rofi message box
 # =============================================================================
 
 REFRESH_SECONDS=60
@@ -37,15 +38,34 @@ unavailable() {
     echo "$(icon "$DIM_COLOR" "󰍽") $(value "$DIM_COLOR" "$1")"
 }
 
+# Mouse CLIs in priority order, each with its battery timeout (the X8 SE reports every ~2s)
+MICE=("mm712:1000" "x8se:5000")
+
+installed_mice() {
+    local entry
+    for entry in "${MICE[@]}"; do
+        command -v "${entry%%:*}" >/dev/null 2>&1 && echo "$entry"
+    done
+}
+
+# Prints the JSON battery status of the first mouse that answers
+# Exit codes of the CLIs: 3 dongle not found, 4 permission denied, 5 mouse asleep/off
+read_battery() {
+    local entry
+    for entry in $(installed_mice); do
+        "${entry%%:*}" battery --json --timeout-ms "${entry#*:}" 2>/dev/null && return
+    done
+    return 1
+}
+
 print_battery() {
-    if ! command -v mm712 >/dev/null 2>&1; then
+    if [[ -z "$(installed_mice)" ]]; then
         unavailable "n/a"
         return
     fi
 
-    # Exit codes: 3 dongle not found, 4 permission denied, 5 mouse asleep/off
     local status percent charging color
-    if ! status=$(mm712 battery --json --timeout-ms 1000 2>/dev/null); then
+    if ! status=$(read_battery); then
         unavailable "--"
         return
     fi
@@ -74,10 +94,17 @@ print_battery() {
 }
 
 show_status() {
-    local status
-    status=$(mm712 status 2>&1)
-    rofi -e "MM712
+    local entry tool status
+    for entry in $(installed_mice); do
+        tool=${entry%%:*}
+        if status=$("$tool" status --timeout-ms "${entry#*:}" 2>&1); then
+            rofi -e "${tool^^}
 ${status}"
+            return
+        fi
+    done
+    rofi -e "No mouse answered
+${status:-mm712 and x8se are not installed}"
 }
 
 tail_battery() {

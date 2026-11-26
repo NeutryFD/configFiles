@@ -44,6 +44,27 @@ launch_main_bars() {
     fi
 }
 
+# Launch the bars on an external monitor: the main vertical set, or the smaller horizontal one
+# Usage: launch_ext_bars <monitor> <desktops>
+launch_ext_bars() {
+    local monitor=$1
+    local desktops=$2
+
+    if [ "$BAR_LAYOUT" == "vertical" ]; then
+        launch_main_bars "$monitor" "$desktops"
+        bspc config -m "$monitor" top_padding    38
+        bspc config -m "$monitor" bottom_padding 38
+    else
+        launch_polybar "$POLYBAR_CONFIG" "$monitor" \
+            thinkpad-ext-banner thinkpad-ext-vpn thinkpad-ext-tunnels thinkpad-ext-bspwm thinkpad-ext-music thinkpad-ext-right
+
+        # External bars are smaller (27px) than internal (35px)
+        bspc config -m "$monitor" top_padding    30
+        bspc config -m "$monitor" bottom_padding 8
+        bspc config -m "$monitor" left_padding   8
+    fi
+}
+
 if [ $(connected_monitors) -eq 3 ]; then
     # Three monitors: DisplayPort + HDMI + Internal
 
@@ -70,17 +91,8 @@ if [ $(connected_monitors) -eq 3 ]; then
     # Launch polybar for each monitor
     launch_main_bars "$LAPTOP_DISPLAY" 3
 
-    launch_polybar "$POLYBAR_CONFIG" "$DISPLAY_DP" \
-        thinkpad-ext-banner thinkpad-ext-vpn thinkpad-ext-tunnels thinkpad-ext-bspwm thinkpad-ext-music thinkpad-ext-right
-
-    launch_polybar "$POLYBAR_CONFIG" "$DISPLAY_HDMI" \
-        thinkpad-ext-banner thinkpad-ext-vpn thinkpad-ext-tunnels thinkpad-ext-bspwm thinkpad-ext-music thinkpad-ext-right
-
-    # Per-monitor padding: external bars are smaller (27px) than internal (35px)
-    bspc config -m "$DISPLAY_DP"   top_padding    30
-    bspc config -m "$DISPLAY_DP"   bottom_padding 8
-    bspc config -m "$DISPLAY_HDMI" top_padding    30
-    bspc config -m "$DISPLAY_HDMI" bottom_padding 8
+    launch_ext_bars "$DISPLAY_DP"   3
+    launch_ext_bars "$DISPLAY_HDMI" 3
 
 
 elif [ $(connected_monitors) -eq 2 ]; then
