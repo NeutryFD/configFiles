@@ -272,21 +272,29 @@ setup_polybar() {
 
 setup_gearbox() {
     echo -e "\n${YELLOW}--- Gearbox (device tools) ---${NC}"
-    local gearbox_dir="$HOME/Documents/gearbox"
+    local gearbox_dir="${GEARBOX_DIR:-}" dir tool
+    if [[ -z "$gearbox_dir" ]]; then
+        for dir in "$HOME/gearbox" "$HOME/Documents/gearbox"; do
+            [[ -d "$dir" ]] && gearbox_dir=$dir && break
+        done
+    fi
     install_packages jq cargo:rust make
-    if [[ ! -d "$gearbox_dir/mm712" ]]; then
-        warn "Gearbox not found at $gearbox_dir, skipping"
+    if [[ -z "$gearbox_dir" || ! -d "$gearbox_dir" ]]; then
+        warn "Gearbox not found (set GEARBOX_DIR), skipping"
         return
     fi
     # Build as the user, install as root (make install never builds)
-    if $DRY_RUN; then
-        dry "make -C $gearbox_dir/mm712"
-        dry "sudo make -C $gearbox_dir/mm712 install"
-    else
-        make -C "$gearbox_dir/mm712"
-        sudo make -C "$gearbox_dir/mm712" install
-        info "Installed mm712 and its udev rule (polybar gearbox bar)"
-    fi
+    for tool in mm712 x8se; do
+        [[ -f "$gearbox_dir/$tool/Makefile" ]] || continue
+        if $DRY_RUN; then
+            dry "make -C $gearbox_dir/$tool"
+            dry "sudo make -C $gearbox_dir/$tool install"
+        else
+            make -C "$gearbox_dir/$tool"
+            sudo make -C "$gearbox_dir/$tool" install
+            info "Installed $tool and its udev rule (polybar gearbox bar)"
+        fi
+    done
 }
 
 setup_clipmenu() {
