@@ -49,22 +49,26 @@ launch_polybar() {
 
 # Launch the contiguous segments of the vertical left bar
 # Usage: launch_left_bar <config> <monitor> <bar_prefix> [desktops]
-#   desktops - number of 30px desktop slots (max 10), kept centred on the monitor
-# Fillers end at the slots (50%) and at the clock block (100%:-138), see config/polybar/vertical.conf
+#   desktops - number of VBAR_SLOT px desktop slots (max 10), kept centred on the monitor
+# Fillers end at the slots (50%) and at the clock block (VBAR_DAY_Y), see config/polybar/vertical.conf
 launch_left_bar() {
     local config=$1
     local monitor=$2
     local prefix=$3
     local desktops=${4:-10}
-    local half=$(( desktops * 15 ))
+    local slot=${VBAR_SLOT:-30}
+    local upper=${VBAR_UPPER_Y:-58}
+    local clock=${VBAR_DAY_Y:-100%:-138}
+    local half=$(( desktops * slot / 2 ))
     local i
 
+    clock=${clock#100%:-}
     launch_polybar "$config" "$monitor" "${prefix}top" "${prefix}kbd" "${prefix}disk"
-    VBAR_HEIGHT="50%:-$((58 + half))" launch_polybar "$config" "$monitor" "${prefix}upper"
+    VBAR_HEIGHT="50%:-$((upper + half))" launch_polybar "$config" "$monitor" "${prefix}upper"
     for ((i = 1; i <= desktops; i++)); do
-        VBAR_Y="50%:$(printf '%+d' $(( (i - 1) * 30 - half )))" launch_polybar "$config" "$monitor" "${prefix}${i}"
+        VBAR_Y="50%:$(printf '%+d' $(( (i - 1) * slot - half )))" launch_polybar "$config" "$monitor" "${prefix}${i}"
     done
-    VBAR_Y="50%:+$half" VBAR_HEIGHT="50%:-$((138 + half))" launch_polybar "$config" "$monitor" "${prefix}gap"
+    VBAR_Y="50%:+$half" VBAR_HEIGHT="50%:-$((clock + half))" launch_polybar "$config" "$monitor" "${prefix}gap"
     launch_polybar "$config" "$monitor" \
         "${prefix}hour" "${prefix}min" "${prefix}sep" "${prefix}day" "${prefix}month" "${prefix}bottom"
 }
