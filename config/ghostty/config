@@ -57,3 +57,6 @@ window-theme = ghostty
 ##  --- Close tab
 keybind = ctrl+shift+'=close_surface
 keybind = ctrl+shift+;=new_tab
+
+##  --- Per-host overrides (optional)
+config-file = ?~/.config/dotfiles-host/ghostty.conf
