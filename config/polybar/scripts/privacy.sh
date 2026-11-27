@@ -51,8 +51,8 @@ render() {
     else
         cam="%{F${COLOR_SUBTLE}}${CAM_OFF_ICON}%{F-}"
     fi
-    # %{O8}: the icons overhang their advance; the trailing one keeps the camera from being clipped
-    echo "${mic}%{O8}${cam}%{O8}"
+    # %{O}: the icons overhang their advance; the trailing one keeps the camera from being clipped
+    echo "${mic}%{O${PRIVACY_ICON_GAP:-8}}${cam}%{O${PRIVACY_ICON_GAP:-8}}"
 }
 
 # Apps using the mic and the camera: "<mic> app, app   <cam> app"
