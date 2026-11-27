@@ -1,22 +1,22 @@
 # terminal emulator
 super + Return
-	ghostty
+	$\{GHOSTTY_CMD:-ghostty\}
 
 super + n
-	bspc rule -a \* -o state=floating sticky=on layer=above rectangle=720x360+600+26 && ghostty
+	bspc rule -a \* -o state=floating sticky=on layer=above rectangle=$\{GHOSTTY_FLOAT_RECT:-720x360+600+26\} center=$\{GHOSTTY_FLOAT_CENTER:-off\} && $\{GHOSTTY_CMD:-ghostty\}
 
 # program launcher
 super + @space
 	export PATH=/snap/bin:/opt/ZenNotes:$PATH && rofi -show run
 
 super + shift + n
-	bspc rule -a \* -o state=floating sticky=on layer=above rectangle=720x500+600+340 && ghostty --font-size=15 -e python3 ~/slots/terminal-slotmachine/app.py
+	bspc rule -a \* -o state=floating sticky=on layer=above rectangle=720x500+600+340 && ghostty --font-size=$\{GHOSTTY_SLOT_FONT_SIZE:-15\} -e python3 ~/slots/terminal-slotmachine/app.py
 
 super + @space
 	rofi -show run
 
 super + alt + Return
-	ghostty -e tmux
+	$\{GHOSTTY_CMD:-ghostty\} -e tmux
 
 # make sxhkd reload its configuration files:
 #super + Escape
