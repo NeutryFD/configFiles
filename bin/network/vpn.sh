@@ -16,13 +16,13 @@ VPN_IFACE_RE='^(ppp|tun|wg)'
 NAME_RE='^[A-Za-z0-9][A-Za-z0-9_.-]*$'
 REMOTE_RE='^[A-Za-z0-9_][A-Za-z0-9_.@:-]*$'
 SUBNET_RE='^[][A-Za-z0-9_.:/-]+$'
-STATE_KEYS=(client tunnel wrapper wrapper_start pid pid_start start type config iface remote subnets owner log)
+STATE_KEYS=(client tunnel wrapper wrapper_start pid pid_start start type config iface remote subnets owner log over)
 JQ_DEFS='def str: if . == "" then null else . end; def num: if . == "" then null else tonumber end; def words: split(" ") | map(select(. != ""));'
 
 declare -A CONF=() P_PPID=() P_COMM=() RESOLVED=() IFACES=() CLAIMED=()
 declare -A EXT_TYPE=() EXT_CONFIG=() EXT_REMOTE=() EXT_SUBNETS=()
-EXT_VPNS=() EXT_TUNNELS=() ARGV=()
-LOAD_ERR=""
+EXT_VPNS=() EXT_TUNNELS=() ARGV=() T_OVER=()
+LOAD_ERR="" UP_OVER=""
 STOPPED=0
 
 warn() { echo "vpn: $*" >&2; }
@@ -122,11 +122,16 @@ load_client() {
 # Sets T_* for a tunnel of the loaded client
 load_tunnel() {
   local file tok
-  LOAD_ERR=""
+  local -a over
+  LOAD_ERR="" T_OVER=()
   [[ "$1" =~ $NAME_RE ]] || { LOAD_ERR="invalid tunnel name '$1'"; return 1; }
   T_NAME="$1" file="$C_DIR/tunnels/$1.conf"
   [[ -f "$file" ]] || { LOAD_ERR="unknown tunnel '$C_NAME/$1' (no $file)"; return 1; }
-  parse_conf "$file" remote subnets exclude dns auto_nets needs_vpn args || return 1
+  parse_conf "$file" remote subnets exclude dns auto_nets needs_vpn args via || return 1
+  read -ra over <<< "${CONF[via]:-}"
+  if (( ${#over[@]} )) && [[ -z "${CONF[needs_vpn]:-}" ]]; then
+    CONF[needs_vpn]=no
+  fi
   T_REMOTE="${CONF[remote]:-}"
   [[ "$T_REMOTE" =~ $REMOTE_RE ]] || { LOAD_ERR="$file: remote must be an ssh host alias"; return 1; }
   read -ra T_SUBNETS <<< "${CONF[subnets]:-}"
@@ -148,6 +153,26 @@ load_tunnel() {
     LOAD_ERR="$file: subnets is empty (set subnets= or auto_nets=yes)"
     return 1
   fi
+  [[ -z "${CONF[via]+x}" ]] || load_via "$file" "${over[@]}"
+}
+
+# Validate the via tunnels of the loaded tunnel into T_OVER; clobbers CONF
+load_via() {
+  local file="$1" t
+  shift
+  (( $# )) || { LOAD_ERR="$file: via is empty"; return 1; }
+  [[ "$T_NEEDS_VPN" == no ]] || { LOAD_ERR="$file: via cannot be combined with needs_vpn=yes"; return 1; }
+  for t in "$@"; do
+    [[ "$t" =~ $NAME_RE ]] || { LOAD_ERR="$file: invalid tunnel name '$t' in via"; return 1; }
+    [[ "$t" != "$T_NAME" ]] || { LOAD_ERR="$file: via cannot list itself"; return 1; }
+    [[ -f "$C_DIR/tunnels/$t.conf" ]] || { LOAD_ERR="$file: via lists unknown tunnel '$t'"; return 1; }
+    if parse_conf "$C_DIR/tunnels/$t.conf" remote subnets exclude dns auto_nets needs_vpn args via \
+      && [[ -n "${CONF[via]+x}" ]]; then
+      LOAD_ERR="$file: via tunnel '$t' cannot have via itself"
+      return 1
+    fi
+  done
+  LOAD_ERR="" T_OVER=("$@")
 }
 
 split_target() {
@@ -337,6 +362,27 @@ resolve_remote() {
   RESOLVED[$1]="$ip"
 }
 
+# Set PR_HOST/PR_PORT to the first TCP hop ssh makes for the remote (PR_JUMP: the jump host), $2=direct ignores ProxyJump
+probe_target() {
+  local host="${1#*@}" port="" key value jump=""
+  [[ "$host" =~ :([0-9]+)$ ]] && port="${BASH_REMATCH[1]}" host="${host%:*}"
+  PR_HOST="$host" PR_PORT="" PR_JUMP=""
+  while read -r key value; do
+    case "$key" in
+      hostname) PR_HOST="$value" ;;
+      port) PR_PORT="$value" ;;
+      proxyjump) [[ "$value" == none ]] || jump="$value" ;;
+    esac
+  done < <(ssh -G "$host" 2>/dev/null)
+  PR_PORT="${port:-${PR_PORT:-22}}"
+  [[ -n "$jump" && "${2:-}" != direct ]] && (( ${3:-0} < 5 )) || return 0
+  jump="${jump%%,*}" jump="${jump#ssh://}"
+  probe_target "$jump" "" $(( ${3:-0} + 1 ))
+  PR_JUMP="${PR_JUMP:-$jump}"
+}
+
+probe() { timeout 1 bash -c '</dev/tcp/"$1"/"$2"' _ "$1" "$2" 2>/dev/null; }
+
 route_dev() { ip -j route get "$1" 2>/dev/null | jq -r '.[0].dev // empty' 2>/dev/null; }
 
 # IFACES[name]="up|down <ipv4>" for ppp*/tun*/wg* interfaces
@@ -412,9 +458,9 @@ vpn_status() {
 # Set TS_* for the loaded tunnel (needs scan_all)
 tunnel_status() {
   local pid subnets
-  TS_STATE=down TS_MANAGED=false TS_PID="" TS_SINCE="" TS_LOG="" TS_IP="" TS_DEV="" TS_VIA=false
+  TS_STATE=down TS_MANAGED=false TS_PID="" TS_SINCE="" TS_LOG="" TS_IP="" TS_DEV="" TS_VIA=false TS_OVER=""
   if state_alive "$STATE_DIR/$C_NAME-$T_NAME.tunnel"; then
-    TS_STATE=up TS_MANAGED=true TS_SINCE="${CONF[start]:-}" TS_LOG="${CONF[log]:-}"
+    TS_STATE=up TS_MANAGED=true TS_SINCE="${CONF[start]:-}" TS_LOG="${CONF[log]:-}" TS_OVER="${CONF[over]:-}"
     TS_PID="$(state_pid sshuttle)"
     [[ -n "$TS_PID" ]] && CLAIMED[$TS_PID]=1
   fi
@@ -464,7 +510,7 @@ status_json() {
         tunnels+=("$(jq -cn --arg name "$t" --arg id "$C_NAME/$t" --arg err "$LOAD_ERR" '
           {name: $name, id: $id, error: $err, state: "down", up: false, managed: false, pid: null, since: null,
            remote: null, subnets: [], exclude: [], dns: false, auto_nets: false, needs_vpn: false,
-           route: null, log: null}')")
+           route: null, log: null, via: [], nested_in: null}')")
         continue
       fi
       remote_client[$T_REMOTE]="$C_NAME"
@@ -473,12 +519,12 @@ status_json() {
         --argjson managed "$TS_MANAGED" --arg pid "$TS_PID" --arg since "$TS_SINCE" --arg remote "$T_REMOTE" \
         --arg subnets "${T_SUBNETS[*]}" --arg exclude "${T_EXCLUDE[*]}" --arg dns "$T_DNS" \
         --arg auto "$T_AUTO_NETS" --arg needs "$T_NEEDS_VPN" --arg ip "$TS_IP" --arg dev "$TS_DEV" \
-        --argjson via "$TS_VIA" --arg log "$TS_LOG" "$JQ_DEFS"'
+        --argjson via "$TS_VIA" --arg log "$TS_LOG" --arg over "${T_OVER[*]}" --arg nested "$TS_OVER" "$JQ_DEFS"'
         {name: $name, id: $id, error: null, state: $state, up: ($state == "up"), managed: $managed,
          pid: ($pid | num), since: ($since | num), remote: $remote, subnets: ($subnets | words),
          exclude: ($exclude | words), dns: ($dns == "on"), auto_nets: ($auto == "yes"),
          needs_vpn: ($needs == "yes"), route: {ip: ($ip | str), dev: ($dev | str), via_vpn: $via},
-         log: ($log | str)}')")
+         log: ($log | str), via: ($over | words), nested_in: ($nested | str)}')")
     done
     clients+=("$(jq -cn --arg name "$C_NAME" --arg label "$C_LABEL" --arg color "$C_COLOR" \
       --argjson vpn "$vpn" --argjson tunnels "$(json_array "${tunnels[@]}")" "$JQ_DEFS"'
@@ -554,9 +600,10 @@ cmd_status() {
     def row: map(if . == null then "" else tostring end) | join("\u001f");
     (.clients[] | (["C", .name, .label, .vpn.type, (.vpn.state // "none"), .vpn.iface, .vpn.since,
         (if .vpn != null and .vpn.managed == false and .vpn.up then "external" else null end), .error] | row),
-      (.tunnels[] | ["T", .id, .state,
+      (.tunnels as $ts | .tunnels[] | .nested_in as $n | ["T", .id, .state,
         (.remote), (.subnets | join(" ")),
-        (if .route == null then "" elif .route.ip == null then "unresolved"
+        (if $n != null then "via " + $n + ([$ts[] | select(.name == $n) | " (" + .remote + ")"][0] // "")
+         elif .route == null then "" elif .route.ip == null then "unresolved"
          elif .route.via_vpn then "via " + .route.dev else "direct" + (if .route.dev then " (" + .route.dev + ")" else "" end) end),
         .since, (if .up and (.managed | not) then "external" else null end), .error] | row)),
     (.unmanaged.vpns[] | ["V", .pid, .type, (.config // "unknown config"), .since] | row),
@@ -578,7 +625,7 @@ cmd_list() {
     mapfile -t tnames < <(list_tunnels)
     for t in "${tnames[@]}"; do
       if load_tunnel "$t"; then
-        printf '%-28s %s\n' "$c/$t" "sshuttle $T_REMOTE ${T_SUBNETS[*]}"
+        printf '%-28s %s\n' "$c/$t" "sshuttle $T_REMOTE ${T_SUBNETS[*]}${T_OVER[*]:+${T_SUBNETS[*]:+ }(via ${T_OVER[*]})}"
       else
         printf '%-28s error: %s\n' "$c/$t" "$LOAD_ERR"
       fi
@@ -617,11 +664,11 @@ vpn_watch() {
           dev="$(route_dev "$R_IP")"
           if [[ "$dev" =~ $VPN_IFACE_RE ]]; then
             [[ -n "$iface" ]] || save_vpn_state "$dev"
-            start_tunnel_bg "$dev"
+            start_tunnel_bg "VPN is up on $dev"
             exit
           fi
         elif [[ -n "$iface" ]]; then
-          start_tunnel_bg "$iface"
+          start_tunnel_bg "VPN is up on $iface"
           exit
         fi
       elif [[ -n "$iface" ]]; then
@@ -650,6 +697,7 @@ save_vpn_state() {
     "type=$V_TYPE" "config=$V_CONFIG" "iface=$1"
 }
 
+# $1 says what came up, $2 names the tunnel this one runs over
 start_tunnel_bg() {
   local tstate="$STATE_DIR/$C_NAME-$T_NAME.tunnel" log="$STATE_DIR/$C_NAME-$T_NAME.log" pid start
   if ! sudo -n -v 2>/dev/null; then
@@ -663,9 +711,38 @@ start_tunnel_bg() {
   "${SSHUTTLE_CMD[@]}" >> "$log" 2>&1 &
   pid=$!
   write_state "$tstate" "client=$C_NAME" "tunnel=$T_NAME" "pid=$pid" "pid_start=$(proc_start "$pid")" \
-    "start=$start" "remote=$T_REMOTE" "subnets=${T_SUBNETS[*]}" "owner=$$" "log=$log"
+    "start=$start" "remote=$T_REMOTE" "subnets=${T_SUBNETS[*]}" "owner=$$" "log=$log" "over=${2:-}"
   WATCH_LAUNCHING=0
-  warn "VPN is up on $1, tunnel '$C_NAME/$T_NAME' started (pid $pid, log $log)"
+  warn "$1, tunnel '$C_NAME/$T_NAME' started (pid $pid, log $log)"
+}
+
+# Background helper of run_outer: start tunnel $1 once its remote answers through the outer tunnel
+over_watch() {
+  local outer="$T_NAME" outer_pid="" ssh_pid="" deadline=0 now
+  trap 'watch_abort' TERM
+  load_tunnel "$1" || { warn "$LOAD_ERR"; exit 1; }
+  probe_target "$T_REMOTE" direct
+  while [[ -d "/proc/$$" ]]; do
+    printf -v now '%(%s)T' -1
+    scan_procs
+    if [[ -z "$outer_pid" ]]; then
+      outer_pid="$(child_of "$$" sshuttle)"
+    elif [[ -z "${P_COMM[$outer_pid]:-}" ]]; then
+      exit 0
+    else
+      # The deadline starts with ssh, after the sudo prompt of the outer sshuttle
+      [[ -z "$ssh_pid" ]] && ssh_pid="$(find_descendant "$outer_pid" '^ssh$')" && deadline=$((now + VPN_TIMEOUT))
+      if probe "$PR_HOST" "$PR_PORT"; then
+        start_tunnel_bg "'$C_NAME/$outer' is up" "$outer"
+        exit
+      fi
+      if (( deadline && now >= deadline )); then
+        warn "timed out after ${VPN_TIMEOUT}s waiting for $T_REMOTE ($PR_HOST:$PR_PORT) to answer through '$C_NAME/$outer'; tunnel '$C_NAME/$T_NAME' not started, run 'vpn up $C_NAME/$T_NAME' once it does"
+        exit 1
+      fi
+    fi
+    sleep 0.5
+  done
 }
 
 up_cleanup() {
@@ -680,10 +757,10 @@ up_cleanup() {
     stop_state_file "$f" && warn "stopped tunnel '${CONF[client]:-?}/${CONF[tunnel]:-?}'"
   done
   # sudo runs the VPN in its own session, so a closed terminal only reaches this script
-  if [[ -n "${UP_SUDO:-}" ]] && kill -0 "$UP_SUDO" 2>/dev/null; then
-    kill -TERM "$UP_SUDO" 2>/dev/null
-    wait "$UP_SUDO" 2>/dev/null
-    warn "stopped VPN '$C_NAME'"
+  if [[ -n "${UP_CHILD:-}" ]] && kill -0 "$UP_CHILD" 2>/dev/null; then
+    kill -TERM "$UP_CHILD" 2>/dev/null
+    wait "$UP_CHILD" 2>/dev/null
+    warn "stopped $UP_WHAT"
   fi
   if [[ -f "$UP_STATE" ]] && read_state "$UP_STATE" && [[ "${CONF[wrapper]:-}" == "$$" ]]; then
     rm -f "$UP_STATE"
@@ -697,7 +774,7 @@ run_vpn() {
   need "${VPN_CMD[0]}"
   [[ -z "$tunnel" ]] || need sshuttle
   check_secret_perms
-  UP_STATE="$STATE_DIR/$C_NAME.vpn" UP_WSTART="$(proc_start $$)" UP_WATCH="" UP_SUDO=""
+  UP_STATE="$STATE_DIR/$C_NAME.vpn" UP_WSTART="$(proc_start $$)" UP_WATCH="" UP_CHILD="" UP_WHAT="VPN '$C_NAME'"
   printf -v UP_START '%(%s)T' -1
   save_vpn_state "" || die "cannot write $UP_STATE"
   trap up_cleanup EXIT
@@ -708,10 +785,10 @@ run_vpn() {
   warn "starting $V_TYPE for '$C_LABEL'${tunnel:+, tunnel '$tunnel' starts once it is up} (Ctrl-C to stop)"
   # Background + wait so traps fire; <&0 keeps the prompts on the terminal, env undoes the SIGINT ignore of jobs
   env --default-signal=INT,QUIT sudo "${VPN_CMD[@]}" <&0 &
-  UP_SUDO=$!
-  wait "$UP_SUDO"
+  UP_CHILD=$!
+  wait "$UP_CHILD"
   rc=$?
-  UP_SUDO=""
+  UP_CHILD=""
   exit "$rc"
 }
 
@@ -729,14 +806,71 @@ run_tunnel_fg() {
   UP_TSTATE="$STATE_DIR/$C_NAME-$T_NAME.tunnel"
   printf -v start '%(%s)T' -1
   write_state "$UP_TSTATE" "client=$C_NAME" "tunnel=$T_NAME" "wrapper=$$" "wrapper_start=$(proc_start $$)" \
-    "start=$start" "remote=$T_REMOTE" "subnets=${T_SUBNETS[*]}" || die "cannot write $UP_TSTATE"
+    "start=$start" "remote=$T_REMOTE" "subnets=${T_SUBNETS[*]}" "over=$UP_OVER" || die "cannot write $UP_TSTATE"
   trap tunnel_cleanup EXIT
   trap 'exit 130' INT
   trap 'exit 143' TERM HUP
-  warn "starting tunnel '$C_NAME/$T_NAME' via $T_REMOTE (Ctrl-C to stop)"
+  warn "starting tunnel '$C_NAME/$T_NAME' via $T_REMOTE${UP_OVER:+ over '$C_NAME/$UP_OVER'} (Ctrl-C to stop)"
   "${SSHUTTLE_CMD[@]}"
   rc=$?
   exit "$rc"
+}
+
+# Run the loaded tunnel in the foreground like run_vpn; tunnel $1 starts over it once its remote answers
+run_outer() {
+  local inner="$1" rc start
+  need sshuttle
+  build_sshuttle_cmd
+  UP_STATE="$STATE_DIR/$C_NAME-$T_NAME.tunnel" UP_WSTART="$(proc_start $$)" UP_WATCH="" UP_CHILD=""
+  UP_WHAT="tunnel '$C_NAME/$T_NAME'"
+  printf -v start '%(%s)T' -1
+  write_state "$UP_STATE" "client=$C_NAME" "tunnel=$T_NAME" "wrapper=$$" "wrapper_start=$UP_WSTART" \
+    "start=$start" "remote=$T_REMOTE" "subnets=${T_SUBNETS[*]}" || die "cannot write $UP_STATE"
+  trap up_cleanup EXIT
+  trap 'exit 130' INT
+  trap 'exit 143' TERM HUP
+  over_watch "$inner" &
+  UP_WATCH=$!
+  warn "starting tunnel '$C_NAME/$T_NAME' via $T_REMOTE, '$C_NAME/$inner' starts over it once it answers (Ctrl-C to stop)"
+  env --default-signal=INT,QUIT "${SSHUTTLE_CMD[@]}" <&0 &
+  UP_CHILD=$!
+  wait "$UP_CHILD"
+  rc=$?
+  UP_CHILD=""
+  exit "$rc"
+}
+
+# Run the loaded via tunnel: returns to run it directly or over a running via tunnel, or starts a via tunnel under it
+up_via() {
+  local name="$T_NAME" t
+  local -a over=("${T_OVER[@]}") tried=()
+  # A running via tunnel comes first: the remote also answers through it
+  for t in "${over[@]}"; do
+    load_tunnel "$t" || continue
+    tunnel_status
+    [[ "$TS_STATE" == up ]] || continue
+    UP_OVER="$t"
+    load_tunnel "$name" || die "$LOAD_ERR"
+    return 0
+  done
+  load_tunnel "$name" || die "$LOAD_ERR"
+  probe_target "$T_REMOTE" direct
+  if probe "$PR_HOST" "$PR_PORT"; then
+    warn "$T_REMOTE ($PR_HOST:$PR_PORT) answers directly, not nesting"
+    return 0
+  fi
+  tried=("$name at $PR_HOST:$PR_PORT")
+  for t in "${over[@]}"; do
+    load_tunnel "$t" || { tried+=("$t: $LOAD_ERR"); continue; }
+    probe_target "$T_REMOTE"
+    if probe "$PR_HOST" "$PR_PORT"; then
+      warn "$C_NAME/$name -> over $C_NAME/$t ($PR_HOST:$PR_PORT answers${PR_JUMP:+, jump host $PR_JUMP})"
+      run_outer "$name"
+    fi
+    tried+=("$t at $PR_HOST:$PR_PORT${PR_JUMP:+ (jump host $PR_JUMP)}")
+  done
+  printf -v t '%s, ' "${tried[@]}"
+  die "neither '$C_NAME/$name' nor its via tunnels answer (tried ${t%, })"
 }
 
 cmd_up() {
@@ -753,6 +887,7 @@ cmd_up() {
   load_tunnel "$TGT_TUNNEL" || die "$LOAD_ERR"
   tunnel_status
   [[ "$TS_STATE" == down ]] || die "tunnel '$C_NAME/$T_NAME' is already up${TS_PID:+ (pid $TS_PID)}"
+  (( ${#T_OVER[@]} )) && up_via
   if [[ "$T_NEEDS_VPN" == yes && "$TS_VIA" != true ]]; then
     vpn_status
     case "$VS_STATE" in
@@ -822,7 +957,7 @@ show_client() {
   for t in "${tnames[@]}"; do
     if load_tunnel "$t"; then
       tunnel_status
-      printf '  %-11s %-5s %s\n' "$t" "$TS_STATE" "sshuttle $T_REMOTE ${T_SUBNETS[*]:-(auto)}"
+      printf '  %-11s %-5s %s\n' "$t" "$TS_STATE" "sshuttle $T_REMOTE ${T_SUBNETS[*]:-(auto)}${T_OVER[*]:+ (via ${T_OVER[*]})}"
     else
       printf '  %-11s error: %s\n' "$t" "$LOAD_ERR"
     fi
@@ -830,7 +965,7 @@ show_client() {
 }
 
 show_tunnel() {
-  local host route needs
+  local host route needs log
   tunnel_status
   build_sshuttle_cmd
   echo "$C_LABEL › $T_NAME"
@@ -842,7 +977,9 @@ show_tunnel() {
     field "  $key" "$(tilde "$value")"
   done < <(ssh -G "$host" 2>/dev/null | awk '$1 ~ /^(hostname|user|port|proxyjump)$/ { print }
     $1 == "identityfile" && !id++ { print "key", $2 }')
-  if [[ -z "$TS_IP" ]]; then
+  if [[ -n "$TS_OVER" ]]; then
+    route="nested over $TS_OVER"
+  elif [[ -z "$TS_IP" ]]; then
     route="unresolved"
   elif [[ "$TS_VIA" == true ]]; then
     route="$TS_IP via $TS_DEV (VPN)"
@@ -861,11 +998,47 @@ show_tunnel() {
   fi
   field needs_vpn "$needs"
   field command "${SSHUTTLE_CMD[*]}"
-  if [[ -n "$TS_LOG" && -s "$TS_LOG" ]]; then
-    field log "$(tilde "$TS_LOG")"
+  log="$TS_LOG"
+  (( ${#T_OVER[@]} )) && show_via
+  if [[ -n "$log" && -s "$log" ]]; then
+    field log "$(tilde "$log")"
     echo
-    tail -n 5 "$TS_LOG" | sed 's/^/  /'
+    tail -n 5 "$log" | sed 's/^/  /'
   fi
+}
+
+# What 'vpn up' would do for the loaded via tunnel (needs tunnel_status); reloads it
+show_via() {
+  local name="$T_NAME" state="$TS_STATE" t ans direct up="" first=""
+  local -a over=("${T_OVER[@]}")
+  probe_target "$T_REMOTE" direct
+  direct="no answer"
+  probe "$PR_HOST" "$PR_PORT" && direct=answers
+  echo
+  echo "Via"
+  printf '  %-11s %-10s %s\n' "$name" "$direct" "$PR_HOST:$PR_PORT (direct)"
+  for t in "${over[@]}"; do
+    if ! load_tunnel "$t"; then
+      printf '  %-11s error: %s\n' "$t" "$LOAD_ERR"
+      continue
+    fi
+    tunnel_status
+    [[ "$TS_STATE" == up && -z "$up" ]] && up="nested over $t (already up)"
+    probe_target "$T_REMOTE"
+    ans="no answer"
+    probe "$PR_HOST" "$PR_PORT" && ans=answers first="${first:-$t}"
+    printf '  %-11s %-10s %s -> %s%s\n' "$t" "$ans" "$T_REMOTE" "$PR_HOST:$PR_PORT" "${PR_JUMP:+ (jump host $PR_JUMP)}"
+  done
+  echo
+  if [[ "$state" == up ]]; then
+    up="already up"
+  elif [[ -z "$up" && "$direct" == answers ]]; then
+    up="direct"
+  elif [[ -z "$up" && -n "$first" ]]; then
+    up="starts $first, then $name over it"
+  fi
+  field up "${up:-fails, nothing answers}"
+  load_tunnel "$name"
 }
 
 # fzf preview of the picker, not a user command
@@ -930,7 +1103,13 @@ stop_state_file() {
 }
 
 down_tunnel() {
-  local t="$1" pid subnets
+  local t="$1" pid subnets f
+  local -a inner=()
+  for f in "$STATE_DIR/$C_NAME"-*.tunnel; do
+    [[ -f "$f" ]] && read_state "$f" && [[ "${CONF[client]:-}" == "$C_NAME" && "${CONF[over]:-}" == "$t" ]] || continue
+    inner+=("${CONF[tunnel]:-}")
+  done
+  for f in "${inner[@]}"; do [[ "$f" =~ $NAME_RE ]] && down_tunnel "$f"; done
   if stop_state_file "$STATE_DIR/$C_NAME-$t.tunnel"; then
     echo "vpn: stopped $C_NAME/$t"
     STOPPED=$((STOPPED + 1))
