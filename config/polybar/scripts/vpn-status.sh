@@ -76,8 +76,10 @@ if [[ "$mode" == vpn ]]; then
         | if ($vpns | length) > 0 then $vpns[] else (.interfaces[] | select(.up) | .name) end' <<<"$json")
     icon=$VPN_ICON color=$VPN_COLOR
 else
+    # Outer tunnels first, so a nested pair reads "outer +1"
     mapfile -t items < <(jq -r '
-        (.clients[] | .tunnels[] | select(.up) | .name), (.unmanaged.tunnels[] | .remote // "sshuttle")' <<<"$json")
+        ([.clients[] | .tunnels[] | select(.up)] | sort_by(.nested_in != null) | .[].name),
+        (.unmanaged.tunnels[] | .remote // "sshuttle")' <<<"$json")
     icon=$TUNNEL_ICON color=$TUNNEL_COLOR
 fi
 

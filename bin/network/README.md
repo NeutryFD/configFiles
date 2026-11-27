@@ -20,7 +20,14 @@ Client configs live in `~/.config/vpn/` (format: [`config/vpn/`](../../config/vp
 | `vpn status [--json]` | VPNs, tunnels, unmanaged sshuttle/VPN processes, VPN interfaces |
 | `vpn list` / `vpn edit <target>` | List entries / open the client dir or a tunnel file in `$EDITOR` |
 
-`VPN_TIMEOUT` (default 90 s) bounds the wait between the VPN process starting (after the sudo prompt) and the tunnel remote routing through it.
+A tunnel with `via="a b"` nests over another tunnel. `vpn up` on it, in order:
+1. one of its via tunnels is already up: it runs in the foreground, its ssh going through that tunnel;
+2. its remote answers directly (1 s TCP probe of the `ssh -G` hostname and port, ignoring `ProxyJump`): it runs as a normal tunnel;
+3. otherwise the first via tunnel whose remote answers (or its first `ProxyJump` host) runs in the foreground, and once the remote answers through it the tunnel starts in the background like after a VPN (log `<client>-<tunnel>.log`, `sudo -n -v`, BatchMode). Ctrl-C, closing the terminal or the outer tunnel dropping stops both.
+
+When nothing answers it fails listing what it tried. `vpn down` on the outer tunnel stops the nested one first.
+
+`VPN_TIMEOUT` (default 90 s) bounds the wait between the VPN process starting (after the sudo prompt) and the tunnel remote routing through it, and between the outer sshuttle starting ssh and the nested remote answering through it (so it includes a 2FA prompt).
 
 ## Privileges and the terminal
 
@@ -54,7 +61,9 @@ The key set is fixed. Keys are always present and `null` when unknown. Times are
       "remote": "<ssh alias>", "subnets": [..], "exclude": [..],
       "dns": <bool>, "auto_nets": <bool>, "needs_vpn": <bool>,
       "route": null | {"ip": "<ipv4>" | null, "dev": "ppp0" | null, "via_vpn": <bool>},
-      "log": "<path>" | null
+      "log": "<path>" | null,
+      "via": [..],                              tunnels it can nest over
+      "nested_in": "external" | null            the tunnel it runs over now
     }]
   }],
   "unmanaged": {

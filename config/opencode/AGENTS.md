@@ -75,5 +75,5 @@ Guidelines:
 
 ## Subagent Delegation
 
-- When acting as the primary agent (such as `build`), always delegate non-trivial coding, implementation, refactoring, and bug-fixing tasks to the `manivela` subagent via `subagent(agent: "manivela", ...)` so that language skills and verification loops are enforced.
-- When acting as the primary agent (such as `build`), always delegate search, research, and investigation tasks to the `russell` subagent via `subagent(agent: "russell", ...)` so that information is gathered, verified, and cross-referenced from authoritative sources.
+- When acting as the primary agent (such as `build`), delegate non-trivial application coding, implementation, refactoring, and bug-fixing tasks (e.g. Go, Python, Java, Rust, TypeScript) to the `manivela` subagent via `subagent(agent: "manivela", ...)` so that language skills and verification loops are enforced. Handle small or targeted edits to YAML, Kubernetes manifests, Helm values, Markdown docs, and simple configuration files directly in the primary agent without spawning `manivela`.
+- When acting as the primary agent (such as `build`), delegate research and investigation tasks to the `russell` subagent via `subagent(agent: "russell", ...)` so that information is gathered, verified, and cross-referenced from authoritative sources.
