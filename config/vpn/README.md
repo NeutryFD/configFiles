@@ -7,8 +7,10 @@ Client configs live in `~/.config/vpn/` (mode 700). That directory holds secrets
 ~/.config/vpn/<client>/
   client.conf            label, color
   vpn.conf               type, config, args          (optional)
-  tunnels/<tunnel>.conf  remote, subnets, exclude, dns, auto_nets, needs_vpn, args
+  tunnels/<tunnel>.conf  remote, subnets, exclude, dns, auto_nets, needs_vpn, args, via
   secrets/               VPN configs, certs and keys (dir 700, files 600)
 ```
+
+`via="external"` lists other tunnels of the same client (tried in order) that this tunnel can run nested over, when its remote does not answer directly. A via tunnel cannot have `via` itself, and `via` cannot be combined with `needs_vpn=yes` (`needs_vpn` defaults to `no` with `via`).
 
 The files are read as plain `key=value` lines. They are never sourced, and unknown keys, duplicate keys and stray quotes are errors.
