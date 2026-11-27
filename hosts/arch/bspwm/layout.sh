@@ -20,8 +20,8 @@ DESKTOP_SECOND_DISPLAY=$(xrandr | awk -v main="$DESKTOP_DISPLAY" '$2 == "connect
 
 if [ -n "$DESKTOP_SECOND_DISPLAY" ]; then
     # Portrait chat monitor on the left, without polybar
-    # Main kept at 1080p like the chat monitor so text matches (both 27"); 119.88 is its fastest 1080p rate
-    xrandr --output "$DESKTOP_DISPLAY"        --primary --mode 1920x1080 --rate 119.88 \
+    # Main at its native 1440p, chat monitor at 1080p (both 27"): HDMI-0 sizes are the 1080p ones x4/3
+    xrandr --output "$DESKTOP_DISPLAY"        --primary --mode 2560x1440 --rate 144 \
            --output "$DESKTOP_SECOND_DISPLAY" --auto --rotate right --scale 1x1 --left-of "$DESKTOP_DISPLAY"
 
     # Move desktops beyond 8 with their windows, then drop the default "Desktop"
@@ -37,7 +37,7 @@ if [ -n "$DESKTOP_SECOND_DISPLAY" ]; then
     bspc wm --reorder-monitors "$DESKTOP_SECOND_DISPLAY" "$DESKTOP_DISPLAY"
     DESKTOP_COUNT=8
 else
-    xrandr --output "$DESKTOP_DISPLAY" --mode 1920x1080 --rate 119.88 --pos 0x0
+    xrandr --output "$DESKTOP_DISPLAY" --mode 2560x1440 --rate 144 --pos 0x0
     bspc monitor "$DESKTOP_DISPLAY" -d 1 2 3 4 5 6 7 8 9 10
     DESKTOP_COUNT=10
 
@@ -53,28 +53,47 @@ else
     done
 fi
 
-# Pills sit 8px from the screen edges and 30px tall: windows (padding + window_gap 6) start 8px past them
-bspc config top_padding    40
-bspc config bottom_padding 40
+# Pills sit 10px from the screen edges and 40px tall: windows (padding + window_gap 6) start 11px past them
+bspc config top_padding    55
+bspc config bottom_padding 55
 bspc config left_padding   2
 bspc config right_padding  2
+
+# privacy.sh icon offset and the sxhkdrc slot machine font, x4/3
+export PRIVACY_ICON_GAP=11
+export GHOSTTY_SLOT_FONT_SIZE=20
+export GHOSTTY_CMD="$HOME/.config/dotfiles-host/ghostty-launch.sh"
+export GHOSTTY_FLOAT_RECT=960x480+0+0 GHOSTTY_FLOAT_CENTER=on
 
 # Launch polybar
 if [ "$BAR_LAYOUT" == "vertical" ]; then
     "$HOME/.config/polybar/scripts/bspwm_desktops_daemon.sh" &
+
+    # config/polybar/vertical.conf sizes x4/3; stacked segments keep touching
+    export VBAR_WIDTH=80 VBAR_SLOT=40 VBAR_X=11 VBAR_RADIUS=13
+    export VBAR_TOP_Y=5 VBAR_TOP_H=14 VBAR_KBD_Y=19 VBAR_DISK_Y=48 VBAR_ROW_H=29 VBAR_UPPER_Y=77
+    export VBAR_DAY_Y=100%:-184 VBAR_MONTH_Y=100%:-152 VBAR_SEP_Y=100%:-120 VBAR_HOUR_Y=100%:-101
+    export VBAR_MIN_Y=100%:-69 VBAR_BOTTOM_Y=100%:-37 VBAR_CLOCK_H=32 VBAR_SEP_H=19
+    export VBAR_FONT_5="Hack Nerd Font Propo:style=Bold:pixelsize=28;7"
+    export VBAR_FONT_6="Hack Nerd Font Propo:style=Regular:pixelsize=19;4"
+    export VBAR_FONT_7="Hack Nerd Font Propo:style=Regular:pixelsize=21;5"
+    export VBAR_FONT_8="Droid Sans:style=Regular:pixelsize=20;5"
+    export VBAR_FONT_9="fixed:pixelsize=13;4"
+    export VBAR_FONT_10="fixed:pixelsize=13;3"
+    export VBAR_FONT_11="Hack Nerd Font Propo:style=Regular:pixelsize=13;4"
 
     launch_left_bar "$POLYBAR_VERTICAL_CONFIG" "$DESKTOP_DISPLAY" vbar- "$DESKTOP_COUNT"
 
     launch_polybar "$POLYBAR_VERTICAL_CONFIG" "" \
         top-gearbox top-privacy top-banner top-volume top-music bottom-resources bottom-vpn bottom-tunnels bottom-ethernet
 
-    # visible bar edge 64 + 8 gap - window_gap
-    bspc config left_padding 66
+    # visible bar edge 86 + 10 gap - window_gap
+    bspc config left_padding 90
 else
-    # The Pac-Man pill fits its desktops (about 24px each); gearbox and privacy follow it 8px apart
-    export BSPWM_PILL_WIDTH=$(( DESKTOP_COUNT * 24 + 44 ))
-    export GEARBOX_X=$(( 4 + BSPWM_PILL_WIDTH ))
-    export PRIVACY_X=$(( GEARBOX_X + 80 ))
+    # The Pac-Man pill fits its desktops (about 32px each); gearbox and privacy follow it 10px apart
+    export BSPWM_PILL_WIDTH=$(( DESKTOP_COUNT * 32 + 59 ))
+    export GEARBOX_X=$(( 5 + BSPWM_PILL_WIDTH ))
+    export PRIVACY_X=$(( GEARBOX_X + 107 ))
     launch_polybar "$POLYBAR_CONFIG" "" \
         bspwm gearbox privacy banner volume music left status clock vpn tunnels ethernet
 fi
